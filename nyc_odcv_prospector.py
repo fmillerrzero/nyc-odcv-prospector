@@ -57,7 +57,7 @@ data['scoring']['final_rank'] = range(1, len(data['scoring']) + 1)
 all_buildings = data['scoring']
 
 # TEST MODE - Only generate one building for quick testing
-TEST_MODE = False  # Set to False for full generation
+TEST_MODE = True  # Set to False for full generation
 TEST_BBL = 1000010010  # Replace with any BBL from your data for testing
 
 if TEST_MODE:
@@ -85,16 +85,15 @@ print("\nMapping images...")
 image_map = {}
 for bbl in all_buildings['bbl']:
     folder_name = data['addresses'].loc[data['addresses']['bbl'] == bbl, 'main_address'].iloc[0]
-    folder_name_no_commas = folder_name.replace(',', '')
-    folder_name_encoded = folder_name_no_commas.replace(' ', '%20')
-    image_map[int(bbl)] = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/{bbl}_{folder_name_encoded}/"
+    folder_name_github = folder_name.replace(' ', '%20').replace(',', '%2C')
+    image_map[int(bbl)] = f"https://raw.githubusercontent.com/rmillerzero/nyc-odcv-prospector/main/images/{bbl}_{folder_name_github}/"
 print(f"Generated {len(image_map)} image folder URLs")
 
 # Map thumbnails
 print("\nMapping thumbnails...")
 thumbnail_map = {}
 for bbl in all_buildings['bbl']:
-    thumbnail_map[int(bbl)] = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/hero_thumbnails/{bbl}_thumb.jpg"
+    thumbnail_map[int(bbl)] = f"https://raw.githubusercontent.com/rmillerzero/nyc-odcv-prospector/main/hero_thumbnails/{bbl}_thumb.jpg"
 print(f"Generated {len(thumbnail_map)} thumbnail URLs")
 
 # Safe value getter
@@ -1444,7 +1443,8 @@ for idx, row in all_buildings.iterrows():
             folder_name = data['addresses'].loc[data['addresses']['bbl'] == bbl, 'main_address'].iloc[0]
             folder_name_no_commas = folder_name.replace(',', '')
             folder_name_encoded = folder_name_no_commas.replace(' ', '%20')
-            base_url = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/{bbl}_{folder_name_encoded}"
+            folder_name_github = folder_name.replace(' ', '%20').replace(',', '%2C')
+            base_url = f"https://raw.githubusercontent.com/rmillerzero/nyc-odcv-prospector/main/images/{bbl}_{folder_name_github}"
             
             # Generate image filenames based on pattern - use URL encoded version for consistency
             folder_name_for_filename = folder_name.replace(',', '').replace(' ', '%20')
@@ -2239,7 +2239,7 @@ for b in homepage_data:
     
     # Generate thumbnail cell
     if b['has_thumbnail']:
-        thumb_cell = f'<img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/hero_thumbnails/{b["bbl"]}_thumb.jpg" alt="{escape(b["address"])}" class="building-thumb" onclick="window.location.href=\'{b["filename"]}\'">'
+        thumb_cell = f'<img src="https://raw.githubusercontent.com/rmillerzero/nyc-odcv-prospector/main/hero_thumbnails/{b["bbl"]}_thumb.jpg" alt="{escape(b["address"])}" class="building-thumb" onclick="window.location.href=\'{b["filename"]}\'">'
     else:
         thumb_cell = '<div class="no-thumb">No image</div>'
     
