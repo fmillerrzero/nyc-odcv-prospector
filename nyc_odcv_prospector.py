@@ -862,7 +862,6 @@ building_template = """<!DOCTYPE html>
             <!-- Page 3.1b - Occupancy Trends -->
             <div class="page">
                 <h3 class="page-title">3.1b - NYC Office Occupancy Trends</h3>
-                <div class="chart" id="occupancy_trend_chart"></div>
                 <div style="margin-top: 20px; padding: 15px; background: var(--rzero-light-blue); border-radius: 8px;">
                     <h4 style="color: var(--rzero-primary); margin-top: 0;">Hybrid Work Impact on ODCV</h4>
                     <p style="margin: 10px 0;">With {neighborhood_name} showing clear Tuesday-Thursday peak patterns, ODCV systems can:</p>
@@ -1032,32 +1031,6 @@ building_template = """<!DOCTYPE html>
             }});
         }}
         
-        // NYC Office Occupancy Trend Chart
-        const occupancyMonths = ['Jul 24', 'Aug 24', 'Sep 24', 'Oct 24', 'Nov 24', 'Dec 24', 
-                                 'Jan 25', 'Feb 25', 'Mar 25', 'Apr 25', 'May 25', 'Jun 25'];
-        const nycOccupancy = [88, 82, 90, 93, 92, 89, 91, 92, 93, 94, 94, 95];
-        const neighborhoodOccupancy = nycOccupancy.map(v => v * ({neighborhood_avg} / 90)); // Adjust to neighborhood
-        
-        const nycTrend = {{
-            x: occupancyMonths,
-            y: nycOccupancy,
-            name: 'NYC Average',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: '#999', dash: 'dash'}}
-        }};
-        
-        const neighborhoodTrend = {{
-            x: occupancyMonths,
-            y: neighborhoodOccupancy,
-            name: '{neighborhood_name}',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: rzeroColors.primary, width: 3}},
-            fill: 'tozeroy',
-            fillcolor: 'rgba(0, 118, 157, 0.1)'
-        }};
-        
         // Day of week pattern
         const dayOfWeek = {{
             x: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
@@ -1069,30 +1042,13 @@ building_template = """<!DOCTYPE html>
             }}
         }};
         
-        Plotly.newPlot('occupancy_trend_chart', [neighborhoodTrend, nycTrend], {{
-            title: 'Office Occupancy Recovery Trend (% of capacity)',
-            yaxis: {{title: 'Occupancy %', range: [0, 100]}},
-            xaxis: {{title: 'Month'}},
-            hovermode: 'x unified',
-            font: {{family: 'Inter, sans-serif'}},
-            annotations: [{{
-                x: 'Jun 25',
-                y: {neighborhood_avg},
-                text: 'Current: {neighborhood_avg}%',
-                showarrow: true,
-                arrowhead: 2,
-                arrowcolor: rzeroColors.primary,
-                ax: -40,
-                ay: -40
-            }}]
-        }});
-        
         // Create subplot for day-of-week pattern
         setTimeout(() => {{
             const dayOfWeekDiv = document.createElement('div');
             dayOfWeekDiv.id = 'day_of_week_chart';
             dayOfWeekDiv.style.marginTop = '20px';
-            document.getElementById('occupancy_trend_chart').parentElement.appendChild(dayOfWeekDiv);
+            const pageDiv = Array.from(document.querySelectorAll('h3.page-title')).find(h => h.textContent.includes('NYC Office Occupancy Trends')).closest('.page');
+            pageDiv.appendChild(dayOfWeekDiv);
             
             Plotly.newPlot('day_of_week_chart', [dayOfWeek], {{
                 title: 'Hybrid Work Pattern - {neighborhood_name}',
