@@ -336,32 +336,19 @@
     <div class="container">
         <div class="header">
             <div class="logo-header">
-                <svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 10 L30 10 L30 20 L20 20 L30 40 L10 40 L10 30 L20 30 L10 10" fill="#00769d"/>
-                    <text x="40" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#00769d">R-ZERO</text>
-                </svg>
+                <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo" style="width: 200px; height: 50px;">
             </div>
-            <h1>NYC Office Building ODCV Opportunity Rankings</h1>
-            <p class="subtitle">Sales Intelligence Platform - 585 Buildings Analyzed</p>
-        </div>
-        
-        <div class="new-features">
-            <h3>NEW: Enhanced Reports Now Available!</h3>
-            <p><strong>Section 5:</strong> Air Quality & Ventilation Insights with PM2.5 Trends</p>
+            <h1>R-Zero Prospector: NYC</h1>
         </div>
         
         <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value">$60.8M</div>
-                <div class="stat-label">Total Annual Savings</div>
-            </div>
             <div class="stat-card">
                 <div class="stat-value">470</div>
                 <div class="stat-label">Buildings with BAS</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">32</div>
-                <div class="stat-label" style="color: #dc3545;">Face 2026 Penalties</div>
+                <div class="stat-value">32 buildings</div>
+                <div class="stat-label" style="color: #dc3545;">facing $14.5M 2026 LL97 Penalties</div>
             </div>
             <div class="stat-card" style="background: #f5f5f5; border-left: 4px solid #4caf50;">
                 <div class="stat-value" style="color: #2e7d32;">$60.8M</div>
@@ -370,18 +357,23 @@
         </div>
         
         <div class="info-box">
-            <h2>Understanding the Rankings</h2>
-            <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
-            <ul style="line-height: 1.8;">
-                <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
-                <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
-                <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
-                <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
-                <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
-            </ul>
-            <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
-                <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
-            </p>
+            <h2 onclick="toggleSection('rankings')" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                Understanding the Rankings 
+                <span id="rankings-arrow" style="font-size: 0.8em;">▼</span>
+            </h2>
+            <div id="rankings-content" style="display: none;">
+                <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
+                    <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
+                    <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
+                    <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
+                    <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
+                </ul>
+                <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
+                    <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
+                </p>
+            </div>
         </div>
         
         <div class="info-box">
@@ -9873,10 +9865,7 @@
         </button>
         
         <div style="margin-top: 40px; padding: 20px; text-align: center; color: #666;">
-            <svg width="100" height="25" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.6;">
-                <path d="M10 10 L30 10 L30 20 L20 20 L30 40 L10 40 L10 30 L20 30 L10 10" fill="#00769d"/>
-                <text x="40" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#00769d">R-ZERO</text>
-            </svg>
+            <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo" style="width: 100px; height: 25px; opacity: 0.6;">
             <p style="margin: 10px 0 0 0; font-size: 0.9em;">Powered by R-Zero ODCV Technology</p>
         </div>
     </div>
@@ -10071,10 +10060,7 @@
         </div>
         
         <div style="margin-top: 40px; padding: 20px; text-align: center; color: #666;">
-            <svg width="100" height="25" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.6;">
-                <path d="M10 10 L30 10 L30 20 L20 20 L30 40 L10 40 L10 30 L20 30 L10 10" fill="#00769d"/>
-                <text x="40" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#00769d">R-ZERO</text>
-            </svg>
+            <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo" style="width: 100px; height: 25px; opacity: 0.6;">
             <p style="margin: 10px 0 0 0; font-size: 0.9em;">Powered by R-Zero ODCV Technology</p>
         </div>
     </div>
@@ -10116,7 +10102,6 @@
         });
         
         rows.forEach(row => tbody.appendChild(row));
-    }
     }
     
     // CSV Export
@@ -10289,6 +10274,7 @@
         });
     });
     </script>
-<p style="text-align:center;color:#666;font-size:14px;margin-top:20px;">Reports generated on July 24, 2025 at 01:22 PM</p>
+    
+    <p style="text-align:center;color:#666;font-size:14px;margin-top:20px;">Reports generated on July 24, 2025 at 02:59 PM</p>
 </body>
 </html>
