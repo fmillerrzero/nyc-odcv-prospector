@@ -2699,6 +2699,10 @@ homepage_html += """
 </body>
 </html>"""
 
+# Add timestamp
+timestamp = datetime.now().strftime("Reports generated on %B %d, %Y at %I:%M %p")
+homepage_html = homepage_html.replace('</body>', f'<p style="text-align:center;color:#666;font-size:14px;margin-top:20px;">{timestamp}</p>\n</body>')
+
 # Save homepage
 with open(os.path.join(output_dir, 'index.html'), 'w', encoding='utf-8') as f:
     f.write(homepage_html)
@@ -2736,7 +2740,8 @@ if failed > 0:
     print(f"\nFailed: {failed} buildings")
 
 print(f"\nNEXT STEPS:")
-print(f"1. Copy images: cp -r '{images_dir}' '{output_dir}/images'")
+print(f"1. Copy images: cp -r '/Users/forrestmiller/Desktop/FINAL NYC/BIG/images' '{output_dir}/images'")
+thumbnails_dir = '/Users/forrestmiller/Desktop/FINAL NYC/BIG/hero_thumbnails'
 if os.path.exists(thumbnails_dir):
     print(f"2. Copy thumbnails: cp -r '{thumbnails_dir}' '{output_dir}/hero_thumbnails'")
     print(f"3. Open: file://{output_dir}/index.html")
