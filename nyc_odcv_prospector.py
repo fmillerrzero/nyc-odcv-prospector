@@ -85,7 +85,8 @@ print("\nMapping images...")
 image_map = {}
 for bbl in all_buildings['bbl']:
     folder_name = data['addresses'].loc[data['addresses']['bbl'] == bbl, 'main_address'].iloc[0]
-    folder_name_encoded = folder_name.replace(' ', '%20').replace(',', '%2C')
+    folder_name_no_commas = folder_name.replace(',', '')
+    folder_name_encoded = folder_name_no_commas.replace(' ', '%20')
     image_map[int(bbl)] = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/{bbl}_{folder_name_encoded}/"
 print(f"Generated {len(image_map)} image folder URLs")
 
@@ -1441,14 +1442,16 @@ for idx, row in all_buildings.iterrows():
         if bbl in image_map:
             # Get the encoded folder name for AWS URLs
             folder_name = data['addresses'].loc[data['addresses']['bbl'] == bbl, 'main_address'].iloc[0]
-            folder_name_encoded = folder_name.replace(' ', '%20').replace(',', '%2C')
+            folder_name_no_commas = folder_name.replace(',', '')
+            folder_name_encoded = folder_name_no_commas.replace(' ', '%20')
             base_url = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/{bbl}_{folder_name_encoded}"
             
-            # Generate image filenames based on pattern
-            hero_filename_base = f"{bbl}_hero_{folder_name.replace(',', '')}"
-            street_filename_base = f"{bbl}_street_{folder_name.replace(',', '')}"
-            satellite_filename_base = f"{bbl}_satellite_{folder_name.replace(',', '')}"
-            image_360_filename_base = f"{bbl}_360_{folder_name.replace(',', '')}"
+            # Generate image filenames based on pattern - use URL encoded version for consistency
+            folder_name_for_filename = folder_name.replace(',', '').replace(' ', '%20')
+            hero_filename_base = f"{bbl}_hero_{folder_name_for_filename}"
+            street_filename_base = f"{bbl}_street_{folder_name_for_filename}"
+            satellite_filename_base = f"{bbl}_satellite_{folder_name_for_filename}"
+            image_360_filename_base = f"{bbl}_360_{folder_name_for_filename}"
 
             # Hero image with PNG->JPG fallback
             hero_image = (
@@ -1480,10 +1483,20 @@ for idx, row in all_buildings.iterrows():
 <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css"/>
 <script>
-    pannellum.viewer('panorama_{bbl}', {{
+    var viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
         type: 'equirectangular',
         panorama: '{base_url}/{image_360_filename_base}.png',
         autoLoad: true
+    }});
+    
+    // Add error handler for JPG fallback
+    viewer_{bbl}.on('error', function() {{
+        viewer_{bbl}.destroy();
+        viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
+            type: 'equirectangular',
+            panorama: '{base_url}/{image_360_filename_base}.jpg',
+            autoLoad: true
+        }});
     }});
 </script>
 '''
@@ -2108,7 +2121,7 @@ homepage_html = f"""<!DOCTYPE html>
             margin-top: 0;
         }}
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt_cBgP_yqhIzUacpoz6TAVupvhmA0ZBA&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt_cBgP_yqhIzUacpoz6TAVupvhmA0ZBA&libraries=places&callback=initMap&loading=async" async defer></script>
 </head>
 <body>
     <div class="container">
@@ -2116,7 +2129,7 @@ homepage_html = f"""<!DOCTYPE html>
             <div class="logo-header">
                 <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo" style="width: 200px; height: 50px;">
             </div>
-            <h1>R-Zero Prospector: NYC</h1>
+            <h1>Prospector: NYC</h1>
         </div>
         
         <div class="stats">
@@ -2125,32 +2138,12 @@ homepage_html = f"""<!DOCTYPE html>
                 <div class="stat-label">Buildings with BAS</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">{urgent} buildings</div>
-                <div class="stat-label" style="color: #dc3545;">facing ${total_penalties/1000000:.1f}M 2026 LL97 Penalties</div>
+                <div class="stat-value" style="color: #dc3545;">{urgent}</div>
+                <div class="stat-label">Buildings facing ${total_penalties/1000000:.1f}M 2026 LL97 Penalties</div>
             </div>
-            <div class="stat-card" style="background: #f5f5f5; border-left: 4px solid #4caf50;">
+            <div class="stat-card">
                 <div class="stat-value" style="color: #2e7d32;">${total_savings/1000000:.1f}M</div>
-                <div class="stat-label">YEAR ONE SAVINGS</div>
-            </div>
-        </div>
-        
-        <div class="info-box">
-            <h2 onclick="toggleSection('rankings')" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                Understanding the Rankings 
-                <span id="rankings-arrow" style="font-size: 0.8em;">▼</span>
-            </h2>
-            <div id="rankings-content" style="display: none;">
-                <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
-                <ul style="line-height: 1.8;">
-                    <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
-                    <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
-                    <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
-                    <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
-                    <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
-                </ul>
-                <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
-                    <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
-                </p>
+                <div class="stat-label">Year One Savings</div>
             </div>
         </div>
         """
@@ -2172,6 +2165,28 @@ if top_portfolios:
             </div>
         </div>
     """
+
+homepage_html += f"""
+        <div class="info-box">
+            <h2 onclick="toggleSection('rankings')" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                Understanding the Rankings 
+                <span id="rankings-arrow" style="font-size: 0.8em;">▼</span>
+            </h2>
+            <div id="rankings-content" style="display: none;">
+                <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
+                    <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
+                    <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
+                    <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
+                    <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
+                </ul>
+                <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
+                    <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
+                </p>
+            </div>
+        </div>
+"""
 
 homepage_html += f"""
         <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()">
@@ -2363,9 +2378,6 @@ homepage_html += """
             row.style.display = (matchesSearch && matchesOwner) ? '' : 'none';
         }});
     }}
-    
-    let sortDir = {{}};
-    function sortTable(col) {{
         const tbody = document.querySelector('#buildingTable tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
         
@@ -2505,35 +2517,6 @@ homepage_html += """
         }}
     }});
     
-    // Original sort function enhanced
-    let sortDir = {{}};
-    function sortTable(col) {{
-        const tbody = document.querySelector('#buildingTable tbody');
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        
-        sortDir[col] = !sortDir[col];
-        
-        rows.sort((a, b) => {{
-            let aVal, bVal;
-            
-            if (col === 7 || col === 9) {{  // Annual Savings or 2026 Penalty columns
-                aVal = parseFloat(a.cells[col].getAttribute('data-value') || 0);
-                bVal = parseFloat(b.cells[col].getAttribute('data-value') || 0);
-            }} else if (col === 1 || col === 8) {{  // Rank or Score columns
-                aVal = parseFloat(a.cells[col].textContent.replace('#', '') || 0);
-                bVal = parseFloat(b.cells[col].textContent.replace('#', '') || 0);
-            }} else {{
-                aVal = (a.cells[col].textContent || '').toLowerCase();
-                bVal = (b.cells[col].textContent || '').toLowerCase();
-            }}
-            
-            return sortDir[col] ? 
-                (aVal > bVal ? 1 : -1) : 
-                (aVal < bVal ? 1 : -1);
-        }});
-        
-        rows.forEach(row => tbody.appendChild(row));
-    }}
     
     // Initialize on page load
     window.addEventListener('DOMContentLoaded', function() {{

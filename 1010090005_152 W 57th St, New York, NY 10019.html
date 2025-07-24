@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>152 W 57th St, New York, NY 10019 - ODCV Analysis</title>
+    <style>
+        :root {
+            --rzero-primary: #00769d;
+            --rzero-primary-dark: #005f7e;
+            --rzero-light-blue: #f0f7fa;
+            --rzero-background: #f4fbfd;
+            --text-dark: #1a202c;
+            --text-light: #4a5568;
+            --border: #e2e8f0;
+            --success: #38a169;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: var(--rzero-background); 
+            color: var(--text-dark);
+        }
+        
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 118, 157, 0.08);
+        }
+        
+        /* Section 0 - Title */
+        .title-section { 
+            position: relative; 
+            height: 300px; 
+            background: var(--rzero-primary); 
+            overflow: hidden; 
+        }
+        
+        .hero-image { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0.3; 
+            mix-blend-mode: overlay;
+        }
+        
+        .title-overlay { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: rgba(0, 118, 157, 0.8);
+        }
+        
+        .title-content { text-align: center; color: white; }
+        .title-content h1 { 
+            font-size: 3em; 
+            margin: 0; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .logo-container { 
+            position: absolute; 
+            top: 30px; 
+            right: 30px; 
+            background: white; 
+            padding: 15px 20px; 
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rzero-logo { 
+            width: 140px; 
+            height: auto;
+        }
+        
+        .odcv-badge {
+            font-size: 0.85em;
+            color: var(--rzero-primary);
+            font-weight: 600;
+            padding: 4px 10px;
+            background: var(--rzero-light-blue);
+            border-radius: 20px;
+        }
+        
+        /* Section styling */
+        .section { 
+            padding: 20px; 
+            border-bottom: 1px solid var(--border); 
+        }
+        
+        .section-header { 
+            font-size: 1.8em; 
+            color: var(--rzero-primary); 
+            margin-bottom: 30px; 
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-header::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: var(--rzero-primary);
+            border-radius: 2px;
+        }
+        
+        .page { margin-bottom: 40px; }
+        .page-title { 
+            font-size: 1.3em; 
+            color: var(--text-dark); 
+            margin-bottom: 20px; 
+            font-weight: 500; 
+        }
+        
+        /* Stats and info */
+        .stat { 
+            margin: 15px 0; 
+            display: flex; 
+            align-items: baseline;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 118, 157, 0.08);
+        }
+        
+        .stat:last-child { border-bottom: none; }
+        
+        .stat-label { 
+            font-weight: 500; 
+            color: var(--text-light); 
+            min-width: 200px; 
+        }
+        
+        .stat-value { 
+            font-size: 1.1em; 
+            color: var(--text-dark); 
+        }
+        
+        .stat-value.large { 
+            font-size: 1.5em; 
+            font-weight: 600; 
+            color: var(--rzero-primary); 
+        }
+        
+        /* Images */
+        .image-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            margin: 20px 0; 
+        }
+        
+        .image-grid img { 
+            width: 100%; 
+            max-height: 350px;
+            min-height: 250px;
+            object-fit: contain;
+            background: #f0f0f0;
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0, 118, 157, 0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        
+        /* Graphs */
+        .chart { 
+            margin: 20px 0; 
+            background: #f8f8f8; 
+            padding: 15px; 
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .chart-title { 
+            font-weight: 500; 
+            color: var(--text-dark); 
+            margin-bottom: 10px; 
+        }
+        
+        /* Special highlights */
+        .highlight-box { 
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px; 
+            border-radius: 4px; 
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .highlight-box h4 {
+            color: var(--rzero-primary);
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        
+        .warning-box { 
+            background: #fff3cd; 
+            border: 1px solid #ffeeba; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin: 15px 0; 
+        }
+        
+        .warning-box h3 {
+            color: #856404;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Grid layouts */
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px; 
+        }
+        
+        /* R-Zero branded elements */
+        .rzero-badge {
+            display: inline-block;
+            background: var(--rzero-primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .energy-grade {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .grade-A { background: #d4f1d4; color: #1e7e1e; }
+        .grade-B { background: #e6f3d5; color: #5d7e1e; }
+        .grade-C { background: #fff3cd; color: #856404; }
+        .grade-D { background: #f8d7da; color: #721c24; }
+        .grade-F { background: #f5c6cb; color: #721c24; }
+        .grade-NA { background: #e9ecef; color: #6c757d; }
+        
+        /* Score breakdown styles */
+        .score-breakdown { 
+            background: #f8f8f8; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin: 15px 0;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .component {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 118, 157, 0.2);
+        }
+
+        .component-label {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .component-value {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--rzero-primary);
+            margin-bottom: 10px;
+        }
+
+        .component-bar {
+            height: 8px;
+            background: var(--rzero-primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .bonus-grid {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .bonus-item {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .bonus-active {
+            background: var(--success);
+            color: white;
+        }
+
+        .bonus-inactive {
+            background: #e0e0e0;
+            color: #999;
+        }
+        
+        /* IAQ styles */
+        .iaq-summary {
+            background: var(--rzero-light-blue);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .iaq-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .iaq-stat {
+            text-align: center;
+        }
+
+        .iaq-label {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .iaq-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .iaq-category {
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .iaq-sublabel {
+            font-size: 0.85em;
+            color: var(--text-light);
+        }
+
+        .iaq-insight {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .iaq-insight h4 {
+            color: var(--rzero-primary);
+            margin-top: 0;
+        }
+        
+        /* Building Identity Bar */
+        .building-identity {
+            padding: 15px 20px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .neighborhood-badge {
+            font-size: 1.4em;
+            color: var(--rzero-primary);
+            font-weight: 600;
+        }
+
+        .building-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .stat-item {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        /* Green Rating Badges with LEED levels */
+        .green-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .green-badge.platinum {
+            background: #e5e4e2;
+            color: #333;
+            border: 1px solid #999;
+        }
+
+        .green-badge.gold {
+            background: #ffd700;
+            color: #333;
+        }
+
+        .green-badge.silver {
+            background: #c0c0c0;
+            color: #333;
+        }
+
+        .green-badge.certified {
+            background: #28a745;
+            color: white;
+        }
+
+        /* Default for other green ratings */
+        .green-badge:not(.platinum):not(.gold):not(.silver):not(.certified) {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        @media print {
+            .title-section { height: 200px; }
+            .image-grid { page-break-inside: avoid; }
+            .chart { page-break-inside: avoid; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Section 0.0 - Title -->
+        <div class="title-section">
+            <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1010090005_152%20W%2057th%20St%20New%20York%20NY%2010019/1010090005_hero_152%20W%2057th%20St%20New%20York%20NY%2010019.png" alt="Building photo" class="hero-image" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1010090005_152%20W%2057th%20St%20New%20York%20NY%2010019/1010090005_hero_152%20W%2057th%20St%20New%20York%20NY%2010019.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='block';"><div style="height: 400px; background: #333; display: none;"></div>
+            <div class="title-overlay">
+                <div class="title-content">
+                    <h1>152 W 57th St, New York, NY 10019</h1>
+                </div>
+            </div>
+            <div class="logo-container">
+                <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo">
+                <span class="odcv-badge">ODCV Analysis</span>
+            </div>
+        </div>
+        
+        <!-- Building Identity Bar -->
+        <div class="building-identity">
+            <div class="neighborhood-badge">Midtown-Times Square</div>
+            <div class="building-stats">
+                
+                <span class="stat-item">103 units</span>
+                <span class="stat-item">61 floors</span>
+                <span class="stat-item">Built/Renovated 1988.0</span>
+            </div>
+        </div>
+        
+        <!-- Year One Savings Highlight -->
+        <div style="background: #2e7d32; color: white; padding: 20px; text-align: center;">
+            <h2 style="margin: 0;">Year One Savings: $223,833</h2>
+        </div>
+        
+        
+        
+        <!-- Section 1: General -->
+        <div class="section">
+            <h2 class="section-header">Section 1: General Building Information</h2>
+            
+            <!-- Page 1.0 - Photo -->
+            <div class="page">
+                <h3 class="page-title">1.0 - Building Overview</h3>
+                <div class="stat">
+                    <span class="stat-label">Building Class:</span>
+                    <span class="stat-value large">A</span>
+                </div>
+                <div class="image-grid">
+                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1010090005_152%20W%2057th%20St%20New%20York%20NY%2010019/1010090005_street_152%20W%2057th%20St%20New%20York%20NY%2010019.png" alt="Street view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1010090005_152%20W%2057th%20St%20New%20York%20NY%2010019/1010090005_street_152%20W%2057th%20St%20New%20York%20NY%2010019.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>
+                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1010090005_152%20W%2057th%20St%20New%20York%20NY%2010019/1010090005_satellite_152%20W%2057th%20St%20New%20York%20NY%2010019.png" alt="Satellite view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1010090005_152%20W%2057th%20St%20New%20York%20NY%2010019/1010090005_satellite_152%20W%2057th%20St%20New%20York%20NY%2010019.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>
+                </div>
+            </div>
+            
+            <!-- Page 1.3 - 360° Street View -->
+            <div class="page">
+                <h3 class="page-title">1.3 - 360° Street View</h3>
+                <div class="image-360">
+                    
+<div id="panorama_1010090005" style="width:100%;max-width:1200px;height:400px;border-radius:8px;"></div>
+<script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css"/>
+<script>
+    var viewer_1010090005 = pannellum.viewer('panorama_1010090005', {
+        type: 'equirectangular',
+        panorama: 'https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1010090005_152%20W%2057th%20St%20New%20York%20NY%2010019/1010090005_360_152%20W%2057th%20St%20New%20York%20NY%2010019.png',
+        autoLoad: true
+    });
+    
+    // Add error handler for JPG fallback
+    viewer_1010090005.on('error', function() {
+        viewer_1010090005.destroy();
+        viewer_1010090005 = pannellum.viewer('panorama_1010090005', {
+            type: 'equirectangular',
+            panorama: 'https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1010090005_152%20W%2057th%20St%20New%20York%20NY%2010019/1010090005_360_152%20W%2057th%20St%20New%20York%20NY%2010019.jpg',
+            autoLoad: true
+        });
+    });
+</script>
+
+                </div>
+            </div>
+            
+            <!-- Page 1.1 - Commercial -->
+            <div class="page">
+                <h3 class="page-title">1.1 - Commercial Information</h3>
+                <div class="stat">
+                    <span class="stat-label">Owner:</span>
+                    <span class="stat-value">TF Cornerstone</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Property Manager:</span>
+                    <span class="stat-value">Newmark</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Decision Maker:</span>
+                    <span class="stat-value">TF Cornerstone</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">% Leased:</span>
+                    <span class="stat-value">97.5% (Neighborhood Average: 90%)</span>
+                </div>
+            </div>
+            
+            <!-- Page 1.2 - Site -->
+            <div class="page">
+                <h3 class="page-title">1.2 - Site Details</h3>
+                <div class="stat">
+                    <span class="stat-label">Year Altered:</span>
+                    <span class="stat-value">1988.0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Number of Floors:</span>
+                    <span class="stat-value">61</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total Units:</span>
+                    <span class="stat-value">103</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total Gross Floor Area:</span>
+                    <span class="stat-value">599,778 sq ft</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 2: Building -->
+        <div class="section">
+            <h2 class="section-header">Section 2: Building Performance</h2>
+            
+            <!-- Page 2.0 - Efficiency -->
+            <div class="page">
+                <h3 class="page-title">2.0 - Efficiency Metrics</h3>
+                <div class="stat">
+                    <span class="stat-label">ENERGY STAR Score:</span>
+                    <span class="stat-value large">78</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Target ENERGY STAR Score:</span>
+                    <span class="stat-value">99.0 (+21 to target)</span>
+                </div>
+                
+                <div class="stat">
+                    <span class="stat-label">LL33 Grade:</span>
+                    <span class="stat-value"><span class="energy-grade grade-B">B</span></span>
+                </div>
+            </div>
+            
+            <!-- Page 2.1 - Usage -->
+            <div class="page">
+                <h3 class="page-title">2.1 - Building Energy Usage (Last 12 Months)</h3>
+                <div class="chart" id="energy_usage_chart"></div>
+            </div>
+            
+            <!-- Page 2.2 - Cost -->
+            <div class="page">
+                <h3 class="page-title">2.2 - Building Energy Costs (Last 12 Months)</h3>
+                <div class="chart" id="energy_cost_chart"></div>
+            </div>
+        </div>
+        
+        <!-- Section 3: Office -->
+        <div class="section">
+            <h2 class="section-header">Section 3: Office Space Analysis</h2>
+            
+            <!-- Page 3.0 - Makeup -->
+            <div class="page">
+                <h3 class="page-title">3.0 - Office Space Makeup</h3>
+                <div class="stat">
+                    <span class="stat-label">Office Square Footage:</span>
+                    <span class="stat-value large">527,326 sq ft</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Office % of Building:</span>
+                    <span class="stat-value">87.9%</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Neighborhood:</span>
+                    <span class="stat-value">Theater District</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Current Occupancy:</span>
+                    <span class="stat-value">90% <span style="color: #dc3545;">↓ 6.8% YoY</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Peak Occupancy Days:</span>
+                    <span class="stat-value">Tue-Wed-Thu <span style="color: #666; font-size: 0.9em;">(typical hybrid schedule)</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Occupancy Adjustment:</span>
+                    <span class="stat-value"><span style="color: #666;">Standard ODCV opportunity for this occupancy level</span></span>
+                </div>
+            </div>
+            
+            <!-- Page 3.1 - Consumption -->
+            <div class="page">
+                <h3 class="page-title">3.1 - Office Energy Consumption</h3>
+                <div class="chart" id="office_consumption_chart"></div>
+            </div>
+            
+            <!-- Page 3.1b - Occupancy Trends -->
+            <div class="page">
+                <h3 class="page-title">3.1b - NYC Office Occupancy Trends</h3>
+                <div style="margin-top: 20px; padding: 15px; background: var(--rzero-light-blue); border-radius: 8px;">
+                    <h4 style="color: var(--rzero-primary); margin-top: 0;">Hybrid Work Impact on ODCV</h4>
+                    <p style="margin: 10px 0;">With Theater District showing clear Tuesday-Thursday peak patterns, ODCV systems can:</p>
+                    <ul style="margin: 5px 0;">
+                        <li>Reduce ventilation on low-occupancy Mondays (80%) and Fridays (70%)</li>
+                        <li>Optimize for 90% average occupancy vs. 100% design capacity</li>
+                        <li>Save additional energy during 10% unoccupied time</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Page 3.2 - Disaggregation -->
+            <div class="page">
+                <h3 class="page-title">3.2 - HVAC Disaggregation & ODCV Savings</h3>
+                <div class="chart" id="hvac_pct_chart"></div>
+                <div class="chart" id="odcv_savings_chart"></div>
+                
+                <div class="highlight-box">
+                    <h4>Total Annual ODCV Savings Opportunity</h4>
+                    <div style="font-size: 2.5em; font-weight: bold; color: var(--rzero-primary);">$223,833</div>
+                    <div style="margin-top: 10px;">
+                        <span class="rzero-badge">Rank #144 in NYC</span>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                        Base savings of $223,833 adjusted for 90% occupancy
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 5: Indoor Air Quality Analysis -->
+        <div class="section">
+            <h2 class="section-header">Section 5: Air Quality & Ventilation Insights</h2>
+            
+            
+                <!-- Page 5.0 - PM2.5 Monitoring -->
+                <div class="page">
+                    <h3 class="page-title">5.0 - Outdoor PM2.5 Levels</h3>
+                    
+                    <div class="iaq-summary">
+                        <div class="iaq-stat-grid">
+                            <div class="iaq-stat">
+                                <div class="iaq-label">Average PM2.5</div>
+                                <div class="iaq-value" style="color: #00e400">8.2 μg/m³</div>
+                                <div class="iaq-category">Good</div>
+                            </div>
+                            <div class="iaq-stat">
+                                <div class="iaq-label">Maximum Recorded</div>
+                                <div class="iaq-value">29.2 μg/m³</div>
+                            </div>
+                            <div class="iaq-stat">
+                                <div class="iaq-label">Monitoring Station</div>
+                                <div class="iaq-value">Queensboro Bridge</div>
+                                <div class="iaq-sublabel">0.86 miles away</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart" id="daily_pm25_chart"></div>
+                    <div class="chart" id="monthly_pm25_chart"></div>
+                    
+                    <div class="iaq-insight">
+                        <h4>ODCV Ventilation Optimization</h4>
+                        <p>ODCV systems can reduce outside air intake by up to 50% during high pollution events 
+                        while maintaining required ventilation rates through demand-based control. This provides:</p>
+                        <ul>
+                            <li>Energy savings through reduced conditioning of outside air</li>
+                            <li>Improved indoor air quality during pollution events</li>
+                            <li>Real-time optimization based on occupancy and air quality</li>
+                        </ul>
+                    </div>
+                </div>
+                
+        </div>
+        
+        
+            <div class="section">
+                <h2 class="section-header">LL97 Compliance Status</h2>
+                <div class="page">
+                    <h3>LL97 Compliance Impact</h3>
+                    <p style="font-size: 1.1em;">
+                        Penalty without ODCV: <strong style="color: #d32f2f;">$0</strong><br>
+                        Savings with ODCV: <strong style="color: #2e7d32;">$223,833</strong><br>
+                        Net annual benefit: <strong style="color: #1976d2;">$223,833</strong>
+                    </p>
+                </div>
+            </div>
+            
+    </div>
+    
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        // R-Zero brand colors
+        const rzeroColors = {
+            primary: '#00769d',
+            secondary: '#005f7e',
+            success: '#38a169',
+            accent1: '#17a2b8',
+            accent2: '#20c997'
+        };
+        
+        // Building Energy Usage Chart
+        const elecUsage = {x: months, y: [1819478.9, 1714164.8997, 1849150.5999999999, 1797551.2996, 1904740.5999999999, 1920731.3996000001, 2174589.4, 2201486.8, 1993418.8996000001, 1924879.7, 1873254.2996, 1897018.7999999998], name: 'Electricity (kBtu)', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.primary, width: 3}};
+        const gasUsage = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Gas (kBtu)', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent1, width: 3}};
+        const steamUsage = {x: months, y: [3269351.08, 2814306.333, 1617082.281, 581867.4721, 223987.8475, 1229.01045, 0.0, 0.0, 0.0, 317976.4909, 1121738.074, 1826865.412], name: 'Steam (kBtu)', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent2, width: 3}};
+        
+        const usageData = [elecUsage, gasUsage, steamUsage].filter(d => d.y.some(v => v > 0));
+        
+        if (usageData.length > 0) {
+            Plotly.newPlot('energy_usage_chart', usageData, {
+                title: 'Building Energy Usage by Type',
+                yaxis: {title: 'Usage (kBtu)', tickformat: ',.0f', rangemode: 'tozero'},
+                hovermode: 'x unified',
+                font: {family: 'Inter, sans-serif'},
+                height: 400
+            });
+        }
+        
+        // Building Energy Cost Chart
+        const elecCost = {x: months, y: [110555.18000000001, 120477.8, 109898.43000000001, 100158.55, 130991.23994999999, 233089.97005, 270770.68003000005, 268212.50002, 241700.02, 130457.61996, 123076.21, 110468.56999999999], name: 'Electricity ($)', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.primary, width: 3}};
+        const gasCost = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Gas ($)', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent1, width: 3}};
+        const steamCost = {x: months, y: [158596.22, 136522.0, 78444.66, 28226.39, 10865.65, 59.62, 0.0, 0.0, 0.0, 15425.04, 54415.51, 88621.24], name: 'Steam ($)', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent2, width: 3}};
+        
+        const costData = [elecCost, gasCost, steamCost].filter(d => d.y.some(v => v > 0));
+        
+        if (costData.length > 0) {
+            Plotly.newPlot('energy_cost_chart', costData, {
+                title: 'Building Energy Costs by Type',
+                yaxis: {title: 'Cost ($)', tickformat: '$,.0f', rangemode: 'tozero'},
+                hovermode: 'x unified',
+                font: {family: 'Inter, sans-serif'},
+                height: 400
+            });
+        }
+        
+        // Office Consumption Chart
+        const officeElecUsage = {x: months, y: [1599322.0, 1506751.0, 1625403.0, 1580048.0, 1674267.0, 1688323.0, 1911464.0, 1935107.0, 1752215.0, 1691969.0, 1646591.0, 1667480.0], name: 'Electricity Usage (kBtu)', type: 'bar', marker: {color: rzeroColors.primary}};
+        const officeElecCost = {x: months, y: [52428.55, 51822.0, 50422.9, 49503.68, 55877.55, 64972.39, 74158.44, 77053.67, 69101.0, 54739.62, 54820.93, 51820.64], name: 'Electricity Cost ($)', type: 'scatter', yaxis: 'y2', line: {color: rzeroColors.secondary}};
+        const officeGasUsage = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Gas Usage (kBtu)', type: 'bar', marker: {color: rzeroColors.accent1}};
+        const officeGasCost = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Gas Cost ($)', type: 'scatter', yaxis: 'y2', line: {color: '#0891b2'}};
+        const officeSteamUsage = {x: months, y: [2873760.0, 2473775.0, 1421415.0, 511462.0, 196885.0, 1080.0, 0.0, 0.0, 0.0, 279501.0, 986008.0, 1605815.0], name: 'Steam Usage (kBtu)', type: 'bar', marker: {color: rzeroColors.accent2}};
+        const officeSteamCost = {x: months, y: [163664.72, 140885.01, 80951.61, 29128.49, 11212.88, 61.51, 0.0, 0.0, 0.0, 15917.98, 56154.56, 91453.45], name: 'Steam Cost ($)', type: 'scatter', yaxis: 'y2', line: {color: '#14b8a6'}};
+        
+        const officeData = [officeElecUsage, officeGasUsage, officeSteamUsage, officeElecCost, officeGasCost, officeSteamCost]
+            .filter(d => d.y.some(v => v > 0));
+        
+        if (officeData.length > 0) {
+            Plotly.newPlot('office_consumption_chart', officeData, {
+                title: 'Office Energy Consumption & Cost',
+                yaxis: {title: 'Usage (kBtu)', tickformat: ',.0f', rangemode: 'tozero'},
+                yaxis2: {title: 'Cost ($)', overlaying: 'y', side: 'right', tickformat: '$,.0f', rangemode: 'tozero'},
+                hovermode: 'x unified',
+                font: {family: 'Inter, sans-serif'},
+                height: 400
+            });
+        }
+        
+        // Day of week pattern
+        const dayOfWeek = {
+            x: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            y: [80, 100, 98, 95, 70],
+            name: 'Typical Week Pattern',
+            type: 'bar',
+            marker: {
+                color: ['#ffc107', rzeroColors.primary, rzeroColors.primary, rzeroColors.primary, '#ffc107']
+            }
+        };
+        
+        // Create subplot for day-of-week pattern
+        setTimeout(() => {
+            const dayOfWeekDiv = document.createElement('div');
+            dayOfWeekDiv.id = 'day_of_week_chart';
+            dayOfWeekDiv.style.marginTop = '20px';
+            document.getElementById('occupancy_trend_chart').parentElement.appendChild(dayOfWeekDiv);
+            
+            Plotly.newPlot('day_of_week_chart', [dayOfWeek], {
+                title: 'Hybrid Work Pattern - Theater District',
+                yaxis: {title: 'Relative Occupancy %', range: [0, 110]},
+                xaxis: {title: 'Day of Week'},
+                font: {family: 'Inter, sans-serif'},
+                height: 400
+            });
+        }, 100);
+        
+        // HVAC Percentage Chart
+        const hvacPct = {x: months, y: [0.15, 0.185, 0.164, 0.167, 0.188, 0.221, 0.289, 0.297, 0.249, 0.197, 0.201, 0.185], name: 'HVAC % of Electric', type: 'scatter', mode: 'lines+markers', fill: 'tozeroy', fillcolor: 'rgba(0, 118, 157, 0.1)', line: {color: rzeroColors.primary, width: 3}};
+        
+        // Calculate average HVAC percentage
+        const avgHvac = [0.15, 0.185, 0.164, 0.167, 0.188, 0.221, 0.289, 0.297, 0.249, 0.197, 0.201, 0.185].reduce((a, b) => a + b, 0) / [0.15, 0.185, 0.164, 0.167, 0.188, 0.221, 0.289, 0.297, 0.249, 0.197, 0.201, 0.185].length;
+        
+        Plotly.newPlot('hvac_pct_chart', [hvacPct], {
+            title: 'HVAC as Percentage of Electric Usage',
+            yaxis: {title: 'HVAC %', tickformat: '.0%', range: [0, 1]},
+            hovermode: 'x unified',
+            font: {family: 'Inter, sans-serif'},
+            height: 400,
+            shapes: [{
+                type: 'line',
+                x0: 0, x1: 1,
+                xref: 'paper',
+                y0: avgHvac, y1: avgHvac,
+                line: {color: 'red', width: 2, dash: 'dash'}
+            }],
+            annotations: [
+                {
+                    x: 11,
+                    y: avgHvac,
+                    text: `Avg: ${(avgHvac*100).toFixed(0)}%`,
+                    showarrow: false,
+                    bgcolor: 'white',
+                    bordercolor: 'red',
+                    font: {size: 14, color: '#333'}
+                }
+            ]
+        });
+        
+        // ODCV Savings Chart
+        const odcvElecSave = {x: months, y: [2356.1900000000023, 2872.019999999997, 2476.5999999999985, 2475.470000000001, 3149.2400000000052, 4310.040000000001, 6439.270000000004, 6877.639999999999, 5167.0899999999965, 3232.1800000000003, 3302.760000000002, 2871.949999999997], name: 'Electricity Savings', type: 'bar', marker: {color: rzeroColors.success}};
+        const odcvGasSave = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Gas Savings', type: 'bar', marker: {color: '#22c55e'}};
+        const odcvSteamSave = {x: months, y: [49508.58, 42617.72, 24487.86, 8811.37, 3391.9, 18.61, 0.0, 0.0, 0.0, 4815.19, 16986.75, 27664.67], name: 'Steam Savings', type: 'bar', marker: {color: '#10b981'}};
+        
+        const savingsData = [odcvElecSave, odcvGasSave, odcvSteamSave].filter(d => d.y.some(v => v > 0));
+        
+        if (savingsData.length > 0) {
+            // Calculate total savings
+            const totalSavings = savingsData.reduce((sum, series) => 
+                sum + series.y.reduce((a, b) => a + b, 0), 0);
+            const formattedTotalSavings = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            }).format(totalSavings);
+            
+            Plotly.newPlot('odcv_savings_chart', savingsData, {
+                title: `Monthly ODCV Savings Potential - Total: ${formattedTotalSavings}`,
+                yaxis: {title: 'Savings ($)', tickformat: '$,.0f', rangemode: 'tozero'},
+                hovermode: 'x unified',
+                barmode: 'stack',
+                font: {family: 'Inter, sans-serif'},
+                height: 400,
+                annotations: []
+            });
+        }
+        
+        
+                // Daily PM2.5 Chart (last 90 days)
+                if (document.getElementById('daily_pm25_chart')) {
+                    const dailyPM25 = {
+                        x: ["2025-04-25", "2025-04-26", "2025-04-27", "2025-04-28", "2025-04-29", "2025-04-30", "2025-05-01", "2025-05-02", "2025-05-03", "2025-05-04", "2025-05-05", "2025-05-06", "2025-05-07", "2025-05-08", "2025-05-09", "2025-05-10", "2025-05-11", "2025-05-12", "2025-05-13", "2025-05-14", "2025-05-15", "2025-05-16", "2025-05-17", "2025-05-18", "2025-05-19", "2025-05-20", "2025-05-21", "2025-05-22", "2025-05-23", "2025-05-24", "2025-05-25", "2025-05-26", "2025-05-27", "2025-05-28", "2025-05-29", "2025-05-30", "2025-05-31", "2025-06-01", "2025-06-02", "2025-06-03", "2025-06-04", "2025-06-05", "2025-06-06", "2025-06-07", "2025-06-08", "2025-06-09", "2025-06-10", "2025-06-11", "2025-06-12", "2025-06-13", "2025-06-14", "2025-06-15", "2025-06-16", "2025-06-17", "2025-06-18", "2025-06-19", "2025-06-20", "2025-06-21", "2025-06-22", "2025-06-23", "2025-06-24", "2025-06-25"],
+                        y: [6.4745833333333325, 8.157916666666667, 2.8216666666666668, 3.87125, 5.675, 5.980416666666667, 3.2716666666666665, 11.024583333333332, 11.159166666666666, 7.531666666666666, 8.33375, 6.915, 6.517499999999999, 6.834166666666667, 5.995833333333334, 3.206666666666667, 5.4425, 5.43375, 8.886666666666667, 7.714583333333334, 9.856666666666667, 15.635, 11.822916666666666, 4.092083333333334, 3.389583333333333, 3.0241666666666664, 4.167083333333333, 3.830833333333333, 4.4375, 3.0904166666666666, 3.317083333333333, 3.77375, 5.678333333333334, 5.415416666666666, 5.625, 10.166666666666666, 6.227916666666666, 4.090416666666667, 3.87375, 6.292916666666667, 8.455833333333333, 14.983333333333334, 17.418333333333333, 11.913333333333334, 10.75, 12.540416666666667, 11.12375, 12.61125, 15.434166666666668, 17.826249999999998, 17.085, 10.1925, 9.672916666666667, 8.885, 11.56875, 10.295416666666666, 6.334583333333334, 8.465416666666666, 11.264583333333334, 14.864583333333334, 11.529166666666669, 8.207142857142857],
+                        type: 'scatter',
+                        mode: 'lines',
+                        line: {color: rzeroColors.primary},
+                        fill: 'tozeroy',
+                        fillcolor: 'rgba(0, 118, 157, 0.1)',
+                        name: 'Daily PM2.5'
+                    };
+                    
+                    // Add EPA threshold lines
+                    const goodThreshold = {
+                        x: ["2025-04-25", "2025-04-26", "2025-04-27", "2025-04-28", "2025-04-29", "2025-04-30", "2025-05-01", "2025-05-02", "2025-05-03", "2025-05-04", "2025-05-05", "2025-05-06", "2025-05-07", "2025-05-08", "2025-05-09", "2025-05-10", "2025-05-11", "2025-05-12", "2025-05-13", "2025-05-14", "2025-05-15", "2025-05-16", "2025-05-17", "2025-05-18", "2025-05-19", "2025-05-20", "2025-05-21", "2025-05-22", "2025-05-23", "2025-05-24", "2025-05-25", "2025-05-26", "2025-05-27", "2025-05-28", "2025-05-29", "2025-05-30", "2025-05-31", "2025-06-01", "2025-06-02", "2025-06-03", "2025-06-04", "2025-06-05", "2025-06-06", "2025-06-07", "2025-06-08", "2025-06-09", "2025-06-10", "2025-06-11", "2025-06-12", "2025-06-13", "2025-06-14", "2025-06-15", "2025-06-16", "2025-06-17", "2025-06-18", "2025-06-19", "2025-06-20", "2025-06-21", "2025-06-22", "2025-06-23", "2025-06-24", "2025-06-25"],
+                        y: Array(62).fill(12),
+                        mode: 'lines',
+                        line: {color: '#00e400', dash: 'dash'},
+                        name: 'Good AQ Threshold'
+                    };
+                    
+                    const moderateThreshold = {
+                        x: ["2025-04-25", "2025-04-26", "2025-04-27", "2025-04-28", "2025-04-29", "2025-04-30", "2025-05-01", "2025-05-02", "2025-05-03", "2025-05-04", "2025-05-05", "2025-05-06", "2025-05-07", "2025-05-08", "2025-05-09", "2025-05-10", "2025-05-11", "2025-05-12", "2025-05-13", "2025-05-14", "2025-05-15", "2025-05-16", "2025-05-17", "2025-05-18", "2025-05-19", "2025-05-20", "2025-05-21", "2025-05-22", "2025-05-23", "2025-05-24", "2025-05-25", "2025-05-26", "2025-05-27", "2025-05-28", "2025-05-29", "2025-05-30", "2025-05-31", "2025-06-01", "2025-06-02", "2025-06-03", "2025-06-04", "2025-06-05", "2025-06-06", "2025-06-07", "2025-06-08", "2025-06-09", "2025-06-10", "2025-06-11", "2025-06-12", "2025-06-13", "2025-06-14", "2025-06-15", "2025-06-16", "2025-06-17", "2025-06-18", "2025-06-19", "2025-06-20", "2025-06-21", "2025-06-22", "2025-06-23", "2025-06-24", "2025-06-25"],
+                        y: Array(62).fill(35.4),
+                        mode: 'lines',
+                        line: {color: '#ffff00', dash: 'dash'},
+                        name: 'Moderate AQ Threshold'
+                    };
+                    
+                    Plotly.newPlot('daily_pm25_chart', [dailyPM25, goodThreshold, moderateThreshold], {
+                        title: 'Daily PM2.5 Levels (Recent)',
+                        yaxis: {title: 'PM2.5 (μg/m³)', rangemode: 'tozero'},
+                        xaxis: {title: 'Date'},
+                        hovermode: 'x unified',
+                        font: {family: 'Inter, sans-serif'},
+                        height: 400
+                    });
+                }
+
+                // Monthly PM2.5 Range Chart
+                if (document.getElementById('monthly_pm25_chart') && ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04"].length > 0) {
+                    const monthlyMean = {
+                        x: ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04"],
+                        y: [7.343360215053764, 7.469669540229885, 6.437572090089507, 10.079474206349206, 15.608333333333333, 10.669798850574711, 9.335672043010751, 6.1621250000000005, 5.979274193548386, 5.556138888888889, 6.4399999999999995, 6.040940860215054, 6.0259374999999995, 5.788884408602151, 5.668993055555556],
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        name: 'Monthly Average',
+                        line: {color: rzeroColors.primary}
+                    };
+                    
+                    const monthlyRange = {
+                        x: ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04"].concat(["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04"].slice().reverse()),
+                        y: [15.855, 17.562916666666666, 16.618750000000002, 22.10666666666667, 15.608333333333333, 26.870833333333337, 18.883333333333333, 12.698333333333332, 11.955833333333333, 15.17125, 12.1025, 11.358333333333334, 10.282916666666669, 13.523333333333332, 12.4975].concat([4.362916666666667, 4.145833333333333, 3.682083333333334, 4.6066666666666665, 15.608333333333333, 4.303333333333334, 3.330416666666667, 3.443333333333334, 2.9183333333333334, 3.1679166666666667, 3.5091666666666668, 2.99625, 3.1058333333333334, 2.932916666666667, 2.652083333333333].slice().reverse()),
+                        fill: 'toself',
+                        fillcolor: 'rgba(0, 118, 157, 0.2)',
+                        line: {color: 'transparent'},
+                        showlegend: false,
+                        type: 'scatter',
+                        name: 'Range'
+                    };
+                    
+                    Plotly.newPlot('monthly_pm25_chart', [monthlyRange, monthlyMean], {
+                        title: 'Monthly PM2.5 Trends with Min/Max Range',
+                        yaxis: {title: 'PM2.5 (μg/m³)', rangemode: 'tozero'},
+                        xaxis: {title: 'Month'},
+                        hovermode: 'x unified',
+                        font: {family: 'Inter, sans-serif'},
+                        height: 400
+                    });
+                }
+                
+    </script>
+</body>
+</html>
