@@ -85,15 +85,14 @@ print("\nMapping images...")
 image_map = {}
 for bbl in all_buildings['bbl']:
     folder_name = data['addresses'].loc[data['addresses']['bbl'] == bbl, 'main_address'].iloc[0]
-    folder_name_github = folder_name.replace(' ', '%20').replace(',', '%2C')
-    image_map[int(bbl)] = f"https://raw.githubusercontent.com/rmillerzero/nyc-odcv-prospector/main/images/{bbl}_{folder_name_github}/"
+    image_map[int(bbl)] = f"https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/images/{bbl}/"
 print(f"Generated {len(image_map)} image folder URLs")
 
 # Map thumbnails
 print("\nMapping thumbnails...")
 thumbnail_map = {}
 for bbl in all_buildings['bbl']:
-    thumbnail_map[int(bbl)] = f"https://raw.githubusercontent.com/rmillerzero/nyc-odcv-prospector/main/hero_thumbnails/{bbl}_thumb.jpg"
+    thumbnail_map[int(bbl)] = f"https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/hero_thumbnails/{bbl}_thumb.jpg"
 print(f"Generated {len(thumbnail_map)} thumbnail URLs")
 
 # Safe value getter
@@ -1439,25 +1438,20 @@ for idx, row in all_buildings.iterrows():
         street_view_360 = ""
         
         if bbl in image_map:
-            # Get the encoded folder name for AWS URLs
-            folder_name = data['addresses'].loc[data['addresses']['bbl'] == bbl, 'main_address'].iloc[0]
-            folder_name_no_commas = folder_name.replace(',', '')
-            folder_name_encoded = folder_name_no_commas.replace(' ', '%20')
-            folder_name_github = folder_name.replace(' ', '%20').replace(',', '%2C')
-            base_url = f"https://raw.githubusercontent.com/rmillerzero/nyc-odcv-prospector/main/images/{bbl}_{folder_name_github}"
+            # Simple BBL-based URL
+            base_url = f"https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/images/{bbl}"
             
-            # Generate image filenames based on pattern - use URL encoded version for consistency
-            folder_name_for_filename = folder_name.replace(',', '').replace(' ', '%20')
-            hero_filename_base = f"{bbl}_hero_{folder_name_for_filename}"
-            street_filename_base = f"{bbl}_street_{folder_name_for_filename}"
-            satellite_filename_base = f"{bbl}_satellite_{folder_name_for_filename}"
-            image_360_filename_base = f"{bbl}_360_{folder_name_for_filename}"
+            # Generate simple image filenames
+            hero_filename_base = f"{bbl}_hero"
+            street_filename_base = f"{bbl}_street"
+            satellite_filename_base = f"{bbl}_satellite"
+            image_360_filename_base = f"{bbl}_360"
 
             # Hero image with AWS PNG -> AWS JPG -> Git JPG fallback
             hero_image = (
                 f'<img src="{base_url}/{hero_filename_base}.png" alt="Building photo" class="hero-image" '
                 f'onerror="this.onerror=null;this.src=\'{base_url}/{hero_filename_base}.jpg\';'
-                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}_{folder_name_no_commas}/{hero_filename_base}.jpg\';'
+                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}/{hero_filename_base}.jpg\';'
                 f'this.onerror=function(){{this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';}}}};">'
                 '<div style="height: 400px; background: #333; display: none;"></div>'
             )
@@ -1466,7 +1460,7 @@ for idx, row in all_buildings.iterrows():
             street_image = (
                 f'<img src="{base_url}/{street_filename_base}.png" alt="Street view" '
                 f'onerror="this.onerror=null;this.src=\'{base_url}/{street_filename_base}.jpg\';'
-                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}_{folder_name_no_commas}/{street_filename_base}.jpg\';'
+                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}/{street_filename_base}.jpg\';'
                 f'this.onerror=function(){{this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}}}};">'
                 '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>'
             )
@@ -1475,7 +1469,7 @@ for idx, row in all_buildings.iterrows():
             satellite_image = (
                 f'<img src="{base_url}/{satellite_filename_base}.png" alt="Satellite view" '
                 f'onerror="this.onerror=null;this.src=\'{base_url}/{satellite_filename_base}.jpg\';'
-                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}_{folder_name_no_commas}/{satellite_filename_base}.jpg\';'
+                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}/{satellite_filename_base}.jpg\';'
                 f'this.onerror=function(){{this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}}}};">'
                 '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
             )
@@ -1511,7 +1505,7 @@ for idx, row in all_buildings.iterrows():
             // Try Git JPG
             viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
                 type: 'equirectangular',
-                panorama: 'images/{bbl}_{folder_name_no_commas}/{image_360_filename_base}.jpg',
+                panorama: 'images/{bbl}/{image_360_filename_base}.jpg',
                 autoLoad: true
             }});
         }}
@@ -2239,7 +2233,7 @@ for b in homepage_data:
     
     # Generate thumbnail cell
     if b['has_thumbnail']:
-        thumb_cell = f'<img src="https://raw.githubusercontent.com/rmillerzero/nyc-odcv-prospector/main/hero_thumbnails/{b["bbl"]}_thumb.jpg" alt="{escape(b["address"])}" class="building-thumb" onclick="window.location.href=\'{b["filename"]}\'">'
+        thumb_cell = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/hero_thumbnails/{b["bbl"]}_thumb.jpg" alt="{escape(b["address"])}" class="building-thumb" onclick="window.location.href=\'{b["filename"]}\'">'
     else:
         thumb_cell = '<div class="no-thumb">No image</div>'
     
