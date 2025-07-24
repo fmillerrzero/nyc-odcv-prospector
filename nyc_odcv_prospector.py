@@ -2620,7 +2620,14 @@ homepage_html += """
     }
     
     function escapeRegex(string) {
-        return string.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\homepage_html += """
+        return string.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+    }
+    
+    </script>
+</body>
+</html>"""
+
+homepage_html += """
             </tbody>
         </table>
         </div>
@@ -2671,10 +2678,6 @@ homepage_html += """
         });
         
         rows.forEach(row => tbody.appendChild(row));
-    }
-    </script>
-</body>
-</html>"""');
     }
     
     // CSV Export
@@ -2919,6 +2922,20 @@ View full report: ${window.location.origin}${window.location.pathname.replace('i
         });
     });
     </script>
+    
+    <!-- Footer content -->
+    </tbody>
+    </table>
+    </div>
+    
+    <div style="margin-top: 40px; padding: 20px; text-align: center; color: #666;">
+        <svg width="100" height="25" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.6;">
+            <path d="M10 10 L30 10 L30 20 L20 20 L30 40 L10 40 L10 30 L20 30 L10 10" fill="#00769d"/>
+            <text x="40" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#00769d">R-ZERO</text>
+        </svg>
+        <p style="margin: 10px 0 0 0; font-size: 0.9em;">Powered by R-Zero ODCV Technology</p>
+    </div>
+    </div>
 </body>
 </html>"""
 
