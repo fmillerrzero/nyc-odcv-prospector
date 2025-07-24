@@ -1425,37 +1425,48 @@ for idx, row in all_buildings.iterrows():
             base_url = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/{bbl}_{folder_name_encoded}"
             
             # Generate image filenames based on pattern
-            hero_filename = f"{bbl}_hero_{folder_name.replace(',', '')}.jpg"
-            street_filename = f"{bbl}_street_{folder_name.replace(',', '')}.jpg"
-            satellite_filename = f"{bbl}_satellite_{folder_name.replace(',', '')}.jpg"
-            
-            # Hero image
-            hero_image = f'<img src="{base_url}/{hero_filename.replace(" ", "%20")}" alt="Building photo" class="hero-image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">'
-            hero_image += '<div style="height: 400px; background: #333; display: none;"></div>'
-            
-            # Street image
-            street_image = f'<img src="{base_url}/{street_filename.replace(" ", "%20")}" alt="Street view" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">'
-            street_image += '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>'
-            
-            # Satellite image
-            satellite_image = f'<img src="{base_url}/{satellite_filename.replace(" ", "%20")}" alt="Satellite view" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">'
-            satellite_image += '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
-            
-            # 360° Street View Image
-            # Remove commas from the address to match the actual filenames
-            address_filename_no_commas = folder_name.replace(',', '')
-            image_360_filename = f"{bbl}_360_{address_filename_no_commas}.jpg"
-            
-            street_view_360 = (
-                f'<img src="{base_url}/{image_360_filename.replace(" ", "%20")}" '
-                f'alt="360° Street View of {escape(main_address)}" '
-                f'style="width:100%;max-width:1200px;border-radius:8px;box-shadow:0 4px 12px rgba(0,118,157,0.15);" '
-                f'onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">'
+            hero_filename_base = f"{bbl}_hero_{folder_name.replace(',', '')}"
+            street_filename_base = f"{bbl}_street_{folder_name.replace(',', '')}"
+            satellite_filename_base = f"{bbl}_satellite_{folder_name.replace(',', '')}"
+            image_360_filename_base = f"{bbl}_360_{folder_name.replace(',', '')}"
+
+            # Hero image with PNG->JPG fallback
+            hero_image = (
+                f'<img src="{base_url}/{hero_filename_base}.png" alt="Building photo" class="hero-image" '
+                f'onerror="this.onerror=null;this.src=\'{base_url}/{hero_filename_base}.jpg\';'
+                f'this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';">'
+                '<div style="height: 400px; background: #333; display: none;"></div>'
             )
-            street_view_360 += (
-                '<div style="background:#f0f0f0;height:400px;display:none;align-items:center;justify-content:center;color:#999;border-radius:8px;">'
-                '360° Street View not available</div>'
+
+            # Street image with PNG->JPG fallback
+            street_image = (
+                f'<img src="{base_url}/{street_filename_base}.png" alt="Street view" '
+                f'onerror="this.onerror=null;this.src=\'{base_url}/{street_filename_base}.jpg\';'
+                f'this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'
+                '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>'
             )
+
+            # Satellite image with PNG->JPG fallback
+            satellite_image = (
+                f'<img src="{base_url}/{satellite_filename_base}.png" alt="Satellite view" '
+                f'onerror="this.onerror=null;this.src=\'{base_url}/{satellite_filename_base}.jpg\';'
+                f'this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'
+                '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
+            )
+
+            # 360° Street View with PNG->JPG fallback (Pannellum viewer)
+            street_view_360 = f'''
+<div id="panorama_{bbl}" style="width:100%;max-width:1200px;height:400px;border-radius:8px;"></div>
+<script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css"/>
+<script>
+    pannellum.viewer('panorama_{bbl}', {{
+        type: 'equirectangular',
+        panorama: '{base_url}/{image_360_filename_base}.png',
+        autoLoad: true
+    }});
+</script>
+'''
         else:
             hero_image = '<div style="height: 400px; background: #333;"></div>'
             street_image = '<div style="background: #f0f0f0; height: 300px; display: flex; align-items: center; justify-content: center; color: #999;">Street view not available</div>'
