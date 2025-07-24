@@ -55,6 +55,29 @@ data['scoring'] = data['scoring'].sort_values('total_score', ascending=False).re
 data['scoring']['final_rank'] = range(1, len(data['scoring']) + 1)
 
 all_buildings = data['scoring']
+
+# TEST MODE - Only generate one building for quick testing
+TEST_MODE = False  # Set to False for full generation
+TEST_BBL = 1000010010  # Replace with any BBL from your data for testing
+
+if TEST_MODE:
+    print(f"\n🚀 TEST MODE ACTIVE: Only generating building BBL {TEST_BBL}")
+    # First, let's see what BBLs are available
+    print("Sample BBLs available:", all_buildings['bbl'].head(10).tolist())
+    # Use the first BBL as default if specified one not found
+    if TEST_BBL not in all_buildings['bbl'].values:
+        TEST_BBL = all_buildings['bbl'].iloc[0]
+        print(f"Using first available BBL: {TEST_BBL}")
+    
+    all_buildings = all_buildings[all_buildings['bbl'] == TEST_BBL].head(1)
+    if all_buildings.empty:
+        print(f"❌ ERROR: BBL {TEST_BBL} not found in data!")
+        print("Available BBLs:", data['scoring']['bbl'].head(10).tolist())
+        exit(1)
+    print(f"✅ Found test building: {len(all_buildings)} building selected")
+else:
+    print(f"📊 FULL MODE: Processing all {len(all_buildings)} buildings")
+
 print(f"\nProcessing {len(all_buildings)} buildings...")
 
 # Image mapping
@@ -301,7 +324,7 @@ building_template = """<!DOCTYPE html>
             gap: 10px;
         }}
         
-        .logo {{ 
+        .rzero-logo {{ 
             width: 140px; 
             height: auto;
         }}
@@ -674,10 +697,7 @@ building_template = """<!DOCTYPE html>
                 </div>
             </div>
             <div class="logo-container">
-                <svg class="logo" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 10 L30 10 L30 20 L20 20 L30 40 L10 40 L10 30 L20 30 L10 10" fill="#00769d"/>
-                    <text x="40" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#00769d">R-ZERO</text>
-                </svg>
+                <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo">
                 <span class="odcv-badge">ODCV Analysis</span>
             </div>
         </div>
@@ -1693,6 +1713,7 @@ for idx, row in all_buildings.iterrows():
 total_savings = sum(b['savings'] for b in homepage_data)
 bas_yes = sum(1 for b in homepage_data if b['bas'] == 'yes')
 urgent = sum(1 for b in homepage_data if b['penalty_2026'] > 0)
+total_penalties = sum(b['penalty_2026'] for b in homepage_data if b['penalty_2026'] > 0)
 
 # New occupancy-based stats
 low_occupancy_buildings = []
@@ -1731,10 +1752,10 @@ for b in homepage_data:
     portfolio_stats[b['owner']]['total'] += b['savings']
 
 top_portfolios = sorted(
-    [(k, v) for k, v in portfolio_stats.items() if v['count'] >= 5],
-    key=lambda x: x[1]['total'],
+    [(k, v) for k, v in portfolio_stats.items()],
+    key=lambda x: x[1]['count'],
     reverse=True
-)[:5]
+)[:3]
 
 # Homepage template with R-Zero branding
 homepage_html = f"""<!DOCTYPE html>
@@ -1829,6 +1850,12 @@ homepage_html = f"""<!DOCTYPE html>
             margin-top: 0; 
         }}
         
+        .portfolio-tile:hover {{
+            background-color: rgba(0, 118, 157, 0.15) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 118, 157, 0.2);
+        }}
+        
         .search-box {{ 
             width: 100%; 
             padding: 15px; 
@@ -1856,6 +1883,17 @@ homepage_html = f"""<!DOCTYPE html>
             background: white; 
             border-collapse: collapse; 
             min-width: 1100px;
+        }}
+        
+        table a {{
+            color: var(--rzero-primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }}
+        
+        table a:hover {{
+            text-decoration: underline;
+            color: var(--rzero-primary-dark);
         }}
         
         th {{ 
@@ -2070,37 +2108,25 @@ homepage_html = f"""<!DOCTYPE html>
             margin-top: 0;
         }}
     </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt_cBgP_yqhIzUacpoz6TAVupvhmA0ZBA&libraries=places&callback=initMap" async defer></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="logo-header">
-                <svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 10 L30 10 L30 20 L20 20 L30 40 L10 40 L10 30 L20 30 L10 10" fill="#00769d"/>
-                    <text x="40" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#00769d">R-ZERO</text>
-                </svg>
+                <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo" style="width: 200px; height: 50px;">
             </div>
-            <h1>NYC Office Building ODCV Opportunity Rankings</h1>
-            <p class="subtitle">Sales Intelligence Platform - {len(homepage_data)} Buildings Analyzed</p>
-        </div>
-        
-        <div class="new-features">
-            <h3>NEW: Enhanced Reports Now Available!</h3>
-            <p><strong>Section 5:</strong> Air Quality & Ventilation Insights with PM2.5 Trends</p>
+            <h1>R-Zero Prospector: NYC</h1>
         </div>
         
         <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value">${total_savings/1000000:.1f}M</div>
-                <div class="stat-label">Total Annual Savings</div>
-            </div>
             <div class="stat-card">
                 <div class="stat-value">{bas_yes}</div>
                 <div class="stat-label">Buildings with BAS</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">{urgent}</div>
-                <div class="stat-label" style="color: #dc3545;">Face 2026 Penalties</div>
+                <div class="stat-value">{urgent} buildings</div>
+                <div class="stat-label" style="color: #dc3545;">facing ${total_penalties/1000000:.1f}M 2026 LL97 Penalties</div>
             </div>
             <div class="stat-card" style="background: #f5f5f5; border-left: 4px solid #4caf50;">
                 <div class="stat-value" style="color: #2e7d32;">${total_savings/1000000:.1f}M</div>
@@ -2109,46 +2135,37 @@ homepage_html = f"""<!DOCTYPE html>
         </div>
         
         <div class="info-box">
-            <h2>Understanding the Rankings</h2>
-            <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
-            <ul style="line-height: 1.8;">
-                <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
-                <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
-                <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
-                <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
-                <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
-            </ul>
-            <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
-                <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
-            </p>
-        </div>
-        
-        <div class="info-box">
-            <h2>NYC Office Occupancy Intelligence</h2>
-            <p><strong>Key Findings from July 2024 - June 2025 Data:</strong></p>
-            <ul style="line-height: 1.8;">
-                <li><strong>Average Manhattan Occupancy:</strong> {avg_occupancy:.0f}% (vs. 100% design capacity)</li>
-                <li><strong>Hybrid Work Pattern:</strong> All neighborhoods show Tue-Wed-Thu peaks (100% occupancy) with Mon (80%) and Fri (70%) dips</li>
-                <li><strong>Low Occupancy Opportunities:</strong> {low_occupancy_count} buildings in neighborhoods below 85% occupancy get 20% ODCV bonus</li>
-                <li><strong>Recovery Trend:</strong> Occupancy improving from 88% (Jul 2024) to 95% projected (Jun 2025)</li>
-            </ul>
-            <p style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                <strong>ODCV Impact:</strong> Buildings operating at 70% of pre-2020 capacity can optimize ventilation for actual occupancy, not design maximum. Additional savings from time-of-day and day-of-week scheduling.
-            </p>
+            <h2 onclick="toggleSection('rankings')" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                Understanding the Rankings 
+                <span id="rankings-arrow" style="font-size: 0.8em;">▼</span>
+            </h2>
+            <div id="rankings-content" style="display: none;">
+                <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
+                    <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
+                    <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
+                    <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
+                    <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
+                </ul>
+                <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
+                    <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
+                </p>
+            </div>
         </div>
         """
 
 if top_portfolios:
     homepage_html += f"""
         <div class="portfolio-box">
-            <h2>Top Portfolio Opportunities</h2>
+            <h2>Top Portfolios</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
     """
     for owner, stats in top_portfolios:
         homepage_html += f"""
-                <div style="background: var(--rzero-light-blue); padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2);">
+                <div class="portfolio-tile" onclick="filterByOwner('{escape(owner).replace("'", "\\'")}')" style="background: var(--rzero-light-blue); padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.2s ease;">
                     <strong style="color: var(--rzero-primary);">{escape(owner)}</strong><br>
-                    <span style="color: #666;">{stats['count']} buildings • ${stats['total']/1000000:.1f}M total opportunity</span>
+                    <span style="color: #666;">{stats['count']} buildings • ${stats['total']/1000000:.1f}M savings</span>
                 </div>
         """
     homepage_html += """
@@ -2157,42 +2174,7 @@ if top_portfolios:
     """
 
 homepage_html += f"""
-        <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager, or BBL..." onkeyup="filterTable()">
-        
-        <!-- Filter Controls -->
-        <div class="filter-controls" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-            <button onclick="filterBAS()" class="filter-btn" style="border: 2px solid var(--rzero-primary); color: var(--rzero-primary);">
-                Only BAS Buildings
-            </button>
-            <button onclick="filterPenalty()" class="filter-btn" style="border: 2px solid #dc3545; color: #dc3545;">
-                Has LL97 Penalties
-            </button>
-            <button onclick="filterTop50()" class="filter-btn" style="border: 2px solid #38a169; color: #38a169;">
-                Top 50 Only
-            </button>
-            <button onclick="filterHighSavings()" class="filter-btn" style="border: 2px solid #f57c00; color: #f57c00;">
-                $500K+ Savings
-            </button>
-            <button onclick="filterLowOccupancy()" class="filter-btn" style="border: 2px solid #9c27b0; color: #9c27b0;">
-                Low Occupancy (<85%)
-            </button>
-            <button onclick="clearFilters()" class="filter-btn" style="background: var(--rzero-light-blue); border: 2px solid var(--rzero-primary); color: var(--rzero-primary);">
-                Clear All Filters
-            </button>
-            <button onclick="exportToCSV()" style="padding: 10px 20px; background: var(--rzero-primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: auto; display: flex; align-items: center; gap: 8px;">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                </svg>
-                Export to CSV
-            </button>
-        </div>
-        
-        <!-- Result Counter -->
-        <div id="resultCount" style="padding: 10px 20px; background: var(--rzero-light-blue); border-radius: 8px; margin-bottom: 20px; font-weight: 600; color: var(--rzero-primary); display: flex; justify-content: space-between; align-items: center;">
-            <span id="resultText">Showing {len(homepage_data)} of {len(homepage_data)} buildings</span>
-            <span id="resultStats" style="font-size: 0.9em; color: #666;"></span>
-        </div>
+        <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()">
         
         <div class="table-wrapper">
         <table id="buildingTable">
@@ -2250,8 +2232,8 @@ for b in homepage_data:
                     <td class="thumb-cell">{thumb_cell}</td>
                     <td>{rank_display}</td>
                     <td>{escape(b['address'])}</td>
-                    <td>{escape(b['owner'])}</td>
-                    <td>{escape(b['property_manager'])}</td>
+                    <td><a href="#" onclick="filterByOwner('{js_escape(b['owner'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['owner'])}</a></td>
+                    <td><a href="#" onclick="filterByManager('{js_escape(b['property_manager'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['property_manager'])}</a></td>
                     <td>{b['class']}</td>
                     <td class="{bas_class}">{b['bas']}</td>
                     <td data-value="{b['savings']}" class="{savings_class}">${b['savings']:,.0f}</td>
@@ -2289,225 +2271,24 @@ homepage_html += f"""
                 <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
             </svg>
         </button>
-        
-        <div style="margin-top: 40px; padding: 20px; text-align: center; color: #666;">
-            <svg width="100" height="25" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.6;">
-                <path d="M10 10 L30 10 L30 20 L20 20 L30 40 L10 40 L10 30 L20 30 L10 10" fill="#00769d"/>
-                <text x="40" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#00769d">R-ZERO</text>
-            </svg>
-            <p style="margin: 10px 0 0 0; font-size: 0.9em;">Powered by R-Zero ODCV Technology</p>
-        </div>
     </div>
-    
+"""
+
+homepage_html += """
     <script>
-    // Filter tracking
-    let activeFilters = new Set();
-    
-    // Enhanced filter functions
-    function filterBAS() {
-        activeFilters.clear();
-        activeFilters.add('bas');
-        applyFilters();
-        highlightActiveButton(event.target);
-    }
-    
-    function filterPenalty() {
-        activeFilters.clear();
-        activeFilters.add('penalty');
-        applyFilters();
-        highlightActiveButton(event.target);
-    }
-    
-    function filterTop50() {
-        activeFilters.clear();
-        activeFilters.add('top50');
-        applyFilters();
-        highlightActiveButton(event.target);
-    }
-    
-    function filterHighSavings() {
-        activeFilters.clear();
-        activeFilters.add('highsavings');
-        applyFilters();
-        highlightActiveButton(event.target);
-    }
-    
-    function filterLowOccupancy() {
-        activeFilters.clear();
-        activeFilters.add('lowoccupancy');
-        applyFilters();
-        highlightActiveButton(event.target);
-    }
-    
-    function clearFilters() {
-        activeFilters.clear();
-        document.getElementById('search').value = '';
-        document.querySelectorAll('#buildingTable tbody tr').forEach(row => {
-            row.style.display = '';
-        });
-        updateResultCount();
-        clearButtonHighlights();
-    }
-    
-    function applyFilters() {
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        rows.forEach((row, index) => {
-            let show = true;
-            
-            if (activeFilters.has('bas')) {
-                show = row.cells[6].classList.contains('yes');
-            } else if (activeFilters.has('penalty')) {
-                show = row.cells[9].classList.contains('urgent');
-            } else if (activeFilters.has('top50')) {
-                const rank = parseInt(row.cells[1].textContent.replace('#', ''));
-                show = rank <= 50;
-            } else if (activeFilters.has('highsavings')) {
-                const savingsCell = row.cells[7];
-                const value = parseFloat(savingsCell.getAttribute('data-value') || 0);
-                show = value >= 500000;
-            } else if (activeFilters.has('lowoccupancy')) {
-                const occupancy = parseInt(row.getAttribute('data-occupancy') || 100);
-                show = occupancy < 85;
-            }
-            
-            row.style.display = show ? '' : 'none';
-        });
-        updateResultCount();
-    }
-    
-    function highlightActiveButton(button) {
-        clearButtonHighlights();
-        button.style.background = button.style.borderColor;
-        button.style.color = 'white';
-    }
-    
-    function clearButtonHighlights() {
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.style.background = 'white';
-            btn.style.color = btn.style.borderColor || 'var(--rzero-primary)';
-        });
-    }
-    
-    // Result counter
-    function updateResultCount() {
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        let visibleCount = 0;
-        let totalSavings = 0;
-        let basCount = 0;
-        let penaltyCount = 0;
-        
-        rows.forEach(row => {
-            if (row.style.display !== 'none') {
-                visibleCount++;
-                
-                const savingsCell = row.cells[7];
-                totalSavings += parseFloat(savingsCell.getAttribute('data-value') || 0);
-                
-                if (row.cells[6].classList.contains('yes')) basCount++;
-                if (row.cells[9].classList.contains('urgent')) penaltyCount++;
-            }
-        });
-        
-        document.getElementById('resultText').textContent = 
-            `Showing ${visibleCount} of ${rows.length} buildings`;
-        
-        document.getElementById('resultStats').textContent = 
-            `Total visible savings: ${(totalSavings/1000000).toFixed(1)}M | ${basCount} with BAS | ${penaltyCount} with penalties`;
-    }
-    
-    // Enhanced search with highlighting
-    function filterTable() {
-        const input = document.getElementById('search').value.toLowerCase();
-        const searchTerms = input.split(' ').filter(term => term.length > 0);
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        
-        rows.forEach(row => {
-            const searchText = row.getAttribute('data-search');
-            const cells = row.cells;
-            
-            // Clear previous highlights
-            [2, 3, 4].forEach(colIndex => {
-                const cell = cells[colIndex];
-                if (cell && cell.innerHTML.includes('<mark')) {
-                    cell.innerHTML = cell.textContent;
-                }
+    function initMap() {
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            const autocomplete = new google.maps.places.Autocomplete(searchInput, {
+                types: ['address'],
+                componentRestrictions: { country: 'US' }
             });
-            
-            // Check if row matches search
-            const matchesSearch = searchTerms.length === 0 || searchTerms.every(term => searchText.includes(term));
-            const matchesFilter = activeFilters.size === 0 || checkFilters(row);
-            row.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
-            
-            // Highlight matching terms
-            if (matchesSearch && searchTerms.length > 0 && row.style.display !== 'none') {
-                [2, 3, 4].forEach(colIndex => {
-                    const cell = cells[colIndex];
-                    if (cell) {
-                        let html = cell.textContent;
-                        
-                        searchTerms.forEach(term => {
-                            const regex = new RegExp(`(${escapeRegex(term)})`, 'gi');
-                            html = html.replace(regex, '<mark style="background:#ffeb3b;padding:2px;border-radius:2px;">$1</mark>');
-                        });
-                        
-                        cell.innerHTML = html;
-                    }
-                });
-            }
-        });
-        
-        updateResultCount();
-    }
-    
-    function checkFilters(row) {
-        if (activeFilters.size === 0) return true;
-        
-        if (activeFilters.has('bas')) return row.cells[6].classList.contains('yes');
-        if (activeFilters.has('penalty')) return row.cells[9].classList.contains('urgent');
-        if (activeFilters.has('top50')) {
-            const rank = parseInt(row.cells[1].textContent.replace('#', ''));
-            return rank <= 50;
         }
-        if (activeFilters.has('highsavings')) {
-            const value = parseFloat(row.cells[7].getAttribute('data-value') || 0);
-            return value >= 500000;
-        }
-        if (activeFilters.has('lowoccupancy')) {
-            const occupancy = parseInt(row.getAttribute('data-occupancy') || 100);
-            return occupancy < 85;
-        }
-        
-        return true;
     }
     
-    function escapeRegex(string) {
-        return string.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
-    }
-    </script>
-            </tbody>
-        </table>
-        </div>
-        
-        <div style="margin-top: 40px; padding: 20px; text-align: center; color: #666;">
-            <svg width="100" height="25" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.6;">
-                <path d="M10 10 L30 10 L30 20 L20 20 L30 40 L10 40 L10 30 L20 30 L10 10" fill="#00769d"/>
-                <text x="40" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#00769d">R-ZERO</text>
-            </svg>
-            <p style="margin: 10px 0 0 0; font-size: 0.9em;">Powered by R-Zero ODCV Technology</p>
-        </div>
-    </div>
-    
-    <script>
-    function filterTable() {
-        const input = document.getElementById('search').value.toLowerCase();
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        rows.forEach(row => {
-            const searchText = row.getAttribute('data-search');
-            row.style.display = searchText.includes(input) ? '' : 'none';
-        });
-    }
-    
+    let activeOwnerFilter = null;
     let sortDir = {};
+    
     function sortTable(col) {
         const tbody = document.querySelector('#buildingTable tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
@@ -2535,180 +2316,236 @@ homepage_html += f"""
         
         rows.forEach(row => tbody.appendChild(row));
     }
-    }
     
-    // CSV Export
-    function exportToCSV() {
-        let csv = 'Rank,Building Address,Owner,Property Manager,Class,BAS,Annual Savings,Score,2026 Penalty,BBL\\n';
-        let exportCount = 0;
-        
-        document.querySelectorAll('#buildingTable tbody tr').forEach(row => {
-            if (row.style.display !== 'none') {
-                const cells = Array.from(row.cells);
-                
-                const rank = cells[1].textContent.replace('#', '');
-                const address = cells[2].textContent;
-                const owner = cells[3].textContent;
-                const propertyManager = cells[4].textContent;
-                const buildingClass = cells[5].textContent;
-                const bas = cells[6].textContent;
-                const savings = cells[7].getAttribute('data-value');
-                const score = cells[8].textContent;
-                const penalty = cells[9].getAttribute('data-value');
-                
-                const link = cells[10].querySelector('a');
-                const bbl = link ? link.href.match(/(\\d+)_/)?.[1] || '' : '';
-                
-                const escapeCSV = (val) => `"${String(val).replace(/"/g, '""')}"`;
-                csv += `${escapeCSV(rank)},${escapeCSV(address)},${escapeCSV(owner)},${escapeCSV(propertyManager)},${escapeCSV(buildingClass)},${escapeCSV(bas)},${escapeCSV(savings)},${escapeCSV(score)},${escapeCSV(penalty)},${escapeCSV(bbl)}\\n`;
-                exportCount++;
-            }
+    function filterByOwner(ownerName) {
+        const rows = document.querySelectorAll('#buildingTable tbody tr');
+        rows.forEach(row => {
+            const ownerCell = row.cells[3]; // Owner column index
+            const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
+            row.style.display = isMatch ? '' : 'none';
         });
-        
-        const timestamp = new Date().toISOString().split('T')[0];
-        const filename = `odcv_buildings_export_${timestamp}.csv`;
-        
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        
-        if (navigator.msSaveBlob) {
-            navigator.msSaveBlob(blob, filename);
-        } else {
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        
-        showNotification(`Exported ${exportCount} buildings to CSV`);
+    }
+
+    function filterByManager(managerName) {
+        const rows = document.querySelectorAll('#buildingTable tbody tr');
+        rows.forEach(row => {
+            const managerCell = row.cells[4]; // Property Manager column index
+            const isMatch = managerCell && managerCell.textContent.trim() === managerName;
+            row.style.display = isMatch ? '' : 'none';
+        });
     }
     
-    
-    // Notification system
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: ${type === 'error' ? '#dc3545' : 'var(--rzero-primary)'};
-            color: white;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 1000;
-            animation: slideUp 0.3s ease-out;
-        `;
+    function filterTable() {{
+        const input = document.getElementById('search').value.toLowerCase();
+        const rows = document.querySelectorAll('#buildingTable tbody tr');
         
-        document.body.appendChild(notification);
-        setTimeout(() => notification.remove(), 3000);
-    }
+        // Clear owner filter if user starts typing
+        if (input && activeOwnerFilter) {{
+            activeOwnerFilter = null;
+            // Remove active styling from all tiles
+            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
+                tile.style.outline = '';
+                tile.style.boxShadow = '';
+            }});
+        }}
+        
+        rows.forEach(row => {{
+            const searchText = row.getAttribute('data-search');
+            const matchesSearch = searchText.includes(input);
+            
+            // Check if row matches owner filter (if active)
+            let matchesOwner = true;
+            if (activeOwnerFilter) {{
+                const ownerCell = row.cells[3];
+                matchesOwner = ownerCell && ownerCell.textContent === activeOwnerFilter;
+            }}
+            
+            row.style.display = (matchesSearch && matchesOwner) ? '' : 'none';
+        }});
+    }}
+    
+    let sortDir = {{}};
+    function sortTable(col) {{
+        const tbody = document.querySelector('#buildingTable tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        sortDir[col] = !sortDir[col];
+        
+        rows.sort((a, b) => {{
+            let aVal, bVal;
+            
+            if (col === 7 || col === 9) {{  // Annual Savings or 2026 Penalty columns
+                aVal = parseFloat(a.cells[col].getAttribute('data-value') || 0);
+                bVal = parseFloat(b.cells[col].getAttribute('data-value') || 0);
+            }} else if (col === 1 || col === 8) {{  // Rank or Score columns
+                aVal = parseFloat(a.cells[col].textContent.replace('#', '') || 0);
+                bVal = parseFloat(b.cells[col].textContent.replace('#', '') || 0);
+            }} else {{
+                aVal = (a.cells[col].textContent || '').toLowerCase();
+                bVal = (b.cells[col].textContent || '').toLowerCase();
+            }}
+            
+            return sortDir[col] ? 
+                (aVal > bVal ? 1 : -1) : 
+                (aVal < bVal ? 1 : -1);
+        }});
+        
+        rows.forEach(row => tbody.appendChild(row));
+    }}
+    
+    
+    // Toggle collapsible sections
+    function toggleSection(sectionId) {{
+        const content = document.getElementById(sectionId + '-content');
+        const arrow = document.getElementById(sectionId + '-arrow');
+        
+        if (content.style.display === 'none' || content.style.display === '') {{
+            content.style.display = 'block';
+            arrow.textContent = '▲';
+        }} else {{
+            content.style.display = 'none';
+            arrow.textContent = '▼';
+        }}
+    }}
+    
+    // Filter by owner when clicking portfolio tiles
+    function filterByOwner(ownerName) {{
+        const rows = document.querySelectorAll('#buildingTable tbody tr');
+        const searchBox = document.getElementById('search');
+        
+        if (activeOwnerFilter === ownerName) {{
+            // If clicking the same owner, reset the filter
+            activeOwnerFilter = null;
+            searchBox.value = '';
+            rows.forEach(row => {{
+                row.style.display = '';
+            }});
+            // Remove active styling from all tiles
+            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
+                tile.style.outline = '';
+                tile.style.boxShadow = '0 4px 12px rgba(0, 118, 157, 0.2)';
+            }});
+        }} else {{
+            // Apply new owner filter
+            activeOwnerFilter = ownerName;
+            searchBox.value = ''; // Clear search box
+            
+            rows.forEach(row => {{
+                const ownerCell = row.cells[3]; // Owner column (0-indexed)
+                const isMatch = ownerCell && ownerCell.textContent === ownerName;
+                row.style.display = isMatch ? '' : 'none';
+            }});
+            
+            // Add active styling to clicked tile
+            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
+                const tileOwner = tile.querySelector('strong').textContent;
+                if (tileOwner === ownerName) {{
+                    tile.style.outline = '3px solid var(--rzero-primary)';
+                    tile.style.boxShadow = '0 4px 16px rgba(0, 118, 157, 0.4)';
+                }} else {{
+                    tile.style.outline = '';
+                    tile.style.boxShadow = '0 4px 12px rgba(0, 118, 157, 0.2)';
+                }}
+            }});
+        }}
+    }}
     
     // Back to top
-    function scrollToTop() {
+    function scrollToTop() {{
         const tableWrapper = document.querySelector('.table-wrapper');
         const startPosition = tableWrapper.scrollTop;
         const startTime = performance.now();
         const duration = 500;
         
-        function animation(currentTime) {
+        function animation(currentTime) {{
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             const easeOutCubic = 1 - Math.pow(1 - progress, 3);
             
             tableWrapper.scrollTop = startPosition * (1 - easeOutCubic);
             
-            if (progress < 1) {
+            if (progress < 1) {{
                 requestAnimationFrame(animation);
-            }
-        }
+            }}
+        }}
         
         requestAnimationFrame(animation);
-    }
+    }}
     
     // Show/hide back to top based on scroll
-    document.querySelector('.table-wrapper').addEventListener('scroll', function() {
+    document.querySelector('.table-wrapper').addEventListener('scroll', function() {{
         const scrollTop = this.scrollTop;
         const backToTopBtn = document.getElementById('backToTop');
         
-        if (scrollTop > 300) {
+        if (scrollTop > 300) {{
             backToTopBtn.style.display = 'block';
             backToTopBtn.style.transform = 'scale(1)';
-        } else {
+        }} else {{
             backToTopBtn.style.transform = 'scale(0)';
-            setTimeout(() => {
-                if (scrollTop <= 300) {
+            setTimeout(() => {{
+                if (scrollTop <= 300) {{
                     backToTopBtn.style.display = 'none';
-                }
-            }, 300);
-        }
+                }}
+            }}, 300);
+        }}
         
         // Add progress indicator
         const scrollHeight = this.scrollHeight - this.clientHeight;
         const scrollProgress = (scrollTop / scrollHeight) * 100;
-        backToTopBtn.style.background = `conic-gradient(var(--rzero-primary) ${scrollProgress}%, var(--rzero-primary-dark) ${scrollProgress}%)`;
-    });
+        backToTopBtn.style.background = `conic-gradient(var(--rzero-primary) ${{scrollProgress}}%, var(--rzero-primary-dark) ${{scrollProgress}}%)`;
+    }});
     
     // Dynamic shadow on scroll
-    document.querySelector('.table-wrapper').addEventListener('scroll', function(e) {
+    document.querySelector('.table-wrapper').addEventListener('scroll', function(e) {{
         const thead = document.querySelector('thead');
-        if (e.target.scrollTop > 0) {
+        if (e.target.scrollTop > 0) {{
             thead.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
-        } else {
+        }} else {{
             thead.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-        }
-    });
+        }}
+    }});
     
     // Original sort function enhanced
-    let sortDir = {};
-    function sortTable(col) {
+    let sortDir = {{}};
+    function sortTable(col) {{
         const tbody = document.querySelector('#buildingTable tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
         
         sortDir[col] = !sortDir[col];
         
-        rows.sort((a, b) => {
+        rows.sort((a, b) => {{
             let aVal, bVal;
             
-            if (col === 7 || col === 9) {  // Annual Savings or 2026 Penalty columns
+            if (col === 7 || col === 9) {{  // Annual Savings or 2026 Penalty columns
                 aVal = parseFloat(a.cells[col].getAttribute('data-value') || 0);
                 bVal = parseFloat(b.cells[col].getAttribute('data-value') || 0);
-            } else if (col === 1 || col === 8) {  // Rank or Score columns
+            }} else if (col === 1 || col === 8) {{  // Rank or Score columns
                 aVal = parseFloat(a.cells[col].textContent.replace('#', '') || 0);
                 bVal = parseFloat(b.cells[col].textContent.replace('#', '') || 0);
-            } else {
+            }} else {{
                 aVal = (a.cells[col].textContent || '').toLowerCase();
                 bVal = (b.cells[col].textContent || '').toLowerCase();
-            }
+            }}
             
             return sortDir[col] ? 
                 (aVal > bVal ? 1 : -1) : 
                 (aVal < bVal ? 1 : -1);
-        });
+        }});
         
         rows.forEach(row => tbody.appendChild(row));
-    }
+    }}
     
     // Initialize on page load
-    window.addEventListener('DOMContentLoaded', function() {
-        updateResultCount();
-        
+    window.addEventListener('DOMContentLoaded', function() {{
         // Add tooltips to high-value savings
-        document.querySelectorAll('td[data-value]').forEach(cell => {
+        document.querySelectorAll('td[data-value]').forEach(cell => {{
             const value = parseFloat(cell.getAttribute('data-value'));
-            if (value >= 1000000) {
-                cell.title = `${(value/1000000).toFixed(2)}M annual savings - TOP OPPORTUNITY`;
-            }
-        });
-    });
+            if (value >= 1000000) {{
+                cell.title = `${{(value/1000000).toFixed(2)}}M annual savings - TOP OPPORTUNITY`;
+            }}
+        }});
+    }});
     </script>
-    
-    <p style="text-align:center;color:#666;font-size:14px;margin-top:20px;">{datetime.now().strftime("Reports generated on %B %d, %Y at %I:%M %p")}</p>
 </body>
 </html>"""
 
