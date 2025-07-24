@@ -448,7 +448,7 @@
     <div class="container">
         <!-- Section 0.0 - Title -->
         <div class="title-section">
-            <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_hero_400%20Madison%20Ave%20New%20York%20NY%2010017.png" alt="Building photo" class="hero-image" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_hero_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='block';"><div style="height: 400px; background: #333; display: none;"></div>
+            <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_hero_400%20Madison%20Ave%20New%20York%20NY%2010017.png" alt="Building photo" class="hero-image" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_hero_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=function(){this.onerror=null;this.src='images/1012830017_400 Madison Ave New York NY 10017/1012830017_hero_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';}};"><div style="height: 400px; background: #333; display: none;"></div>
             <div class="title-overlay">
                 <div class="title-content">
                     <h1>400 Madison Ave, New York, NY 10017</h1>
@@ -490,8 +490,8 @@
                     <span class="stat-value large">A</span>
                 </div>
                 <div class="image-grid">
-                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_street_400%20Madison%20Ave%20New%20York%20NY%2010017.png" alt="Street view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_street_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>
-                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_satellite_400%20Madison%20Ave%20New%20York%20NY%2010017.png" alt="Satellite view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_satellite_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>
+                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_street_400%20Madison%20Ave%20New%20York%20NY%2010017.png" alt="Street view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_street_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=function(){this.onerror=null;this.src='images/1012830017_400 Madison Ave New York NY 10017/1012830017_street_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}};"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>
+                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_satellite_400%20Madison%20Ave%20New%20York%20NY%2010017.png" alt="Satellite view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_satellite_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=function(){this.onerror=null;this.src='images/1012830017_400 Madison Ave New York NY 10017/1012830017_satellite_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}};"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>
                 </div>
             </div>
             
@@ -510,14 +510,29 @@
         autoLoad: true
     });
     
-    // Add error handler for JPG fallback
+    var fallbackAttempt_1012830017 = 0;
+    
+    // Add error handler for AWS JPG and Git JPG fallback
     viewer_1012830017.on('error', function() {
+        fallbackAttempt_1012830017++;
         viewer_1012830017.destroy();
-        viewer_1012830017 = pannellum.viewer('panorama_1012830017', {
-            type: 'equirectangular',
-            panorama: 'https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_360_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg',
-            autoLoad: true
-        });
+        
+        if (fallbackAttempt_1012830017 === 1) {
+            // Try AWS JPG
+            viewer_1012830017 = pannellum.viewer('panorama_1012830017', {
+                type: 'equirectangular',
+                panorama: 'https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1012830017_400%20Madison%20Ave%20New%20York%20NY%2010017/1012830017_360_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg',
+                autoLoad: true
+            });
+            viewer_1012830017.on('error', arguments.callee);
+        } else if (fallbackAttempt_1012830017 === 2) {
+            // Try Git JPG
+            viewer_1012830017 = pannellum.viewer('panorama_1012830017', {
+                type: 'equirectangular',
+                panorama: 'images/1012830017_400 Madison Ave New York NY 10017/1012830017_360_400%20Madison%20Ave%20New%20York%20NY%2010017.jpg',
+                autoLoad: true
+            });
+        }
     });
 </script>
 

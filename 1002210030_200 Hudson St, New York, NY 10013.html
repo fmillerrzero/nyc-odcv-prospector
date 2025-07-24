@@ -448,7 +448,7 @@
     <div class="container">
         <!-- Section 0.0 - Title -->
         <div class="title-section">
-            <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_hero_200%20Hudson%20St%20New%20York%20NY%2010013.png" alt="Building photo" class="hero-image" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_hero_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='block';"><div style="height: 400px; background: #333; display: none;"></div>
+            <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_hero_200%20Hudson%20St%20New%20York%20NY%2010013.png" alt="Building photo" class="hero-image" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_hero_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=function(){this.onerror=null;this.src='images/1002210030_200 Hudson St New York NY 10013/1002210030_hero_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';}};"><div style="height: 400px; background: #333; display: none;"></div>
             <div class="title-overlay">
                 <div class="title-content">
                     <h1>200 Hudson St, New York, NY 10013</h1>
@@ -490,8 +490,8 @@
                     <span class="stat-value large">B</span>
                 </div>
                 <div class="image-grid">
-                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_street_200%20Hudson%20St%20New%20York%20NY%2010013.png" alt="Street view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_street_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>
-                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_satellite_200%20Hudson%20St%20New%20York%20NY%2010013.png" alt="Satellite view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_satellite_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>
+                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_street_200%20Hudson%20St%20New%20York%20NY%2010013.png" alt="Street view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_street_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=function(){this.onerror=null;this.src='images/1002210030_200 Hudson St New York NY 10013/1002210030_street_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}};"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>
+                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_satellite_200%20Hudson%20St%20New%20York%20NY%2010013.png" alt="Satellite view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_satellite_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=function(){this.onerror=null;this.src='images/1002210030_200 Hudson St New York NY 10013/1002210030_satellite_200%20Hudson%20St%20New%20York%20NY%2010013.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}};"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>
                 </div>
             </div>
             
@@ -510,14 +510,29 @@
         autoLoad: true
     });
     
-    // Add error handler for JPG fallback
+    var fallbackAttempt_1002210030 = 0;
+    
+    // Add error handler for AWS JPG and Git JPG fallback
     viewer_1002210030.on('error', function() {
+        fallbackAttempt_1002210030++;
         viewer_1002210030.destroy();
-        viewer_1002210030 = pannellum.viewer('panorama_1002210030', {
-            type: 'equirectangular',
-            panorama: 'https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_360_200%20Hudson%20St%20New%20York%20NY%2010013.jpg',
-            autoLoad: true
-        });
+        
+        if (fallbackAttempt_1002210030 === 1) {
+            // Try AWS JPG
+            viewer_1002210030 = pannellum.viewer('panorama_1002210030', {
+                type: 'equirectangular',
+                panorama: 'https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1002210030_200%20Hudson%20St%20New%20York%20NY%2010013/1002210030_360_200%20Hudson%20St%20New%20York%20NY%2010013.jpg',
+                autoLoad: true
+            });
+            viewer_1002210030.on('error', arguments.callee);
+        } else if (fallbackAttempt_1002210030 === 2) {
+            // Try Git JPG
+            viewer_1002210030 = pannellum.viewer('panorama_1002210030', {
+                type: 'equirectangular',
+                panorama: 'images/1002210030_200 Hudson St New York NY 10013/1002210030_360_200%20Hudson%20St%20New%20York%20NY%2010013.jpg',
+                autoLoad: true
+            });
+        }
     });
 </script>
 

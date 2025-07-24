@@ -448,7 +448,7 @@
     <div class="container">
         <!-- Section 0.0 - Title -->
         <div class="title-section">
-            <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_hero_111%20Broadway%20New%20York%20NY%2010006.png" alt="Building photo" class="hero-image" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_hero_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='block';"><div style="height: 400px; background: #333; display: none;"></div>
+            <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_hero_111%20Broadway%20New%20York%20NY%2010006.png" alt="Building photo" class="hero-image" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_hero_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=function(){this.onerror=null;this.src='images/1000490002_111 Broadway New York NY 10006/1000490002_hero_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';}};"><div style="height: 400px; background: #333; display: none;"></div>
             <div class="title-overlay">
                 <div class="title-content">
                     <h1>111 Broadway, New York, NY 10006</h1>
@@ -490,8 +490,8 @@
                     <span class="stat-value large">A</span>
                 </div>
                 <div class="image-grid">
-                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_street_111%20Broadway%20New%20York%20NY%2010006.png" alt="Street view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_street_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>
-                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_satellite_111%20Broadway%20New%20York%20NY%2010006.png" alt="Satellite view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_satellite_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>
+                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_street_111%20Broadway%20New%20York%20NY%2010006.png" alt="Street view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_street_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=function(){this.onerror=null;this.src='images/1000490002_111 Broadway New York NY 10006/1000490002_street_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}};"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>
+                    <img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_satellite_111%20Broadway%20New%20York%20NY%2010006.png" alt="Satellite view" onerror="this.onerror=null;this.src='https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_satellite_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=function(){this.onerror=null;this.src='images/1000490002_111 Broadway New York NY 10006/1000490002_satellite_111%20Broadway%20New%20York%20NY%2010006.jpg';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}};"><div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>
                 </div>
             </div>
             
@@ -510,14 +510,29 @@
         autoLoad: true
     });
     
-    // Add error handler for JPG fallback
+    var fallbackAttempt_1000490002 = 0;
+    
+    // Add error handler for AWS JPG and Git JPG fallback
     viewer_1000490002.on('error', function() {
+        fallbackAttempt_1000490002++;
         viewer_1000490002.destroy();
-        viewer_1000490002 = pannellum.viewer('panorama_1000490002', {
-            type: 'equirectangular',
-            panorama: 'https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_360_111%20Broadway%20New%20York%20NY%2010006.jpg',
-            autoLoad: true
-        });
+        
+        if (fallbackAttempt_1000490002 === 1) {
+            // Try AWS JPG
+            viewer_1000490002 = pannellum.viewer('panorama_1000490002', {
+                type: 'equirectangular',
+                panorama: 'https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/1000490002_111%20Broadway%20New%20York%20NY%2010006/1000490002_360_111%20Broadway%20New%20York%20NY%2010006.jpg',
+                autoLoad: true
+            });
+            viewer_1000490002.on('error', arguments.callee);
+        } else if (fallbackAttempt_1000490002 === 2) {
+            // Try Git JPG
+            viewer_1000490002 = pannellum.viewer('panorama_1000490002', {
+                type: 'equirectangular',
+                panorama: 'images/1000490002_111 Broadway New York NY 10006/1000490002_360_111%20Broadway%20New%20York%20NY%2010006.jpg',
+                autoLoad: true
+            });
+        }
     });
 </script>
 

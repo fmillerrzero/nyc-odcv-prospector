@@ -1453,31 +1453,34 @@ for idx, row in all_buildings.iterrows():
             satellite_filename_base = f"{bbl}_satellite_{folder_name_for_filename}"
             image_360_filename_base = f"{bbl}_360_{folder_name_for_filename}"
 
-            # Hero image with PNG->JPG fallback
+            # Hero image with AWS PNG -> AWS JPG -> Git JPG fallback
             hero_image = (
                 f'<img src="{base_url}/{hero_filename_base}.png" alt="Building photo" class="hero-image" '
                 f'onerror="this.onerror=null;this.src=\'{base_url}/{hero_filename_base}.jpg\';'
-                f'this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';">'
+                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}_{folder_name_no_commas}/{hero_filename_base}.jpg\';'
+                f'this.onerror=function(){{this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';}}}};">'
                 '<div style="height: 400px; background: #333; display: none;"></div>'
             )
 
-            # Street image with PNG->JPG fallback
+            # Street image with AWS PNG -> AWS JPG -> Git JPG fallback
             street_image = (
                 f'<img src="{base_url}/{street_filename_base}.png" alt="Street view" '
                 f'onerror="this.onerror=null;this.src=\'{base_url}/{street_filename_base}.jpg\';'
-                f'this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'
+                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}_{folder_name_no_commas}/{street_filename_base}.jpg\';'
+                f'this.onerror=function(){{this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}}}};">'
                 '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>'
             )
 
-            # Satellite image with PNG->JPG fallback
+            # Satellite image with AWS PNG -> AWS JPG -> Git JPG fallback
             satellite_image = (
                 f'<img src="{base_url}/{satellite_filename_base}.png" alt="Satellite view" '
                 f'onerror="this.onerror=null;this.src=\'{base_url}/{satellite_filename_base}.jpg\';'
-                f'this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'
+                f'this.onerror=function(){{this.onerror=null;this.src=\'images/{bbl}_{folder_name_no_commas}/{satellite_filename_base}.jpg\';'
+                f'this.onerror=function(){{this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}}}};">'
                 '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
             )
 
-            # 360° Street View with PNG->JPG fallback (Pannellum viewer)
+            # 360° Street View with AWS PNG -> AWS JPG -> Git JPG fallback (Pannellum viewer)
             street_view_360 = f'''
 <div id="panorama_{bbl}" style="width:100%;max-width:1200px;height:400px;border-radius:8px;"></div>
 <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
@@ -1489,14 +1492,29 @@ for idx, row in all_buildings.iterrows():
         autoLoad: true
     }});
     
-    // Add error handler for JPG fallback
+    var fallbackAttempt_{bbl} = 0;
+    
+    // Add error handler for AWS JPG and Git JPG fallback
     viewer_{bbl}.on('error', function() {{
+        fallbackAttempt_{bbl}++;
         viewer_{bbl}.destroy();
-        viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
-            type: 'equirectangular',
-            panorama: '{base_url}/{image_360_filename_base}.jpg',
-            autoLoad: true
-        }});
+        
+        if (fallbackAttempt_{bbl} === 1) {{
+            // Try AWS JPG
+            viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
+                type: 'equirectangular',
+                panorama: '{base_url}/{image_360_filename_base}.jpg',
+                autoLoad: true
+            }});
+            viewer_{bbl}.on('error', arguments.callee);
+        }} else if (fallbackAttempt_{bbl} === 2) {{
+            // Try Git JPG
+            viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
+                type: 'equirectangular',
+                panorama: 'images/{bbl}_{folder_name_no_commas}/{image_360_filename_base}.jpg',
+                autoLoad: true
+            }});
+        }}
     }});
 </script>
 '''
