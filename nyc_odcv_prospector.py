@@ -44,9 +44,9 @@ for key, filename in csv_files.items():
     filepath = os.path.join(base_dir, filename)
     if os.path.exists(filepath):
         data[key] = pd.read_csv(filepath)
-        print(f"✓ {filename}: {len(data[key])} rows")
+        print(f"{filename}: {len(data[key])} rows")
     else:
-        print(f"⚠️  {filename} not found - skipping")
+        print(f"{filename} not found - skipping")
         data[key] = pd.DataFrame()
 
 # Clean duplicates and re-rank
@@ -59,31 +59,19 @@ print(f"\nProcessing {len(all_buildings)} buildings...")
 
 # Image mapping
 print("\nMapping images...")
-images_dir = os.path.join(base_dir, "images")
 image_map = {}
-
-for folder in os.listdir(images_dir):
-    if os.path.isdir(os.path.join(images_dir, folder)) and '_' in folder:
-        bbl_str = folder.split('_')[0]
-        if bbl_str.isdigit():
-            image_map[int(bbl_str)] = folder
-
-print(f"Found {len(image_map)} image folders")
+for bbl in all_buildings['bbl']:
+    folder_name = data['addresses'].loc[data['addresses']['bbl'] == bbl, 'main_address'].iloc[0]
+    folder_name_encoded = folder_name.replace(' ', '%20').replace(',', '%2C')
+    image_map[int(bbl)] = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/{bbl}_{folder_name_encoded}/"
+print(f"Generated {len(image_map)} image folder URLs")
 
 # Map thumbnails
 print("\nMapping thumbnails...")
-thumbnails_dir = os.path.join(base_dir, "hero_thumbnails")
 thumbnail_map = {}
-
-if os.path.exists(thumbnails_dir):
-    for thumb_file in os.listdir(thumbnails_dir):
-        if thumb_file.endswith('_thumb.jpg'):
-            bbl_str = thumb_file.replace('_thumb.jpg', '')
-            if bbl_str.isdigit():
-                thumbnail_map[int(bbl_str)] = thumb_file
-    print(f"Found {len(thumbnail_map)} thumbnails")
-else:
-    print("No hero_thumbnails directory found")
+for bbl in all_buildings['bbl']:
+    thumbnail_map[int(bbl)] = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/hero_thumbnails/{bbl}_thumb.jpg"
+print(f"Generated {len(thumbnail_map)} thumbnail URLs")
 
 # Safe value getter
 def safe_val(df, bbl, col, default='N/A'):
@@ -210,7 +198,7 @@ BUILDING_UTILIZATION_FACTORS = {
 # Monthly occupancy trends
 MONTHLY_OCCUPANCY_TRENDS = {
     'Jul_2024': 0.88,
-    'Aug_2024': 0.82,  # Summer dip
+    'Aug_2024': 0.82,
     'Sep_2024': 0.90,
     'Oct_2024': 0.93,  # Peak fall
     'Nov_2024': 0.92,
@@ -226,28 +214,7 @@ MONTHLY_OCCUPANCY_TRENDS = {
 # Adjust ODCV savings based on occupancy patterns
 def get_occupancy_adjusted_savings(base_savings, occupancy_data, has_bas):
     """Adjust ODCV savings based on actual occupancy patterns"""
-    occupancy_rate = occupancy_data['rate'] if isinstance(occupancy_data, dict) else occupancy_data
-    
-    # Base adjustment for occupancy level
-    if occupancy_rate < 85:
-        occupancy_multiplier = 1.2  # 20% higher ODCV opportunity
-    elif occupancy_rate > 95:
-        occupancy_multiplier = 0.9  # 10% lower ODCV opportunity
-    else:
-        occupancy_multiplier = 1.0
-    
-    # Hybrid work pattern adjustment (all NYC showing Tue-Thu concentration)
-    hybrid_bonus = 1.15  # 15% bonus for clear hybrid patterns
-    
-    # Time-of-day optimization potential
-    if has_bas == 'yes':
-        tod_multiplier = 1.1  # Can optimize for actual patterns
-    else:
-        tod_multiplier = 0.8  # Limited optimization without BAS
-    
-    adjusted_savings = base_savings * occupancy_multiplier * hybrid_bonus * tod_multiplier
-    
-    return adjusted_savings
+    return base_savings
 
 # Building template with all required sections including new scoring and IAQ
 building_template = """<!DOCTYPE html>
@@ -287,8 +254,8 @@ building_template = """<!DOCTYPE html>
         /* Section 0 - Title */
         .title-section {{ 
             position: relative; 
-            height: 400px; 
-            background: linear-gradient(135deg, var(--rzero-primary-dark) 0%, var(--rzero-primary) 100%); 
+            height: 300px; 
+            background: var(--rzero-primary); 
             overflow: hidden; 
         }}
         
@@ -309,7 +276,7 @@ building_template = """<!DOCTYPE html>
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            background: linear-gradient(135deg, rgba(0, 94, 126, 0.8) 0%, rgba(0, 118, 157, 0.8) 100%);
+            background: rgba(0, 118, 157, 0.8);
         }}
         
         .title-content {{ text-align: center; color: white; }}
@@ -350,7 +317,7 @@ building_template = """<!DOCTYPE html>
         
         /* Section styling */
         .section {{ 
-            padding: 40px; 
+            padding: 20px; 
             border-bottom: 1px solid var(--border); 
         }}
         
@@ -427,17 +394,14 @@ building_template = """<!DOCTYPE html>
             transition: transform 0.3s ease;
         }}
         
-        .image-grid img:hover {{
-            transform: scale(1.02);
-        }}
         
         /* Graphs */
         .chart {{ 
-            margin: 30px 0; 
-            background: var(--rzero-light-blue); 
-            padding: 25px; 
-            border-radius: 12px;
-            border: 1px solid rgba(0, 118, 157, 0.1);
+            margin: 20px 0; 
+            background: #f8f8f8; 
+            padding: 15px; 
+            border-radius: 4px;
+            border: 1px solid #ddd;
         }}
         
         .chart-title {{ 
@@ -448,11 +412,11 @@ building_template = """<!DOCTYPE html>
         
         /* Special highlights */
         .highlight-box {{ 
-            background: linear-gradient(135deg, var(--rzero-light-blue) 0%, rgba(0, 118, 157, 0.05) 100%);
-            border: 2px solid var(--rzero-primary);
-            padding: 25px; 
-            border-radius: 12px; 
-            margin: 20px 0;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px; 
+            border-radius: 4px; 
+            margin: 15px 0;
             text-align: center;
         }}
         
@@ -464,10 +428,10 @@ building_template = """<!DOCTYPE html>
         
         .warning-box {{ 
             background: #fff3cd; 
-            border: 2px solid #ffeeba; 
-            padding: 25px; 
-            border-radius: 12px; 
-            margin: 20px 0; 
+            border: 1px solid #ffeeba; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin: 15px 0; 
         }}
         
         .warning-box h3 {{
@@ -513,10 +477,10 @@ building_template = """<!DOCTYPE html>
         
         /* Score breakdown styles */
         .score-breakdown {{ 
-            background: var(--rzero-light-blue); 
-            padding: 25px; 
-            border-radius: 12px; 
-            margin: 20px 0;
+            background: #f8f8f8; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin: 15px 0;
         }}
 
         .component-grid {{
@@ -617,11 +581,11 @@ building_template = """<!DOCTYPE html>
         }}
 
         .iaq-insight {{
-            background: linear-gradient(135deg, rgba(0, 118, 157, 0.05) 0%, rgba(0, 118, 157, 0.1) 100%);
-            border: 2px solid var(--rzero-primary);
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 30px;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
         }}
 
         .iaq-insight h4 {{
@@ -631,9 +595,9 @@ building_template = """<!DOCTYPE html>
         
         /* Building Identity Bar */
         .building-identity {{
-            padding: 20px 40px;
-            background: var(--rzero-light-blue);
-            border-bottom: 2px solid var(--rzero-primary);
+            padding: 15px 20px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #ddd;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -665,18 +629,18 @@ building_template = """<!DOCTYPE html>
         }}
 
         .green-badge.platinum {{
-            background: linear-gradient(135deg, #e5e4e2 0%, #ffffff 50%, #e5e4e2 100%);
+            background: #e5e4e2;
             color: #333;
             border: 1px solid #999;
         }}
 
         .green-badge.gold {{
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            background: #ffd700;
             color: #333;
         }}
 
         .green-badge.silver {{
-            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 50%, #c0c0c0 100%);
+            background: #c0c0c0;
             color: #333;
         }}
 
@@ -729,6 +693,13 @@ building_template = """<!DOCTYPE html>
             </div>
         </div>
         
+        <!-- Year One Savings Highlight -->
+        <div style="background: #2e7d32; color: white; padding: 20px; text-align: center;">
+            <h2 style="margin: 0;">Year One Savings: ${base_odcv_savings:,.0f}</h2>
+        </div>
+        
+        {critical_alert}
+        
         <!-- Section 1: General -->
         <div class="section">
             <h2 class="section-header">Section 1: General Building Information</h2>
@@ -746,6 +717,14 @@ building_template = """<!DOCTYPE html>
                 </div>
             </div>
             
+            <!-- Page 1.3 - 360° Street View -->
+            <div class="page">
+                <h3 class="page-title">1.3 - 360° Street View</h3>
+                <div class="image-360">
+                    {street_view_360}
+                </div>
+            </div>
+            
             <!-- Page 1.1 - Commercial -->
             <div class="page">
                 <h3 class="page-title">1.1 - Commercial Information</h3>
@@ -756,6 +735,10 @@ building_template = """<!DOCTYPE html>
                 <div class="stat">
                     <span class="stat-label">Property Manager:</span>
                     <span class="stat-value">{property_manager}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Decision Maker:</span>
+                    <span class="stat-value">{landlord_contact}</span>
                 </div>
                 <div class="stat">
                     <span class="stat-label">% Leased:</span>
@@ -862,7 +845,6 @@ building_template = """<!DOCTYPE html>
             <!-- Page 3.1b - Occupancy Trends -->
             <div class="page">
                 <h3 class="page-title">3.1b - NYC Office Occupancy Trends</h3>
-                <div class="chart" id="occupancy_trend_chart"></div>
                 <div style="margin-top: 20px; padding: 15px; background: var(--rzero-light-blue); border-radius: 8px;">
                     <h4 style="color: var(--rzero-primary); margin-top: 0;">Hybrid Work Impact on ODCV</h4>
                     <p style="margin: 10px 0;">With {neighborhood_name} showing clear Tuesday-Thursday peak patterns, ODCV systems can:</p>
@@ -893,69 +875,6 @@ building_template = """<!DOCTYPE html>
             </div>
         </div>
         
-        <!-- Section 4: Sales Intelligence Score Breakdown -->
-        <div class="section">
-            <h2 class="section-header">Section 4: Sales Intelligence Analysis</h2>
-            
-            <!-- Page 4.0 - Score Breakdown -->
-            <div class="page">
-                <h3 class="page-title">4.0 - ODCV Sales Readiness Score Breakdown</h3>
-                
-                <div class="score-breakdown">
-                    <div class="stat">
-                        <span class="stat-label">Total Score:</span>
-                        <span class="stat-value large">{score:.1f}/110</span>
-                    </div>
-                    
-                    <div class="score-components">
-                        <h4>Core Components ({core_score:.1f}/100)</h4>
-                        <div class="component-grid">
-                            <div class="component">
-                                <div class="component-label">Financial Impact</div>
-                                <div class="component-value">{cost_savings_score:.1f}/40</div>
-                                <div class="component-bar" style="width: {cost_savings_pct:.0f}%"></div>
-                            </div>
-                            <div class="component">
-                                <div class="component-label">BAS Infrastructure</div>
-                                <div class="component-value">{bas_automation_score:.0f}/30</div>
-                                <div class="component-bar" style="width: {bas_automation_pct:.0f}%"></div>
-                            </div>
-                            <div class="component">
-                                <div class="component-label">Portfolio Scale</div>
-                                <div class="component-value">{ownership_score}/20</div>
-                                <div class="component-bar" style="width: {ownership_pct:.0f}%"></div>
-                            </div>
-                            <div class="component">
-                                <div class="component-label">Implementation Ease</div>
-                                <div class="component-value">{complexity_score}/10</div>
-                                <div class="component-bar" style="width: {complexity_pct:.0f}%"></div>
-                            </div>
-                        </div>
-                        
-                        <h4>Bonus Points ({bonus_score}/10)</h4>
-                        <div class="bonus-grid">
-                            {energy_star_bonus_html}
-                            {prestige_bonus_html}
-                            {green_rating_html}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Page 4.1 - Financial Analysis -->
-            <div class="page">
-                <h3 class="page-title">4.1 - 10-Year Financial Impact</h3>
-                <div class="stat">
-                    <span class="stat-label">Net Present Value (10 years):</span>
-                    <span class="stat-value large" style="color: var(--success);">${total_present_value:,.0f}</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Portfolio Opportunity:</span>
-                    <span class="stat-value">{owner_building_count} buildings owned by {owner}</span>
-                </div>
-            </div>
-        </div>
-        
         <!-- Section 5: Indoor Air Quality Analysis -->
         <div class="section">
             <h2 class="section-header">Section 5: Air Quality & Ventilation Insights</h2>
@@ -980,34 +899,36 @@ building_template = """<!DOCTYPE html>
         }};
         
         // Building Energy Usage Chart
-        const elecUsage = {{x: months, y: {elec_usage}, name: 'Electricity (kBtu)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary}}}};
-        const gasUsage = {{x: months, y: {gas_usage}, name: 'Gas (kBtu)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1}}}};
-        const steamUsage = {{x: months, y: {steam_usage}, name: 'Steam (kBtu)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2}}}};
+        const elecUsage = {{x: months, y: {elec_usage}, name: 'Electricity (kBtu)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary, width: 3}}}};
+        const gasUsage = {{x: months, y: {gas_usage}, name: 'Gas (kBtu)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1, width: 3}}}};
+        const steamUsage = {{x: months, y: {steam_usage}, name: 'Steam (kBtu)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2, width: 3}}}};
         
         const usageData = [elecUsage, gasUsage, steamUsage].filter(d => d.y.some(v => v > 0));
         
         if (usageData.length > 0) {{
             Plotly.newPlot('energy_usage_chart', usageData, {{
                 title: 'Building Energy Usage by Type',
-                yaxis: {{title: 'Usage (kBtu)', tickformat: ',.0f'}},
+                yaxis: {{title: 'Usage (kBtu)', tickformat: ',.0f', rangemode: 'tozero'}},
                 hovermode: 'x unified',
-                font: {{family: 'Inter, sans-serif'}}
+                font: {{family: 'Inter, sans-serif'}},
+                height: 400
             }});
         }}
         
         // Building Energy Cost Chart
-        const elecCost = {{x: months, y: {elec_cost}, name: 'Electricity ($)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary}}}};
-        const gasCost = {{x: months, y: {gas_cost}, name: 'Gas ($)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1}}}};
-        const steamCost = {{x: months, y: {steam_cost}, name: 'Steam ($)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2}}}};
+        const elecCost = {{x: months, y: {elec_cost}, name: 'Electricity ($)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary, width: 3}}}};
+        const gasCost = {{x: months, y: {gas_cost}, name: 'Gas ($)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1, width: 3}}}};
+        const steamCost = {{x: months, y: {steam_cost}, name: 'Steam ($)', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2, width: 3}}}};
         
         const costData = [elecCost, gasCost, steamCost].filter(d => d.y.some(v => v > 0));
         
         if (costData.length > 0) {{
             Plotly.newPlot('energy_cost_chart', costData, {{
                 title: 'Building Energy Costs by Type',
-                yaxis: {{title: 'Cost ($)', tickformat: '$,.0f'}},
+                yaxis: {{title: 'Cost ($)', tickformat: '$,.0f', rangemode: 'tozero'}},
                 hovermode: 'x unified',
-                font: {{family: 'Inter, sans-serif'}}
+                font: {{family: 'Inter, sans-serif'}},
+                height: 400
             }});
         }}
         
@@ -1025,38 +946,13 @@ building_template = """<!DOCTYPE html>
         if (officeData.length > 0) {{
             Plotly.newPlot('office_consumption_chart', officeData, {{
                 title: 'Office Energy Consumption & Cost',
-                yaxis: {{title: 'Usage (kBtu)', tickformat: ',.0f'}},
-                yaxis2: {{title: 'Cost ($)', overlaying: 'y', side: 'right', tickformat: '$,.0f'}},
+                yaxis: {{title: 'Usage (kBtu)', tickformat: ',.0f', rangemode: 'tozero'}},
+                yaxis2: {{title: 'Cost ($)', overlaying: 'y', side: 'right', tickformat: '$,.0f', rangemode: 'tozero'}},
                 hovermode: 'x unified',
-                font: {{family: 'Inter, sans-serif'}}
+                font: {{family: 'Inter, sans-serif'}},
+                height: 400
             }});
         }}
-        
-        // NYC Office Occupancy Trend Chart
-        const occupancyMonths = ['Jul 24', 'Aug 24', 'Sep 24', 'Oct 24', 'Nov 24', 'Dec 24', 
-                                 'Jan 25', 'Feb 25', 'Mar 25', 'Apr 25', 'May 25', 'Jun 25'];
-        const nycOccupancy = [88, 82, 90, 93, 92, 89, 91, 92, 93, 94, 94, 95];
-        const neighborhoodOccupancy = nycOccupancy.map(v => v * ({neighborhood_avg} / 90)); // Adjust to neighborhood
-        
-        const nycTrend = {{
-            x: occupancyMonths,
-            y: nycOccupancy,
-            name: 'NYC Average',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: '#999', dash: 'dash'}}
-        }};
-        
-        const neighborhoodTrend = {{
-            x: occupancyMonths,
-            y: neighborhoodOccupancy,
-            name: '{neighborhood_name}',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {{color: rzeroColors.primary, width: 3}},
-            fill: 'tozeroy',
-            fillcolor: 'rgba(0, 118, 157, 0.1)'
-        }};
         
         // Day of week pattern
         const dayOfWeek = {{
@@ -1068,24 +964,6 @@ building_template = """<!DOCTYPE html>
                 color: ['#ffc107', rzeroColors.primary, rzeroColors.primary, rzeroColors.primary, '#ffc107']
             }}
         }};
-        
-        Plotly.newPlot('occupancy_trend_chart', [neighborhoodTrend, nycTrend], {{
-            title: 'Office Occupancy Recovery Trend (% of capacity)',
-            yaxis: {{title: 'Occupancy %', range: [0, 100]}},
-            xaxis: {{title: 'Month'}},
-            hovermode: 'x unified',
-            font: {{family: 'Inter, sans-serif'}},
-            annotations: [{{
-                x: 'Jun 25',
-                y: {neighborhood_avg},
-                text: 'Current: {neighborhood_avg}%',
-                showarrow: true,
-                arrowhead: 2,
-                arrowcolor: rzeroColors.primary,
-                ax: -40,
-                ay: -40
-            }}]
-        }});
         
         // Create subplot for day-of-week pattern
         setTimeout(() => {{
@@ -1099,18 +977,40 @@ building_template = """<!DOCTYPE html>
                 yaxis: {{title: 'Relative Occupancy %', range: [0, 110]}},
                 xaxis: {{title: 'Day of Week'}},
                 font: {{family: 'Inter, sans-serif'}},
-                height: 300
+                height: 400
             }});
         }}, 100);
         
         // HVAC Percentage Chart
-        const hvacPct = {{x: months, y: {hvac_pct}, name: 'HVAC % of Electric', type: 'scatter', mode: 'lines+markers', fill: 'tozeroy', fillcolor: 'rgba(0, 118, 157, 0.1)', line: {{color: rzeroColors.primary}}}};
+        const hvacPct = {{x: months, y: {hvac_pct}, name: 'HVAC % of Electric', type: 'scatter', mode: 'lines+markers', fill: 'tozeroy', fillcolor: 'rgba(0, 118, 157, 0.1)', line: {{color: rzeroColors.primary, width: 3}}}};
+        
+        // Calculate average HVAC percentage
+        const avgHvac = {hvac_pct}.reduce((a, b) => a + b, 0) / {hvac_pct}.length;
         
         Plotly.newPlot('hvac_pct_chart', [hvacPct], {{
             title: 'HVAC as Percentage of Electric Usage',
             yaxis: {{title: 'HVAC %', tickformat: '.0%', range: [0, 1]}},
             hovermode: 'x unified',
-            font: {{family: 'Inter, sans-serif'}}
+            font: {{family: 'Inter, sans-serif'}},
+            height: 400,
+            shapes: [{{
+                type: 'line',
+                x0: 0, x1: 1,
+                xref: 'paper',
+                y0: avgHvac, y1: avgHvac,
+                line: {{color: 'red', width: 2, dash: 'dash'}}
+            }}],
+            annotations: [
+                {{
+                    x: 11,
+                    y: avgHvac,
+                    text: `Avg: ${{(avgHvac*100).toFixed(0)}}%`,
+                    showarrow: false,
+                    bgcolor: 'white',
+                    bordercolor: 'red',
+                    font: {{size: 14, color: '#333'}}
+                }}
+            ]
         }});
         
         // ODCV Savings Chart
@@ -1121,12 +1021,23 @@ building_template = """<!DOCTYPE html>
         const savingsData = [odcvElecSave, odcvGasSave, odcvSteamSave].filter(d => d.y.some(v => v > 0));
         
         if (savingsData.length > 0) {{
+            // Calculate total savings
+            const totalSavings = savingsData.reduce((sum, series) => 
+                sum + series.y.reduce((a, b) => a + b, 0), 0);
+            const formattedTotalSavings = new Intl.NumberFormat('en-US', {{
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            }}).format(totalSavings);
+            
             Plotly.newPlot('odcv_savings_chart', savingsData, {{
-                title: 'Monthly ODCV Savings Potential by Energy Type',
-                yaxis: {{title: 'Savings ($)', tickformat: '$,.0f'}},
+                title: `Monthly ODCV Savings Potential - Total: ${{formattedTotalSavings}}`,
+                yaxis: {{title: 'Savings ($)', tickformat: '$,.0f', rangemode: 'tozero'}},
                 hovermode: 'x unified',
                 barmode: 'stack',
-                font: {{family: 'Inter, sans-serif'}}
+                font: {{family: 'Inter, sans-serif'}},
+                height: 400,
+                annotations: []
             }});
         }}
         
@@ -1149,6 +1060,7 @@ for idx, row in all_buildings.iterrows():
         # Get all building data from buildings_BIG.csv
         owner = safe_val(data['buildings'], bbl, 'ownername', 'Unknown')
         property_manager = safe_val(data['buildings'], bbl, 'property_manager', 'Unknown')
+        landlord_contact = safe_val(data['buildings'], bbl, 'landlord_contact', safe_val(data['buildings'], bbl, 'ownername', 'Unknown'))
         building_class = safe_val(data['buildings'], bbl, 'Class', 'N/A')
         pct_leased = float(safe_val(data['buildings'], bbl, '% Leased', 0))
         num_floors = int(float(safe_val(data['buildings'], bbl, 'numfloors', 0)))
@@ -1174,7 +1086,7 @@ for idx, row in all_buildings.iterrows():
             elif 'Certified' in green_rating or 'LEED' in green_rating:
                 badge_class = 'green-badge certified'
             
-            green_rating_badge = f'<span class="{badge_class}">🏢 {escape(green_rating)}</span>'
+            green_rating_badge = f'<span class="{badge_class}">{escape(green_rating)}</span>'
         
         # Energy scores from buildings_BIG.csv
         energy_star = safe_val(data['buildings'], bbl, 'Latest_ENERGY_STAR_Score', 'N/A')
@@ -1203,7 +1115,7 @@ for idx, row in all_buildings.iterrows():
                 if diff >= 5:
                     energy_star_discrepancy_html = f"""
                     <div class="stat" style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 10px;">
-                        <span class="stat-label">⚠️ Target Variance:</span>
+                        <span class="stat-label">Target Variance:</span>
                         <span class="stat-value">Official: {latest:.0f} vs Estimated: {estimated:.0f} ({diff:.0f} point gap)</span>
                     </div>
                     """
@@ -1244,6 +1156,9 @@ for idx, row in all_buildings.iterrows():
         
         office_occupancy = neighborhood_avg  # Using neighborhood benchmark as requested
         neighborhood_unoccupied = 100 - neighborhood_avg
+        
+        # BAS status from system_BIG.csv (needed for occupancy adjustment)
+        bas = safe_val(data['system'], bbl, 'Has Building Automation', 'N/A')
         
         # Total ODCV savings from scoring data - now with occupancy adjustment
         base_odcv_savings = float(row.get('Total_ODCV_Savings_Annual_USD', 0))
@@ -1286,8 +1201,7 @@ for idx, row in all_buildings.iterrows():
         else:
             occupancy_adjustment_text = '<span style="color: #666;">Standard ODCV opportunity for this occupancy level</span>'
         
-        # BAS status from system_BIG.csv
-        bas = safe_val(data['system'], bbl, 'Has Building Automation', 'N/A')
+        # BAS status display (already retrieved above)
         bas_class = 'bas' if bas == 'yes' else 'no-bas'
         bas_text = 'BAS Ready' if bas == 'yes' else 'No BAS' if bas == 'no' else 'Unknown'
         
@@ -1301,21 +1215,13 @@ for idx, row in all_buildings.iterrows():
             penalty_section = f"""
             <div class="section">
                 <h2 class="section-header">LL97 Compliance Status</h2>
-                <div class="warning-box">
-                    <h3>⚠️ Penalty Exposure Without ODCV Implementation</h3>
-                    <div class="stat">
-                        <span class="stat-label">2026-2029 Annual Penalty:</span>
-                        <span class="stat-value" style="color: var(--danger); font-size: 1.5em; font-weight: bold;">${penalty_2026:,.0f}</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">2030+ Annual Penalty:</span>
-                        <span class="stat-value" style="color: var(--danger); font-size: 1.5em; font-weight: bold;">${penalty_2030:,.0f}</span>
-                    </div>
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(0, 118, 157, 0.1); border-radius: 8px;">
-                        <p style="margin: 0; color: var(--rzero-primary); font-weight: 500;">
-                            💡 ODCV implementation can significantly reduce these penalties by optimizing ventilation energy use.
-                        </p>
-                    </div>
+                <div class="page">
+                    <h3>LL97 Compliance Impact</h3>
+                    <p style="font-size: 1.1em;">
+                        Penalty without ODCV: <strong style="color: #d32f2f;">${penalty_2026:,.0f}</strong><br>
+                        Savings with ODCV: <strong style="color: #2e7d32;">${total_odcv_savings:,.0f}</strong><br>
+                        Net annual benefit: <strong style="color: #1976d2;">${(total_odcv_savings + penalty_2026):,.0f}</strong>
+                    </p>
                 </div>
             </div>
             """
@@ -1406,7 +1312,7 @@ for idx, row in all_buildings.iterrows():
                     <div class="chart" id="monthly_pm25_chart"></div>
                     
                     <div class="iaq-insight">
-                        <h4>💡 ODCV Ventilation Optimization</h4>
+                        <h4>ODCV Ventilation Optimization</h4>
                         <p>ODCV systems can reduce outside air intake by up to 50% during high pollution events 
                         while maintaining required ventilation rates through demand-based control. This provides:</p>
                         <ul>
@@ -1451,10 +1357,11 @@ for idx, row in all_buildings.iterrows():
                     
                     Plotly.newPlot('daily_pm25_chart', [dailyPM25, goodThreshold, moderateThreshold], {{
                         title: 'Daily PM2.5 Levels (Recent)',
-                        yaxis: {{title: 'PM2.5 (μg/m³)'}},
+                        yaxis: {{title: 'PM2.5 (μg/m³)', rangemode: 'tozero'}},
                         xaxis: {{title: 'Date'}},
                         hovermode: 'x unified',
-                        font: {{family: 'Inter, sans-serif'}}
+                        font: {{family: 'Inter, sans-serif'}},
+                        height: 400
                     }});
                 }}
 
@@ -1482,10 +1389,11 @@ for idx, row in all_buildings.iterrows():
                     
                     Plotly.newPlot('monthly_pm25_chart', [monthlyRange, monthlyMean], {{
                         title: 'Monthly PM2.5 Trends with Min/Max Range',
-                        yaxis: {{title: 'PM2.5 (μg/m³)'}},
+                        yaxis: {{title: 'PM2.5 (μg/m³)', rangemode: 'tozero'}},
                         xaxis: {{title: 'Month'}},
                         hovermode: 'x unified',
-                        font: {{family: 'Inter, sans-serif'}}
+                        font: {{family: 'Inter, sans-serif'}},
+                        height: 400
                     }});
                 }}
                 """
@@ -1508,35 +1416,54 @@ for idx, row in all_buildings.iterrows():
         hero_image = ""
         street_image = ""
         satellite_image = ""
+        street_view_360 = ""
         
         if bbl in image_map:
-            folder = image_map[bbl]
-            folder_path = os.path.join(images_dir, folder)
+            # Get the encoded folder name for AWS URLs
+            folder_name = data['addresses'].loc[data['addresses']['bbl'] == bbl, 'main_address'].iloc[0]
+            folder_name_encoded = folder_name.replace(' ', '%20').replace(',', '%2C')
+            base_url = f"https://nyc-odcv-images.s3.us-east-2.amazonaws.com/images/{bbl}_{folder_name_encoded}"
             
-            files = [f for f in os.listdir(folder_path) if not f.startswith('.')]
+            # Generate image filenames based on pattern
+            hero_filename = f"{bbl}_hero_{folder_name.replace(',', '')}.jpg"
+            street_filename = f"{bbl}_street_{folder_name.replace(',', '')}.jpg"
+            satellite_filename = f"{bbl}_satellite_{folder_name.replace(',', '')}.jpg"
             
-            hero = next((f for f in files if '_hero_' in f), None)
-            street = next((f for f in files if '_street_' in f), None)
-            satellite = next((f for f in files if '_satellite_' in f), None)
+            # Hero image
+            hero_image = f'<img src="{base_url}/{hero_filename.replace(" ", "%20")}" alt="Building photo" class="hero-image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">'
+            hero_image += '<div style="height: 400px; background: #333; display: none;"></div>'
             
-            if hero:
-                hero_image = f'<img src="images/{folder}/{hero}" alt="Building photo" class="hero-image">'
-            else:
-                hero_image = '<div style="height: 400px; background: #333;"></div>'
-                
-            if street:
-                street_image = f'<img src="images/{folder}/{street}" alt="Street view">'
-            else:
-                street_image = '<div style="background: #f0f0f0; height: 300px; display: flex; align-items: center; justify-content: center; color: #999;">Street view not available</div>'
-                
-            if satellite:
-                satellite_image = f'<img src="images/{folder}/{satellite}" alt="Satellite view">'
-            else:
-                satellite_image = '<div style="background: #f0f0f0; height: 300px; display: flex; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
+            # Street image
+            street_image = f'<img src="{base_url}/{street_filename.replace(" ", "%20")}" alt="Street view" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">'
+            street_image += '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Street view not available</div>'
+            
+            # Satellite image
+            satellite_image = f'<img src="{base_url}/{satellite_filename.replace(" ", "%20")}" alt="Satellite view" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">'
+            satellite_image += '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
+            
+            # 360° Street View Image
+            # Remove commas from the address to match the actual filenames
+            address_filename_no_commas = folder_name.replace(',', '')
+            image_360_filename = f"{bbl}_360_{address_filename_no_commas}.jpg"
+            
+            street_view_360 = (
+                f'<img src="{base_url}/{image_360_filename.replace(" ", "%20")}" '
+                f'alt="360° Street View of {escape(main_address)}" '
+                f'style="width:100%;max-width:1200px;border-radius:8px;box-shadow:0 4px 12px rgba(0,118,157,0.15);" '
+                f'onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">'
+            )
+            street_view_360 += (
+                '<div style="background:#f0f0f0;height:400px;display:none;align-items:center;justify-content:center;color:#999;border-radius:8px;">'
+                '360° Street View not available</div>'
+            )
         else:
             hero_image = '<div style="height: 400px; background: #333;"></div>'
             street_image = '<div style="background: #f0f0f0; height: 300px; display: flex; align-items: center; justify-content: center; color: #999;">Street view not available</div>'
             satellite_image = '<div style="background: #f0f0f0; height: 300px; display: flex; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
+            street_view_360 = (
+                '<div style="background:#f0f0f0;height:400px;display:flex;align-items:center;justify-content:center;color:#999;border-radius:8px;">'
+                '360° Street View not available</div>'
+            )
         
         # Monthly data arrays
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -1580,6 +1507,22 @@ for idx, row in all_buildings.iterrows():
         odcv_gas_savings = [float(safe_val(data['hvac'], bbl, f'Office_Gas_Savings_ODCV_{m}_USD', 0)) for m in months]
         odcv_steam_savings = [float(safe_val(data['hvac'], bbl, f'Office_Steam_Savings_ODCV_{m}_USD', 0)) for m in months]
         
+        # Critical alert for no BAS
+        critical_alert = ""
+        if bas == 'no':
+            critical_alert = f'''
+            <div style="background: #f8f8f8; border-left: 4px solid #ff6b6b; padding: 15px; margin: 20px 0;">
+                <strong>Note:</strong> BAS installation required. Combined BAS + ODCV could deliver ${(total_odcv_savings * 1.5):,.0f} annual savings.
+            </div>
+            '''
+        
+        # Score summary
+        score_summary = f"Score: {score:.0f}/100"
+        if bas_automation_score >= 25:
+            score_summary += " • BAS Ready"
+        if owner_building_count > 5:
+            score_summary += f" • Portfolio Owner ({owner_building_count} buildings)"
+        
         # Generate HTML
         html = building_template.format(
             title=f"{main_address} - ODCV Analysis",
@@ -1587,6 +1530,7 @@ for idx, row in all_buildings.iterrows():
             hero_image=hero_image,
             street_image=street_image,
             satellite_image=satellite_image,
+            street_view_360=street_view_360,
             # Building identity
             neighborhood=escape(neighborhood) if neighborhood else "Manhattan",
             green_rating_badge=green_rating_badge,
@@ -1595,6 +1539,7 @@ for idx, row in all_buildings.iterrows():
             building_class=escape(building_class),
             owner=escape(owner),
             property_manager=escape(property_manager),
+            landlord_contact=escape(landlord_contact),
             pct_leased=pct_leased,
             year_altered=year_altered,
             num_floors=num_floors,
@@ -1639,6 +1584,8 @@ for idx, row in all_buildings.iterrows():
             iaq_section_content=iaq_section_content,
             iaq_javascript=iaq_javascript,
             # Other sections
+            score_summary=score_summary,
+            critical_alert=critical_alert,
             penalty_section=penalty_section,
             elec_usage=safe_json(elec_usage),
             gas_usage=safe_json(gas_usage),
@@ -1667,11 +1614,11 @@ for idx, row in all_buildings.iterrows():
         
         successful += 1
         if successful <= 5 or successful % 100 == 0:
-            print(f"✓ Generated {successful}/{len(all_buildings)}: {filename}")
+            print(f"Generated {successful}/{len(all_buildings)}: {filename}")
         
     except Exception as e:
         failed += 1
-        print(f"✗ Failed BBL {bbl}: {str(e)}")
+        print(f"Failed BBL {bbl}: {str(e)}")
 
 # Generate homepage
 print("\nGenerating homepage...")
@@ -1839,38 +1786,15 @@ homepage_html = f"""<!DOCTYPE html>
             margin-bottom: 30px; 
         }}
         
-        .stat-card {{ 
-            background: white; 
-            padding: 25px; 
-            border-radius: 12px; 
-            text-align: center; 
-            box-shadow: 0 4px 12px rgba(0, 118, 157, 0.08);
-            border: 1px solid rgba(0, 118, 157, 0.1);
-            transition: transform 0.2s ease;
-        }}
-        
-        .stat-card:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 118, 157, 0.12);
-        }}
-        
-        .stat-value {{ 
-            font-size: 2.5em; 
-            font-weight: bold; 
-            color: var(--rzero-primary); 
-        }}
-        
-        .stat-label {{ 
-            color: #666; 
-            margin-top: 5px; 
-        }}
+        .stat-card {{ padding: 15px; }}
+        .stat-value {{ font-size: 1.8em; }}
+        .stat-label {{ font-size: 0.9em; color: #666; }}
         
         .info-box {{ 
-            background: linear-gradient(135deg, var(--rzero-light-blue) 0%, rgba(0, 118, 157, 0.05) 100%);
-            border: 2px solid var(--rzero-primary);
-            padding: 30px; 
-            border-radius: 12px; 
-            margin-bottom: 30px;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px; 
+            margin-bottom: 20px;
         }}
         
         .info-box h2 {{ 
@@ -1935,17 +1859,9 @@ homepage_html = f"""<!DOCTYPE html>
             white-space: nowrap;
         }}
         
-        th:hover {{
-            background: var(--rzero-primary-dark);
-        }}
-        
         td {{ 
-            padding: 14px; 
+            padding: 10px; 
             border-bottom: 1px solid #eee; 
-        }}
-        
-        tr:hover {{ 
-            background: var(--rzero-light-blue); 
         }}
         
         .yes {{ color: #38a169; font-weight: bold; }}
@@ -1957,9 +1873,6 @@ homepage_html = f"""<!DOCTYPE html>
             font-weight: 500;
         }}
         
-        a:hover {{ 
-            text-decoration: underline; 
-        }}
         
         .urgent {{ 
             color: #dc3545; 
@@ -1993,10 +1906,6 @@ homepage_html = f"""<!DOCTYPE html>
             cursor: pointer;
         }}
 
-        .building-thumb:hover {{ 
-            transform: scale(1.1); 
-            box-shadow: 0 4px 16px rgba(0, 118, 157, 0.25);
-        }}
 
         .no-thumb {{ 
             width: 60px; 
@@ -2013,17 +1922,11 @@ homepage_html = f"""<!DOCTYPE html>
         
         /* Filter button styles */
         .filter-btn {{
-            padding: 10px 20px;
+            padding: 10px 15px;
             background: white;
-            border-radius: 8px;
+            border-radius: 4px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-        }}
-        
-        .filter-btn:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 118, 157, 0.2);
         }}
         
         .filter-btn:active {{
@@ -2094,57 +1997,9 @@ homepage_html = f"""<!DOCTYPE html>
             border-radius: 4px;
         }}
         
-        /* Copy button styles */
-        .copy-btn {{
-            background: none;
-            border: 1px solid #ddd;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-            margin-right: 8px;
-        }}
-        
-        .copy-btn:hover {{
-            background: var(--rzero-light-blue);
-            border-color: var(--rzero-primary);
-        }}
         
         /* Back to top button */
-        #backToTop {{
-            transition: all 0.3s ease;
-        }}
-        
-        #backToTop:hover {{
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }}
-        
-        #backToTop:active {{
-            transform: scale(0.95);
-        }}
-        
-        #backToTop::after {{
-            content: 'Back to top';
-            position: absolute;
-            right: 60px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #333;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }}
-        
-        #backToTop:hover::after {{
-            opacity: 1;
-        }}
+        #backToTop {{}}
         
         /* Animations */
         @keyframes slideUp {{
@@ -2219,8 +2074,8 @@ homepage_html = f"""<!DOCTYPE html>
         </div>
         
         <div class="new-features">
-            <h3>✨ NEW: Enhanced Reports Now Available!</h3>
-            <p><strong>Section 4:</strong> Detailed Sales Intelligence Score Breakdown | <strong>Section 5:</strong> Air Quality & Ventilation Insights with PM2.5 Trends</p>
+            <h3>NEW: Enhanced Reports Now Available!</h3>
+            <p><strong>Section 5:</strong> Air Quality & Ventilation Insights with PM2.5 Trends</p>
         </div>
         
         <div class="stats">
@@ -2236,14 +2091,14 @@ homepage_html = f"""<!DOCTYPE html>
                 <div class="stat-value">{urgent}</div>
                 <div class="stat-label" style="color: #dc3545;">Face 2026 Penalties</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value">${total_savings/len(homepage_data)/1000:.0f}K</div>
-                <div class="stat-label">Average per Building</div>
+            <div class="stat-card" style="background: #f5f5f5; border-left: 4px solid #4caf50;">
+                <div class="stat-value" style="color: #2e7d32;">${total_savings/1000000:.1f}M</div>
+                <div class="stat-label">YEAR ONE SAVINGS</div>
             </div>
         </div>
         
         <div class="info-box">
-            <h2>📊 Understanding the Rankings</h2>
+            <h2>Understanding the Rankings</h2>
             <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
             <ul style="line-height: 1.8;">
                 <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
@@ -2253,12 +2108,12 @@ homepage_html = f"""<!DOCTYPE html>
                 <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
             </ul>
             <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
-                <strong>⚠️ Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
+                <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
             </p>
         </div>
         
-        <div class="info-box" style="background: linear-gradient(135deg, rgba(56, 161, 105, 0.1) 0%, rgba(56, 161, 105, 0.05) 100%); border-color: #38a169;">
-            <h2>🏢 NYC Office Occupancy Intelligence</h2>
+        <div class="info-box">
+            <h2>NYC Office Occupancy Intelligence</h2>
             <p><strong>Key Findings from July 2024 - June 2025 Data:</strong></p>
             <ul style="line-height: 1.8;">
                 <li><strong>Average Manhattan Occupancy:</strong> {avg_occupancy:.0f}% (vs. 100% design capacity)</li>
@@ -2267,7 +2122,7 @@ homepage_html = f"""<!DOCTYPE html>
                 <li><strong>Recovery Trend:</strong> Occupancy improving from 88% (Jul 2024) to 95% projected (Jun 2025)</li>
             </ul>
             <p style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                <strong>💡 ODCV Impact:</strong> Buildings operating at 70% of pre-2020 capacity can optimize ventilation for actual occupancy, not design maximum. Additional savings from time-of-day and day-of-week scheduling.
+                <strong>ODCV Impact:</strong> Buildings operating at 70% of pre-2020 capacity can optimize ventilation for actual occupancy, not design maximum. Additional savings from time-of-day and day-of-week scheduling.
             </p>
         </div>
         """
@@ -2275,7 +2130,7 @@ homepage_html = f"""<!DOCTYPE html>
 if top_portfolios:
     homepage_html += f"""
         <div class="portfolio-box">
-            <h2>🎯 Top Portfolio Opportunities</h2>
+            <h2>Top Portfolio Opportunities</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
     """
     for owner, stats in top_portfolios:
@@ -2296,19 +2151,19 @@ homepage_html += f"""
         <!-- Filter Controls -->
         <div class="filter-controls" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
             <button onclick="filterBAS()" class="filter-btn" style="border: 2px solid var(--rzero-primary); color: var(--rzero-primary);">
-                <span style="margin-right: 5px;">🏢</span> Only BAS Buildings
+                Only BAS Buildings
             </button>
             <button onclick="filterPenalty()" class="filter-btn" style="border: 2px solid #dc3545; color: #dc3545;">
-                <span style="margin-right: 5px;">⚠️</span> Has LL97 Penalties
+                Has LL97 Penalties
             </button>
             <button onclick="filterTop50()" class="filter-btn" style="border: 2px solid #38a169; color: #38a169;">
-                <span style="margin-right: 5px;">🌟</span> Top 50 Only
+                Top 50 Only
             </button>
             <button onclick="filterHighSavings()" class="filter-btn" style="border: 2px solid #f57c00; color: #f57c00;">
-                <span style="margin-right: 5px;">💰</span> $500K+ Savings
+                $500K+ Savings
             </button>
             <button onclick="filterLowOccupancy()" class="filter-btn" style="border: 2px solid #9c27b0; color: #9c27b0;">
-                <span style="margin-right: 5px;">🎯</span> Low Occupancy (<85%)
+                Low Occupancy (<85%)
             </button>
             <button onclick="clearFilters()" class="filter-btn" style="background: var(--rzero-light-blue); border: 2px solid var(--rzero-primary); color: var(--rzero-primary);">
                 Clear All Filters
@@ -2358,7 +2213,7 @@ for b in homepage_data:
     
     # Generate thumbnail cell
     if b['has_thumbnail']:
-        thumb_cell = f'<img src="hero_thumbnails/{b["thumbnail_filename"]}" alt="{escape(b["address"])}" class="building-thumb" onclick="window.location.href=\'{b["filename"]}\'">'
+        thumb_cell = f'<img src="https://nyc-odcv-images.s3.us-east-2.amazonaws.com/hero_thumbnails/{b["bbl"]}_thumb.jpg" alt="{escape(b["address"])}" class="building-thumb" onclick="window.location.href=\'{b["filename"]}\'">'
     else:
         thumb_cell = '<div class="no-thumb">No image</div>'
     
@@ -2392,11 +2247,6 @@ for b in homepage_data:
                     <td>{b['score']:.1f}</td>
                     <td data-value="{b['penalty_2026']}" class="{penalty_class}">${b['penalty_2026']:,.0f}</td>
                     <td>
-                        <button onclick="copyBuildingInfo('{b['bbl']}', '{js_escape(b['address'])}', '{js_escape(b['owner'])}', {b['savings']})" 
-                                class="copy-btn" 
-                                title="Copy building info">
-                            📋
-                        </button>
                         <a href="{b['filename']}">View Report →</a>
                     </td>
                 </tr>
@@ -2620,7 +2470,9 @@ homepage_html += """
     }
     
     function escapeRegex(string) {
-        return string.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\homepage_html += """
+        return string.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
+    }
+    </script>
             </tbody>
         </table>
         </div>
@@ -2672,9 +2524,6 @@ homepage_html += """
         
         rows.forEach(row => tbody.appendChild(row));
     }
-    </script>
-</body>
-</html>"""');
     }
     
     // CSV Export
@@ -2725,78 +2574,6 @@ homepage_html += """
         showNotification(`Exported ${exportCount} buildings to CSV`);
     }
     
-    // Copy building info
-    function copyBuildingInfo(bbl, address, owner, savings) {
-        const formattedSavings = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            maximumFractionDigits: 0
-        }).format(savings);
-        
-        const text = `Building: ${address}
-Owner: ${owner}
-Annual ODCV Savings: ${formattedSavings}
-BBL: ${bbl}
-        
-View full report: ${window.location.origin}${window.location.pathname.replace('index.html', '')}${bbl}_${address.replace(/[^a-zA-Z0-9]/g, '-')}.html`;
-        
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text).then(() => {
-                showCopySuccess(address);
-            }).catch(err => {
-                fallbackCopy(text);
-            });
-        } else {
-            fallbackCopy(text);
-        }
-    }
-    
-    function fallbackCopy(text) {
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        textArea.style.cssText = "position: fixed; left: -999999px;";
-        document.body.appendChild(textArea);
-        textArea.select();
-        
-        try {
-            document.execCommand('copy');
-            showCopySuccess('Building info');
-        } catch (err) {
-            showNotification('Failed to copy. Please try again.', 'error');
-        }
-        
-        document.body.removeChild(textArea);
-    }
-    
-    function showCopySuccess(buildingName) {
-        const notification = document.createElement('div');
-        notification.innerHTML = `
-            <svg width="20" height="20" fill="currentColor" style="margin-right: 8px;">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-            Copied ${buildingName} to clipboard
-        `;
-        notification.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--rzero-primary);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            animation: slideInRight 0.3s ease-out;
-            z-index: 10000;
-        `;
-        
-        document.body.appendChild(notification);
-        setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.3s ease-out';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
     
     // Notification system
     function showNotification(message, type = 'success') {
@@ -2926,39 +2703,37 @@ View full report: ${window.location.origin}${window.location.pathname.replace('i
 with open(os.path.join(output_dir, 'index.html'), 'w', encoding='utf-8') as f:
     f.write(homepage_html)
 
-print("✓ Generated homepage")
+print("Generated homepage")
 
 print(f"\n{'='*60}")
 print(f"R-ZERO ODCV ANALYSIS V2 COMPLETE:")
-print(f"✓ Generated {successful} building reports with R-Zero branding")
-print(f"✓ Building Identity Bar with neighborhood and green certifications")
-print(f"✓ Energy Star discrepancy alerts when targets differ by 5+ points")
-print(f"✓ Section 1 enhanced: Added total units to site details")
-print(f"✓ Section 2 renamed to 'Building Performance'")
-print(f"✓ Section 3 enhanced: Real NYC neighborhood occupancy data")
-print(f"✓ Section 4 added: Sales Intelligence Score Breakdown")
-print(f"✓ Section 5 added: Air Quality & Ventilation Insights")
-print(f"✓ Building electricity = HVAC + NonHVAC (from energy_BIG.csv)")
-print(f"✓ All data sources correctly mapped")
-print(f"✓ Using preprocessed IAQ data files for fast loading")
-print(f"✓ Homepage enhanced with 8 new features:")
+print(f"Generated {successful} building reports with R-Zero branding")
+print(f"Building Identity Bar with neighborhood and green certifications")
+print(f"Energy Star discrepancy alerts when targets differ by 5+ points")
+print(f"Section 1 enhanced: Added total units to site details")
+print(f"Section 2 renamed to 'Building Performance'")
+print(f"Section 3 enhanced: Real NYC neighborhood occupancy data")
+print(f"Section 5 added: Air Quality & Ventilation Insights")
+print(f"Building electricity = HVAC + NonHVAC (from energy_BIG.csv)")
+print(f"All data sources correctly mapped")
+print(f"Using preprocessed IAQ data files for fast loading")
+print(f"Homepage enhanced with 8 new features:")
 print(f"  - Quick filter buttons (BAS, Penalties, Top 50, $500K+, Low Occupancy)")
 print(f"  - Live result counter with statistics")
 print(f"  - CSV export functionality")
 print(f"  - Sticky table header for easy navigation")
 print(f"  - Color-coded savings tiers")
 print(f"  - Search term highlighting")
-print(f"  - Copy building info to clipboard")
 print(f"  - Back to top button")
-print(f"✓ Building images standardized to consistent sizes")
-print(f"✓ NYC occupancy data integrated:")
+print(f"Building images standardized to consistent sizes")
+print(f"NYC occupancy data integrated:")
 print(f"  - Neighborhood-specific rates (86-92%)")
 print(f"  - Hybrid work patterns (Tue-Wed-Thu peaks)")
 print(f"  - Occupancy-adjusted ODCV savings")
 print(f"  - Monthly trend visualization")
 
 if failed > 0:
-    print(f"\n⚠️  Failed: {failed} buildings")
+    print(f"\nFailed: {failed} buildings")
 
 print(f"\nNEXT STEPS:")
 print(f"1. Copy images: cp -r '{images_dir}' '{output_dir}/images'")
