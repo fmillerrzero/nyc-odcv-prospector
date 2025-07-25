@@ -106,10 +106,35 @@
             margin-top: 0; 
         }
         
-        .portfolio-tile:hover {
-            background-color: rgba(0, 118, 157, 0.15) !important;
-            transform: translateY(-2px);
+        .portfolio-tile:not(.selected):hover {
+            background-color: rgba(0, 118, 157, 0.08) !important;
+            transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 118, 157, 0.2);
+        }
+        
+        .portfolio-tile.selected {
+            background-color: rgba(0, 118, 157, 0.15) !important;
+            border: 3px solid var(--rzero-primary) !important;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.3), 0 8px 20px rgba(0, 118, 157, 0.4) !important;
+            transform: translateY(-3px) scale(1.02);
+            position: relative;
+        }
+        
+        .portfolio-tile.selected::before {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--rzero-primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
         }
         
         .search-box { 
@@ -405,19 +430,19 @@
             <h2>Top Portfolios</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
     
-                <div class="portfolio-tile" onclick="filterByOwner('Vornado Realty Trust')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.2s ease; position: relative; min-height: 100px;">
-                    <img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/Vornado_Realty_Trust.png" alt="Vornado Realty Trust" style="position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;">
+                <div class="portfolio-tile" onclick="filterByOwner('Vornado Realty Trust')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; min-height: 100px;">
+                    <img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/Vornado_Realty_Trust.png" alt="Vornado Realty Trust" style="position: absolute; top: 15px; right: 15px; max-height: 60px; max-width: 120px; opacity: 0.8;">
                     <strong style="color: var(--rzero-primary); display: block; margin-bottom: 5px;">Vornado Realty Trust</strong>
                     <span style="color: #666;">42 buildings • $7.1M savings</span>
                 </div>
         
-                <div class="portfolio-tile" onclick="filterByOwner('SL Green Realty')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.2s ease; position: relative; min-height: 100px;">
+                <div class="portfolio-tile" onclick="filterByOwner('SL Green Realty')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; min-height: 100px;">
                     <img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/SL_Green_Realty.png" alt="SL Green Realty" style="position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;">
                     <strong style="color: var(--rzero-primary); display: block; margin-bottom: 5px;">SL Green Realty</strong>
                     <span style="color: #666;">26 buildings • $6.4M savings</span>
                 </div>
         
-                <div class="portfolio-tile" onclick="filterByOwner('Kaufman Organization')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.2s ease; position: relative; min-height: 100px;">
+                <div class="portfolio-tile" onclick="filterByOwner('Kaufman Organization')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; min-height: 100px;">
                     <img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/Kaufman_Organization.png" alt="Kaufman Organization" style="position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;">
                     <strong style="color: var(--rzero-primary); display: block; margin-bottom: 5px;">Kaufman Organization</strong>
                     <span style="color: #666;">23 buildings • $1.7M savings</span>
@@ -449,7 +474,7 @@
 
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()" style="flex: 1; margin: 0;">
-            <button onclick="clearAllFilters()" style="background: #c41e3a; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s;">
+            <button id="clearFilterBtn" onclick="clearAllFilters()" style="background: #e0e0e0; color: #999; border: none; padding: 15px 25px; border-radius: 8px; cursor: not-allowed; font-size: 16px; font-weight: 600; transition: all 0.2s;" disabled>
                 Clear Filter
             </button>
         </div>
@@ -8111,6 +8136,28 @@
     let activeOwnerFilter = null;
     let sortDir = {};
     
+    function updateClearButtonState() {
+        const btn = document.getElementById('clearFilterBtn');
+        const searchBox = document.getElementById('search');
+        const hasActiveFilter = (searchBox.value.trim() !== '') || (activeOwnerFilter !== null);
+        
+        if (hasActiveFilter) {
+            btn.disabled = false;
+            btn.style.background = '#c41e3a';
+            btn.style.color = 'white';
+            btn.style.cursor = 'pointer';
+            btn.onmouseover = function() { this.style.background='#a01729'; };
+            btn.onmouseout = function() { this.style.background='#c41e3a'; };
+        } else {
+            btn.disabled = true;
+            btn.style.background = '#e0e0e0';
+            btn.style.color = '#999';
+            btn.style.cursor = 'not-allowed';
+            btn.onmouseover = null;
+            btn.onmouseout = null;
+        }
+    }
+    
     function sortTable(col) {
         const tbody = document.querySelector('#buildingTable tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
@@ -8148,15 +8195,35 @@
             const matchesSearch = searchText && searchText.includes(input);
             row.style.display = matchesSearch ? '' : 'none';
         });
+        
+        updateClearButtonState();
     }
     
     function filterByOwner(ownerName) {
+        // Update active filter
+        activeOwnerFilter = ownerName;
+        
+        // Remove previous selection styling
+        document.querySelectorAll('.portfolio-tile').forEach(tile => {
+            tile.classList.remove('selected');
+        });
+        
+        // Add selection styling to clicked tile
+        document.querySelectorAll('.portfolio-tile').forEach(tile => {
+            if (tile.querySelector('strong') && tile.querySelector('strong').textContent === ownerName) {
+                tile.classList.add('selected');
+            }
+        });
+        
+        // Filter table rows
         const rows = document.querySelectorAll('#buildingTable tbody tr');
         rows.forEach(row => {
             const ownerCell = row.cells[3];
             const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
             row.style.display = isMatch ? '' : 'none';
         });
+        
+        updateClearButtonState();
     }
     
     function clearAllFilters() {
@@ -8174,9 +8241,10 @@
         
         // Remove active styling from portfolio tiles
         document.querySelectorAll('.portfolio-tile').forEach(tile => {
-            tile.style.outline = '';
-            tile.style.boxShadow = '';
+            tile.classList.remove('selected');
         });
+        
+        updateClearButtonState();
     }
     
     function filterByManager(managerName) {
@@ -8191,6 +8259,11 @@
     function scrollToTop() {
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateClearButtonState();
+    });
     </script>
 </body>
 </html>

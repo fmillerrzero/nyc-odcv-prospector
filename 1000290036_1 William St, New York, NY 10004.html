@@ -31,14 +31,14 @@
             margin: 0 auto; 
             background: white;
             box-shadow: 0 4px 20px rgba(0, 118, 157, 0.08);
-            padding: 0 15%;
+            padding: 0;
         }
         
         /* Section 0 - Title */
         .title-section {
             background: linear-gradient(to right, #0066cc, #0052a3);
             color: white;
-            padding: 30px 40px;
+            padding: 30px 15%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -619,13 +619,18 @@
 <body>
     <div class="container">
         <!-- Navigation Bar -->
-        <div style="background: #f8f8f8; padding: 10px 20px; border-bottom: 1px solid #e2e8f0;">
-            <a href="index.html" style="text-decoration: none;">
-                <button style="background: var(--rzero-primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.3s ease;" 
-                        onmouseover="this.style.background='var(--rzero-primary-dark)'" 
-                        onmouseout="this.style.background='var(--rzero-primary)'">
-                    ← Back to Rankings
-                </button>
+        <div style="background: linear-gradient(to right, #0066cc, #0052a3); padding: 0; margin: 0; width: 100%; position: relative;">
+            <a href="index.html" style="text-decoration: none; display: block;">
+                <div style="padding: 15px 40px; display: flex; align-items: center; gap: 10px; color: white; cursor: pointer; transition: all 0.3s ease;"
+                     onmouseover="this.style.background='rgba(255,255,255,0.1)'" 
+                     onmouseout="this.style.background='transparent'">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;"
+                         onmouseover="this.style.transform='translateX(-5px)'" 
+                         onmouseout="this.style.transform='translateX(0)'">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span style="font-size: 16px; font-weight: 500; opacity: 0.9;">Back to Rankings</span>
+                </div>
             </a>
         </div>
 
@@ -724,8 +729,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isTimesSquareArea || isTallBuilding) {
             // Make it extra tall for Times Square buildings
             optimalHeight = Math.max(1100, optimalHeight * 1.2);
-            // Cap at 1600px for Times Square area
-            optimalHeight = Math.min(1600, optimalHeight);
+            // Cap at 2000px for Times Square area
+            optimalHeight = Math.min(2000, optimalHeight);
         } else {
             // Normal buildings: Cap between 400px and 1200px
             optimalHeight = Math.max(400, Math.min(1200, optimalHeight));
@@ -740,17 +745,27 @@ document.addEventListener('DOMContentLoaded', function() {
             "panorama": imgUrl,
             "autoLoad": true,
             "autoRotate": -2,
-            "showZoomCtrl": false,
-            "showFullscreenCtrl": false,
-            "showControls": false,
+            "showZoomCtrl": "1000290036" === "1009950005" ? false : true,  // Disable zoom controls for 4 Times Square
+            "showFullscreenCtrl": true,
+            "showControls": true,
             "haov": 360,
             "vaov": Math.min(180, (aspectRatio * 360)),  // Adjust vertical angle based on image
-            "yaw": getBuildingYaw("1 William St, New York, NY 10004"),
-            "pitch": isTimesSquareArea ? 15 : 0,  // Look up more for tall buildings
-            "hfov": isTimesSquareArea ? 100 : 90,  // Wider view for Times Square
-            "minPitch": -45,
-            "maxPitch": 80
+            "yaw": "1000290036" === "1009950005" ? 135 : getBuildingYaw("1 William St, New York, NY 10004"),  // 135° points SE toward 4 Times Square
+            "pitch": isTimesSquareArea ? 35 : 0,  // Look up more for tall buildings
+            "hfov": "1000290036" === "1009950005" ? 120 : (isTimesSquareArea ? 100 : 90),  // Max zoom out for 4 Times Square
+            "minHfov": "1000290036" === "1009950005" ? 120 : 50,    // Prevent zoom in
+            "maxHfov": "1000290036" === "1009950005" ? 120 : 120,   // Lock at max zoom
+            "minPitch": -60,
+            "maxPitch": 90
         });
+        
+        if ("1000290036" === "1009950005") {
+            // Disable mouse wheel zoom for 4 Times Square
+            viewerEl.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }, { passive: false });
+        }
     };
     img.src = imgUrl;
 });
@@ -758,6 +773,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 </div>
             </div>
+            
+            
             
             <!-- Page 1.1 - Site -->
             <div class="page">
@@ -994,6 +1011,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
     
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1001,17 +1019,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // R-Zero brand colors with distinct energy type colors
         const rzeroColors = {
             primary: '#0066cc',      // Blue for electricity
-            secondary: '#ff6b35',    // Orange for gas  
+            secondary: '#ffc107',    // Yellow for gas  
             success: '#38a169',      // Keep green
-            accent1: '#ff6b35',      // Orange for gas
-            accent2: '#8b5cf6'       // Purple for steam
+            accent1: '#ffc107',      // Yellow for gas
+            accent2: '#dc3545'       // Red for steam
         };
         
         // Energy type colors for clarity
         const energyColors = {
             electricity: '#0066cc',  // Blue - like electrical current
-            gas: '#ff6b35',         // Orange - like gas flame
-            steam: '#8b5cf6'        // Purple - like steam/vapor
+            gas: '#ffc107',         // Yellow - like gas flame
+            steam: '#dc3545'        // Red - like steam heat
         };
         
         // Unit conversion functions
@@ -1102,8 +1120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 yaxis: {
                     tickformat: '$,.0f',
                     rangemode: 'tozero',
-                    showgrid: true,
-                    gridcolor: '#e0e0e0',
+                    showgrid: false,
                     tickfont: {size: 16}
                 },
                 xaxis: {
@@ -1114,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 font: {family: 'Inter, sans-serif', size: 16},
                 legend: {font: {size: 16}},
                 height: 500,
-                margin: {l: 80, r: 50, t: 50, b: 80}
+                margin: {l: 100, r: 50, t: 50, b: 80}
             }, {displayModeBar: false});
         }
         
@@ -1140,21 +1157,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Office Cost Chart
-        const officeElecCost = {x: months, y: [7397.87, 7216.57, 7200.18, 6913.83, 8034.38, 9682.68, 10965.03, 11467.59, 10059.46, 7676.77, 6485.81, 5812.84], name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.primary, width: 5}, marker: {size: 10}};
-        const officeGasCost = {x: months, y: [15.98, 13.99, 16.31, 3.87, 15.61, 94.24, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent1, width: 5}, marker: {size: 10}};
-        const officeSteamCost = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent2, width: 5}, marker: {size: 10}};
+        const officeElecCost = {x: months, y: [7397.87, 7216.57, 7200.18, 6913.83, 8034.38, 9682.68, 10965.03, 11467.59, 10059.46, 7676.77, 6485.81, 5812.84], name: 'Elec', type: 'bar', marker: {color: rzeroColors.primary}};
+        const officeGasCost = {x: months, y: [15.98, 13.99, 16.31, 3.87, 15.61, 94.24, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Gas', type: 'bar', marker: {color: rzeroColors.accent1}};
+        const officeSteamCost = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Steam', type: 'bar', marker: {color: rzeroColors.accent2}};
         
         const officeCostData = [officeElecCost, officeGasCost, officeSteamCost].filter(d => d.y.some(v => v > 0));
         
         if (officeCostData.length > 0) {
             Plotly.newPlot('office_cost_chart', officeCostData, {
                 title: '',
+                barmode: 'group',
                 yaxis: {tickformat: '$,.0f', rangemode: 'tozero', showgrid: false},
                 xaxis: {showgrid: false},
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif', size: 16},
                 height: 500,
-                margin: {l: 60, r: 30, t: 30, b: 60},
+                margin: {l: 100, r: 30, t: 30, b: 60},
                 autosize: true
             }, {displayModeBar: false, responsive: true});
         }
@@ -1179,8 +1197,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             Plotly.newPlot('day_of_week_chart', [dayOfWeek], {
                 title: 'Hybrid Work Pattern - Financial District',
-                yaxis: {title: 'Relative Occupancy %', range: [0, 110]},
-                xaxis: {title: 'Day of Week'},
+                yaxis: {title: 'Relative Occupancy %', range: [0, 110], showgrid: false},
+                xaxis: {title: 'Day of Week', showgrid: false},
                 font: {family: 'Inter, sans-serif', size: 16},
                 height: 500,
                 margin: {l: 60, r: 30, t: 30, b: 60},
@@ -1269,7 +1287,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 barmode: 'stack',
                 font: {family: 'Inter, sans-serif', size: 16},
                 height: 500,
-                margin: {l: 60, r: 30, t: 30, b: 60},
+                margin: {l: 100, r: 100, t: 60, b: 80},
+                legend: {
+                    x: 1,
+                    xanchor: 'right',
+                    y: 1,
+                    yanchor: 'top',
+                    bgcolor: 'rgba(255,255,255,0.8)',
+                    bordercolor: 'rgba(0,0,0,0.1)',
+                    borderwidth: 1
+                },
                 autosize: true
             }, {displayModeBar: false, responsive: true});
         }
@@ -1356,19 +1383,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             showgrid: false  // Remove grid lines
                         },
                         legend: {
-                            orientation: 'h',  // Horizontal layout
-                            x: 0.5,           // Center horizontally
+                            orientation: 'h',
+                            x: 0.5,
                             xanchor: 'center',
-                            y: 1.15,          // Position above chart
+                            y: -0.15,         // Move legend below chart
                             yanchor: 'top',
-                            bgcolor: 'rgba(255,255,255,0.8)',
-                            bordercolor: 'rgba(0,0,0,0.1)',
-                            borderwidth: 1
+                            bgcolor: 'transparent',
+                            borderwidth: 0
                         },
                         hovermode: 'x unified',
                         font: {family: 'Inter, sans-serif', size: 16},
                         height: 500,
-                        margin: {t: 80}  // Add top margin for legend
+                        margin: {t: 60, l: 80, r: 50, b: 100}  // Add bottom margin for legend
                     }, {displayModeBar: false});
                 }
                 
