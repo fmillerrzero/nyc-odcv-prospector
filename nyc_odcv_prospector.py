@@ -1474,42 +1474,22 @@ for idx, row in all_buildings.iterrows():
                 '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
             )
 
-            # 360° Street View with AWS PNG -> AWS JPG -> Git JPG fallback (Pannellum viewer)
+            # 360° Street View with Marzipano
             street_view_360 = f'''
-<div id="panorama_{bbl}" style="width:100%;max-width:1200px;height:400px;border-radius:8px;"></div>
-<script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css"/>
+<div id="pano_{bbl}" style="width:100%;height:400px;border-radius:8px;"></div>
+<script src="https://www.marzipano.net/demos/vendor/marzipano.js"></script>
 <script>
-    var viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
-        type: 'equirectangular',
-        panorama: '{base_url}/{image_360_filename_base}.png',
-        autoLoad: true
-    }});
-    
-    var fallbackAttempt_{bbl} = 0;
-    
-    // Add error handler for AWS JPG and Git JPG fallback
-    viewer_{bbl}.on('error', function() {{
-        fallbackAttempt_{bbl}++;
-        viewer_{bbl}.destroy();
-        
-        if (fallbackAttempt_{bbl} === 1) {{
-            // Try AWS JPG
-            viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
-                type: 'equirectangular',
-                panorama: '{base_url}/{image_360_filename_base}.jpg',
-                autoLoad: true
-            }});
-            viewer_{bbl}.on('error', arguments.callee);
-        }} else if (fallbackAttempt_{bbl} === 2) {{
-            // Try Git JPG
-            viewer_{bbl} = pannellum.viewer('panorama_{bbl}', {{
-                type: 'equirectangular',
-                panorama: 'images/{bbl}/{image_360_filename_base}.jpg',
-                autoLoad: true
-            }});
-        }}
-    }});
+try {{
+    const viewer_{bbl} = new Marzipano.Viewer(document.querySelector('#pano_{bbl}'));
+    const source_{bbl} = Marzipano.ImageUrlSource.fromString('{base_url}/{image_360_filename_base}.jpg');
+    const geometry_{bbl} = new Marzipano.EquirectGeometry([{{ width: 4096 }}]);
+    const limiter_{bbl} = Marzipano.RectilinearView.limit.traditional(1024, 100*Math.PI/180);
+    const view_{bbl} = new Marzipano.RectilinearView(null, limiter_{bbl});
+    const scene_{bbl} = viewer_{bbl}.createScene({{ source: source_{bbl}, geometry: geometry_{bbl}, view: view_{bbl} }});
+    scene_{bbl}.switchTo();
+}} catch(e) {{
+    document.getElementById('pano_{bbl}').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
+}}
 </script>
 '''
         else:
