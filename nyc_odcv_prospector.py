@@ -2626,10 +2626,16 @@ homepage_html = f"""<!DOCTYPE html>
             position: relative;
         }}
         
+        /* Aggressively prevent any checkmarks */
         .portfolio-tile.selected::after,
-        .portfolio-tile.selected::before {{
+        .portfolio-tile.selected::before,
+        .portfolio-tile::after,
+        .portfolio-tile::before,
+        .portfolio-tile *::after,
+        .portfolio-tile *::before {{
             display: none !important;
             content: none !important;
+            visibility: hidden !important;
         }}
         
         
