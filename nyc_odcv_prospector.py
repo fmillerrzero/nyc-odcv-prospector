@@ -1833,9 +1833,9 @@ for idx, row in all_buildings.iterrows():
         else:
             penalty_breakdown_html = ''  # Empty when no penalty
         
-        # Penalty section
+        # Penalty section - show for all buildings
         penalty_section = ""
-        if penalty_2026 > 0 or penalty_2030 > 0 or compliance_2024 == 'No' or compliance_2030 == 'No':
+        if True:  # Always show LL97 section
             penalty_section = f"""
             <div class="section">
                 <h2 class="section-header">LL97 Compliance Status</h2>
