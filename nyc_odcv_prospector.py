@@ -294,6 +294,10 @@ building_template = """<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="deploy-timestamp" content="{timestamp}">
     <title>{title}</title>
     <style>
         :root {{
@@ -929,7 +933,10 @@ building_template = """<!DOCTYPE html>
         <!-- Section 0.0 - Title -->
         <div class="title-section">
             <div>
-                <h1 style="margin: 0; font-size: 2em; font-weight: 600;">{address}</h1>
+                <h1 style="margin: 0; font-size: 2em; font-weight: 600;">
+                    <span style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 25px; margin-right: 15px; font-size: 0.8em;">#{rank}</span>
+                    {address}
+                </h1>
                 <p style="margin: 5px 0 0 0; opacity: 0.9;">{neighborhood} • {office_occupancy}% avg occupancy {trend_indicator}</p>
             </div>
             <div style="text-align: center;">
@@ -2275,6 +2282,7 @@ document.addEventListener('DOMContentLoaded', function() {{
         # Generate HTML
         html = building_template.format(
             title=f"{main_address} - ODCV Analysis",
+            timestamp=datetime.now().isoformat(),
             address=escape(main_address),
             main_address=escape(main_address),
             hero_image=hero_image,
@@ -2509,6 +2517,10 @@ homepage_html = f"""<!DOCTYPE html>
 <head>
     <title>NYC ODCV Opportunity Rankings | R-Zero</title>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="deploy-timestamp" content="{datetime.now().isoformat()}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
