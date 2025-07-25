@@ -1336,21 +1336,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         name: 'Good AQ Threshold'
                     };
                     
-                    const moderateThreshold = {
-                        x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                        y: Array(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].length).fill(35.4),
-                        mode: 'lines',
-                        line: {color: '#ffff00', dash: 'dash', width: 2},
-                        name: 'Moderate AQ Threshold'
-                    };
+                    // Remove moderateThreshold since it's at 35.4 (off chart)
                     
-                    Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold, moderateThreshold], {
+                    Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold], {
                         title: 'Monthly PM2.5 Levels',
                         yaxis: {
                             title: 'PM2.5 (μg/m³)', 
-                            range: [0, Math.max(20, Math.max(...[8.834139784946236, 8.676130952380953, 8.171075268817205, 8.555225694444443, 0.0, 0.0, 0.0, 13.534976851851852, 8.500805555555555, 8.691922043010754, 9.17602777777778, 10.077876344086022]) * 1.5)]  // Dynamic range with minimum of 20
+                            range: [0, Math.max(20, Math.max(...[8.834139784946236, 8.676130952380953, 8.171075268817205, 8.555225694444443, 0.0, 0.0, 0.0, 13.534976851851852, 8.500805555555555, 8.691922043010754, 9.17602777777778, 10.077876344086022]) * 1.5)],
+                            showgrid: false,  // Remove grid lines
+                            zeroline: false
                         },
-                        xaxis: {title: 'Month'},
+                        xaxis: {
+                            title: 'Month',
+                            showgrid: false  // Remove grid lines
+                        },
                         hovermode: 'x unified',
                         font: {family: 'Inter, sans-serif', size: 16},
                         height: 500

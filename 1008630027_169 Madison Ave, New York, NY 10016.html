@@ -1332,21 +1332,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         name: 'Good AQ Threshold'
                     };
                     
-                    const moderateThreshold = {
-                        x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                        y: Array(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].length).fill(35.4),
-                        mode: 'lines',
-                        line: {color: '#ffff00', dash: 'dash', width: 2},
-                        name: 'Moderate AQ Threshold'
-                    };
+                    // Remove moderateThreshold since it's at 35.4 (off chart)
                     
-                    Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold, moderateThreshold], {
+                    Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold], {
                         title: 'Monthly PM2.5 Levels',
                         yaxis: {
                             title: 'PM2.5 (μg/m³)', 
-                            range: [0, Math.max(20, Math.max(...[6.5828494623655915, 6.299940476190477, 6.132647849462365, 6.101475694444445, 11.80220430107527, 9.909125, 10.67967741935484, 9.875779569892472, 6.489097222222222, 6.327439964157707, 6.164333333333333, 9.090120967741935]) * 1.5)]  // Dynamic range with minimum of 20
+                            range: [0, Math.max(20, Math.max(...[6.5828494623655915, 6.299940476190477, 6.132647849462365, 6.101475694444445, 11.80220430107527, 9.909125, 10.67967741935484, 9.875779569892472, 6.489097222222222, 6.327439964157707, 6.164333333333333, 9.090120967741935]) * 1.5)],
+                            showgrid: false,  // Remove grid lines
+                            zeroline: false
                         },
-                        xaxis: {title: 'Month'},
+                        xaxis: {
+                            title: 'Month',
+                            showgrid: false  // Remove grid lines
+                        },
                         hovermode: 'x unified',
                         font: {family: 'Inter, sans-serif', size: 16},
                         height: 500

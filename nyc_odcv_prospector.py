@@ -1856,21 +1856,20 @@ for idx, row in all_buildings.iterrows():
                         name: 'Good AQ Threshold'
                     }};
                     
-                    const moderateThreshold = {{
-                        x: {monthly_dates},
-                        y: Array({monthly_dates}.length).fill(35.4),
-                        mode: 'lines',
-                        line: {{color: '#ffff00', dash: 'dash', width: 2}},
-                        name: 'Moderate AQ Threshold'
-                    }};
+                    // Remove moderateThreshold since it's at 35.4 (off chart)
                     
-                    Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold, moderateThreshold], {{
+                    Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold], {{
                         title: 'Monthly PM2.5 Levels',
                         yaxis: {{
                             title: 'PM2.5 (μg/m³)', 
-                            range: [0, Math.max(20, Math.max(...{monthly_means}) * 1.5)]  // Dynamic range with minimum of 20
+                            range: [0, Math.max(20, Math.max(...{monthly_means}) * 1.5)],
+                            showgrid: false,  // Remove grid lines
+                            zeroline: false
                         }},
-                        xaxis: {{title: 'Month'}},
+                        xaxis: {{
+                            title: 'Month',
+                            showgrid: false  // Remove grid lines
+                        }},
                         hovermode: 'x unified',
                         font: {{family: 'Inter, sans-serif', size: 16}},
                         height: 500
