@@ -14,7 +14,8 @@
             --border: #e2e8f0;
             --success: #38a169;
             --warning: #ffc107;
-            --danger: #dc3545;
+            --danger: #c41e3a;
+            --text-red: #c41e3a;  /* Darker, more visible red */
         }
         
         body { 
@@ -159,7 +160,7 @@
         }
         
         .stat-value.large.below-target {
-            color: #dc3545;
+            color: #c41e3a;
         }
         
         /* Images */
@@ -580,7 +581,7 @@
         }
         
         .gauge-number.below-target {
-            color: #dc3545;
+            color: #c41e3a;
         }
         
         .gauge-visual {
@@ -594,7 +595,7 @@
         
         .gauge-fill {
             height: 100%;
-            background: linear-gradient(to right, #dc3545, #ffc107, #38a169);
+            background: linear-gradient(to right, #c41e3a, #ffc107, #38a169);
             border-radius: 15px;
             transition: width 0.5s ease;
         }
@@ -632,7 +633,7 @@
         <div class="title-section">
             <div>
                 <h1 style="margin: 0; font-size: 2em; font-weight: 600;">110 E 55th St, New York, NY 10022</h1>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">East Midtown-Turtle Bay • 92% avg occupancy <span style="color: #dc3545;">↓ 1.8% YoY</span></p>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">East Midtown-Turtle Bay • 92% avg occupancy <span style="color: #c41e3a; font-weight: 600;">↓ 1.8% YoY</span></p>
             </div>
             <div style="text-align: center;">
                 <div style="font-size: 0.9em; opacity: 0.8; margin-bottom: 5px;">2026 ODCV Savings</div>
@@ -822,7 +823,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <svg viewBox="0 0 200 120" style="width: 200px; height: 120px;">
                             <!-- Background arc removed for cleaner look -->
                             <!-- Colored sections -->
-                            <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
+                            <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#c41e3a" stroke-width="20"/>
                             <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
                             <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
                             <!-- Score number in center -->
@@ -937,7 +938,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div>
                                 <div style="color: #666;">2030-2034</div>
-                                <div style="font-size: 1.5em; font-weight: bold; color: #dc3545;">$453</div>
+                                <div style="font-size: 1.5em; font-weight: bold; color: #c41e3a;">$453</div>
                             </div>
                         </div>
                     </div>

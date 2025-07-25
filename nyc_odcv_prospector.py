@@ -301,7 +301,8 @@ building_template = """<!DOCTYPE html>
             --border: #e2e8f0;
             --success: #38a169;
             --warning: #ffc107;
-            --danger: #dc3545;
+            --danger: #c41e3a;
+            --text-red: #c41e3a;  /* Darker, more visible red */
         }}
         
         body {{ 
@@ -446,7 +447,7 @@ building_template = """<!DOCTYPE html>
         }}
         
         .stat-value.large.below-target {{
-            color: #dc3545;
+            color: #c41e3a;
         }}
         
         /* Images */
@@ -867,7 +868,7 @@ building_template = """<!DOCTYPE html>
         }}
         
         .gauge-number.below-target {{
-            color: #dc3545;
+            color: #c41e3a;
         }}
         
         .gauge-visual {{
@@ -881,7 +882,7 @@ building_template = """<!DOCTYPE html>
         
         .gauge-fill {{
             height: 100%;
-            background: linear-gradient(to right, #dc3545, #ffc107, #38a169);
+            background: linear-gradient(to right, #c41e3a, #ffc107, #38a169);
             border-radius: 15px;
             transition: width 0.5s ease;
         }}
@@ -1032,7 +1033,7 @@ building_template = """<!DOCTYPE html>
                         <svg viewBox="0 0 200 120" style="width: 200px; height: 120px;">
                             <!-- Background arc removed for cleaner look -->
                             <!-- Colored sections -->
-                            <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
+                            <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#c41e3a" stroke-width="20"/>
                             <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
                             <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
                             <!-- Score number in center -->
@@ -1542,9 +1543,9 @@ for idx, row in all_buildings.iterrows():
                 target = float(target_energy_star)
                 delta = target - current
                 if delta > 0:
-                    energy_star_delta = f'<span style="color: #dc3545;">↑ {delta:.0f} needed</span>'
+                    energy_star_delta = f'<span style="color: #c41e3a;">↑ {delta:.0f} needed</span>'
                     energy_star_class = "below-target"
-                    energy_star_color = "#dc3545"
+                    energy_star_color = "#c41e3a"
                 else:
                     energy_star_delta = f'<span style="color: #38a169;">✓ Exceeds target by {abs(delta):.0f}</span>'
                     energy_star_color = "#00769d"
@@ -1589,9 +1590,9 @@ for idx, row in all_buildings.iterrows():
             
             # Format trend indicator
             if occupancy_trend < 0:
-                trend_indicator = f'<span style="color: #dc3545;">↓ {abs(occupancy_trend)}% YoY</span>'
+                trend_indicator = f'<span style="color: #c41e3a; font-weight: 600;">↓ {abs(occupancy_trend)}% YoY</span>'
             else:
-                trend_indicator = f'<span style="color: #38a169;">↑ {occupancy_trend}% YoY</span>'
+                trend_indicator = f'<span style="color: #38a169; font-weight: 600;">↑ {occupancy_trend}% YoY</span>'
         else:
             # Default case for unmapped areas
             neighborhood_avg = 88
@@ -1643,7 +1644,7 @@ for idx, row in all_buildings.iterrows():
         if adjustment_ratio > 1.1:
             occupancy_adjustment_text = f'<span style="color: #38a169;">+{((adjustment_ratio - 1) * 100):.0f}% ODCV opportunity due to occupancy patterns</span>'
         elif adjustment_ratio < 0.9:
-            occupancy_adjustment_text = f'<span style="color: #dc3545;">{((adjustment_ratio - 1) * 100):.0f}% ODCV opportunity due to high occupancy</span>'
+            occupancy_adjustment_text = f'<span style="color: #c41e3a;">{((adjustment_ratio - 1) * 100):.0f}% ODCV opportunity due to high occupancy</span>'
         else:
             occupancy_adjustment_text = '<span style="color: #666;">Standard ODCV opportunity for this occupancy level</span>'
         
@@ -1704,11 +1705,11 @@ for idx, row in all_buildings.iterrows():
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div>
                                 <div style="color: #666;">2026-2029</div>
-                                <div style="font-size: 1.5em; font-weight: bold; color: {'#dc3545' if penalty_2026 > 0 else '#28a745'};">${penalty_2026:,.0f}</div>
+                                <div style="font-size: 1.5em; font-weight: bold; color: {'#c41e3a' if penalty_2026 > 0 else '#28a745'};">${penalty_2026:,.0f}</div>
                             </div>
                             <div>
                                 <div style="color: #666;">2030-2034</div>
-                                <div style="font-size: 1.5em; font-weight: bold; color: {'#dc3545' if penalty_2030 > 0 else '#28a745'};">${penalty_2030:,.0f}</div>
+                                <div style="font-size: 1.5em; font-weight: bold; color: {'#c41e3a' if penalty_2030 > 0 else '#28a745'};">${penalty_2030:,.0f}</div>
                             </div>
                         </div>
                     </div>
@@ -2477,7 +2478,7 @@ homepage_html = f"""<!DOCTYPE html>
         }}
         
         .yes {{ color: #38a169; font-weight: bold; }}
-        .no {{ color: #dc3545; font-weight: bold; }}
+        .no {{ color: #c41e3a; font-weight: bold; }}
         
         a {{ 
             color: var(--rzero-primary); 
@@ -2487,7 +2488,7 @@ homepage_html = f"""<!DOCTYPE html>
         
         
         .urgent {{ 
-            color: #dc3545; 
+            color: #c41e3a; 
             font-weight: bold; 
         }}
         
@@ -2697,7 +2698,7 @@ homepage_html = f"""<!DOCTYPE html>
                 <div class="stat-label">Year One Savings</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" style="color: #dc3545;">{urgent}</div>
+                <div class="stat-value" style="color: #c41e3a;">{urgent}</div>
                 <div class="stat-label">Buildings facing ${total_penalties/1000000:.1f}M 2026 LL97 Penalties</div>
             </div>
             <div class="stat-card">
@@ -2757,7 +2758,7 @@ homepage_html += f"""
 homepage_html += f"""
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()" style="flex: 1; margin: 0;">
-            <button onclick="clearAllFilters()" style="background: #dc3545; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s;">
+            <button onclick="clearAllFilters()" style="background: #c41e3a; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s;">
                 Clear Filter
             </button>
         </div>
