@@ -14,6 +14,11 @@ python3 nyc_odcv_prospector.py
 
 echo "🟢 Fresh reports regenerated successfully."
 
+# Step 2.5: Copy generated reports to git repository
+cp -r "/Users/forrestmiller/Desktop/building_reports/"* "/Users/forrestmiller/Desktop/nyc-odcv-prospector/building_reports/"
+
+echo "🟢 Reports copied to git repository."
+
 # Step 3: Automatically commit and push everything to GitHub (triggers Render deployment automatically)
 git add .
 git commit -m "FULLY AUTOMATED deployment: regenerated all reports fresh"
