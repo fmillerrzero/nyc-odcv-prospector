@@ -292,8 +292,8 @@ building_template = """<!DOCTYPE html>
     <title>{title}</title>
     <style>
         :root {{
-            --rzero-primary: #00769d;
-            --rzero-primary-dark: #005f7e;
+            --rzero-primary: #0066cc;
+            --rzero-primary-dark: #0052a3;
             --rzero-light-blue: #f0f7fa;
             --rzero-background: #f4fbfd;
             --text-dark: #1a202c;
@@ -323,7 +323,7 @@ building_template = """<!DOCTYPE html>
         
         /* Section 0 - Title */
         .title-section {{
-            background: linear-gradient(to right, #00769d, #005f7e);
+            background: linear-gradient(to right, #0066cc, #0052a3);
             color: white;
             padding: 30px 40px;
             display: flex;
@@ -1124,13 +1124,20 @@ building_template = """<!DOCTYPE html>
     <script>
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         
-        // R-Zero brand colors
+        // R-Zero brand colors with distinct energy type colors
         const rzeroColors = {{
-            primary: '#00769d',
-            secondary: '#005f7e',
-            success: '#38a169',
-            accent1: '#17a2b8',
-            accent2: '#20c997'
+            primary: '#0066cc',      // Blue for electricity
+            secondary: '#ff6b35',    // Orange for gas  
+            success: '#38a169',      // Keep green
+            accent1: '#ff6b35',      // Orange for gas
+            accent2: '#8b5cf6'       // Purple for steam
+        }};
+        
+        // Energy type colors for clarity
+        const energyColors = {{
+            electricity: '#0066cc',  // Blue - like electrical current
+            gas: '#ff6b35',         // Orange - like gas flame
+            steam: '#8b5cf6'        // Purple - like steam/vapor
         }};
         
         // Unit conversion functions
@@ -1520,7 +1527,7 @@ for idx, row in all_buildings.iterrows():
         # Calculate delta if both scores exist
         energy_star_delta = ""
         energy_star_class = ""
-        energy_star_color = "#00769d"
+        energy_star_color = "#0066cc"
         energy_star_gauge_width = "0"
         
         # Calculate needle position for SVG
@@ -1549,7 +1556,7 @@ for idx, row in all_buildings.iterrows():
                     energy_star_color = "#c41e3a"
                 else:
                     energy_star_delta = f'<span style="color: #38a169;">✓ Exceeds target by {abs(delta):.0f}</span>'
-                    energy_star_color = "#00769d"
+                    energy_star_color = "#0066cc"
             except:
                 pass
         
@@ -2313,8 +2320,8 @@ homepage_html = f"""<!DOCTYPE html>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --rzero-primary: #00769d;
-            --rzero-primary-dark: #005f7e;
+            --rzero-primary: #0066cc;
+            --rzero-primary-dark: #0052a3;
             --rzero-light-blue: #f0f7fa;
             --rzero-background: #ffffff;
         }}

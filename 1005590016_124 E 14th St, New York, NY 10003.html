@@ -5,8 +5,8 @@
     <title>124 E 14th St, New York, NY 10003 - ODCV Analysis</title>
     <style>
         :root {
-            --rzero-primary: #00769d;
-            --rzero-primary-dark: #005f7e;
+            --rzero-primary: #0066cc;
+            --rzero-primary-dark: #0052a3;
             --rzero-light-blue: #f0f7fa;
             --rzero-background: #f4fbfd;
             --text-dark: #1a202c;
@@ -36,7 +36,7 @@
         
         /* Section 0 - Title */
         .title-section {
-            background: linear-gradient(to right, #00769d, #005f7e);
+            background: linear-gradient(to right, #0066cc, #0052a3);
             color: white;
             padding: 30px 40px;
             display: flex;
@@ -827,7 +827,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
                             <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
                             <!-- Score number in center -->
-                            <text x="100" y="85" text-anchor="middle" font-size="36" font-weight="bold" fill="#00769d">36</text>
+                            <text x="100" y="85" text-anchor="middle" font-size="36" font-weight="bold" fill="#0066cc">36</text>
                             <!-- Needle removed for cleaner look -->
                             <!-- <line x1="100" y1="100" x2="163.3379047450841" y2="129.8045268793627" stroke="#333" stroke-width="3" stroke-linecap="round"/> -->
                             <!-- <circle cx="100" cy="100" r="6" fill="#333"/> -->
@@ -998,13 +998,20 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         
-        // R-Zero brand colors
+        // R-Zero brand colors with distinct energy type colors
         const rzeroColors = {
-            primary: '#00769d',
-            secondary: '#005f7e',
-            success: '#38a169',
-            accent1: '#17a2b8',
-            accent2: '#20c997'
+            primary: '#0066cc',      // Blue for electricity
+            secondary: '#ff6b35',    // Orange for gas  
+            success: '#38a169',      // Keep green
+            accent1: '#ff6b35',      // Orange for gas
+            accent2: '#8b5cf6'       // Purple for steam
+        };
+        
+        // Energy type colors for clarity
+        const energyColors = {
+            electricity: '#0066cc',  // Blue - like electrical current
+            gas: '#ff6b35',         // Orange - like gas flame
+            steam: '#8b5cf6'        // Purple - like steam/vapor
         };
         
         // Unit conversion functions

@@ -5,8 +5,8 @@
     <title>55 W 47th St, New York, NY 10036 - ODCV Analysis</title>
     <style>
         :root {
-            --rzero-primary: #00769d;
-            --rzero-primary-dark: #005f7e;
+            --rzero-primary: #0066cc;
+            --rzero-primary-dark: #0052a3;
             --rzero-light-blue: #f0f7fa;
             --rzero-background: #f4fbfd;
             --text-dark: #1a202c;
@@ -36,7 +36,7 @@
         
         /* Section 0 - Title */
         .title-section {
-            background: linear-gradient(to right, #00769d, #005f7e);
+            background: linear-gradient(to right, #0066cc, #0052a3);
             color: white;
             padding: 30px 40px;
             display: flex;
@@ -998,13 +998,20 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         
-        // R-Zero brand colors
+        // R-Zero brand colors with distinct energy type colors
         const rzeroColors = {
-            primary: '#00769d',
-            secondary: '#005f7e',
-            success: '#38a169',
-            accent1: '#17a2b8',
-            accent2: '#20c997'
+            primary: '#0066cc',      // Blue for electricity
+            secondary: '#ff6b35',    // Orange for gas  
+            success: '#38a169',      // Keep green
+            accent1: '#ff6b35',      // Orange for gas
+            accent2: '#8b5cf6'       // Purple for steam
+        };
+        
+        // Energy type colors for clarity
+        const energyColors = {
+            electricity: '#0066cc',  // Blue - like electrical current
+            gas: '#ff6b35',         // Orange - like gas flame
+            steam: '#8b5cf6'        // Purple - like steam/vapor
         };
         
         // Unit conversion functions
