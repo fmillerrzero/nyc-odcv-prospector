@@ -320,111 +320,57 @@ building_template = """<!DOCTYPE html>
         }}
         
         /* Section 0 - Title */
-        .title-section {{ 
-            position: relative; 
-            min-height: 140px;
-            background: white; 
-            overflow: visible;
+        .title-section {{
+            background: linear-gradient(to right, #00769d, #005f7e);
+            color: white;
+            padding: 30px 40px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }}
-        
-        .hero-image {{ 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            opacity: 0.3; 
-            mix-blend-mode: overlay;
-        }}
-        
-        .title-overlay {{ 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            right: 0; 
-            bottom: 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: rgba(0, 118, 157, 0.8);
-        }}
-        
-        .title-content {{ 
-            text-align: center; 
-            color: #333333; 
-            width: 100%;
-            max-width: 800px;
-            padding: 0 20px;
-        }}
-        .title-content h1 {{ 
-            font-size: 2.2em; 
-            margin: 0; 
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            word-wrap: break-word;
-        }}
-        
-        .neighborhood-subtitle {{
-            font-size: 1.1em;
-            color: #666;
-            margin: 8px 0 0 0;
-            text-align: center;
-        }}
-        
-        .logo-container {{ 
-            position: absolute; 
-            top: 20px;
-            right: 20px;
-            background: white; 
-            padding: 12px 18px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 10;
-        }}
-        
-        .rzero-logo {{ 
-            width: 120px;
-            height: auto;
-        }}
-        
-        .odcv-badge {{
-            font-size: 0.85em;
-            color: var(--rzero-primary);
-            font-weight: 600;
-            padding: 4px 10px;
-            background: var(--rzero-light-blue);
-            border-radius: 20px;
         }}
         
         /* Section styling */
         .section {{ 
-            padding: 20px; 
-            border-bottom: 1px solid var(--border); 
+            padding: 40px 20px; 
+            border-bottom: 3px solid var(--rzero-primary); 
+            background: white;
+            position: relative;
+        }}
+        
+        .section:nth-child(even) {{
+            background: #f8fafb;
+        }}
+        
+        .section::after {{
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(0, 118, 157, 0.05), transparent);
         }}
         
         .section-header {{ 
-            font-size: 1.8em; 
+            font-size: 2em; 
             color: var(--rzero-primary); 
-            margin-bottom: 30px; 
-            font-weight: 600;
+            margin-bottom: 40px; 
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 118, 157, 0.2);
         }}
         
         .section-header::before {{
             content: '';
-            width: 4px;
-            height: 30px;
+            width: 6px;
+            height: 40px;
             background: var(--rzero-primary);
-            border-radius: 2px;
+            border-radius: 3px;
         }}
+        
         
         .page {{ margin-bottom: 40px; }}
         .page-title {{ 
@@ -454,7 +400,13 @@ building_template = """<!DOCTYPE html>
             color: white;
             border-color: var(--rzero-primary);
         }}
-        .chart-container {{ transition: opacity 0.3s ease; }}
+        .chart-container {{ 
+            transition: opacity 0.3s ease; 
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }}
         
         /* Stats and info */
         .stat {{ 
@@ -510,11 +462,13 @@ building_template = """<!DOCTYPE html>
         
         /* Graphs */
         .chart {{ 
-            margin: 20px 0; 
+            margin: 20px auto; 
             background: #f8f8f8; 
-            padding: 15px; 
-            border-radius: 4px;
+            padding: 20px; 
+            border-radius: 8px;
             border: 1px solid #ddd;
+            width: 100%;
+            max-width: 1200px;
         }}
         
         .chart-title {{ 
@@ -772,7 +726,7 @@ building_template = """<!DOCTYPE html>
         .carousel-container {{
             position: relative;
             width: 100%;
-            height: 900px;  /* Increased from 600px */
+            height: 900px;
             overflow: hidden;
             border-radius: 12px;
             margin: 20px 0;
@@ -782,13 +736,14 @@ building_template = """<!DOCTYPE html>
             display: flex;
             transition: transform 0.3s ease;
             height: 100%;
-            margin: 0 -5%;  /* Add negative margin to show edges */
         }}
         
         .carousel-slide {{
-            min-width: 90%;  /* Changed from 100% to show edges */
+            min-width: 100%;
             height: 100%;
-            margin: 0 5%;  /* Add margin between slides */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
         
         .carousel-slide img {{
@@ -951,21 +906,17 @@ building_template = """<!DOCTYPE html>
 
         <!-- Section 0.0 - Title -->
         <div class="title-section">
-            <div class="title-content">
-                <h1>{address}</h1>
-                <p class="neighborhood-subtitle">{neighborhood} • {office_occupancy}% occupancy {trend_indicator}</p>
+            <div>
+                <h1 style="margin: 0; font-size: 2em; font-weight: 600;">{address}</h1>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">{neighborhood} • {office_occupancy}% occupancy {trend_indicator}</p>
             </div>
-            <div class="logo-container">
-                <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo">
-                <span class="odcv-badge">ODCV Prospecting: NYC</span>
-            </div>
-        </div>
-        
-        <div class="highlight-box" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 25px;">
-            <h4 style="margin: 0; font-size: 1.2em;">2026 ODCV Savings</h4>
-            <div style="font-size: 2em; font-weight: bold; color: var(--rzero-primary); margin: 0;">${total_2026_savings:,.0f}</div>
-            <div style="font-size: 0.9em; color: #666; text-align: right;">
+            <div style="text-align: center;">
+                <div style="font-size: 0.9em; opacity: 0.8; margin-bottom: 5px;">2026 ODCV Savings</div>
+                <div style="font-size: 2.5em; font-weight: 700;">${total_2026_savings:,.0f}</div>
                 {penalty_breakdown_html}
+            </div>
+            <div style="background: white; padding: 10px 15px; border-radius: 8px;">
+                <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero" style="height: 40px;">
             </div>
         </div>
         
@@ -1063,30 +1014,28 @@ building_template = """<!DOCTYPE html>
                 <h3 class="page-title">Performance</h3>
                 <div class="stat">
                     <span class="stat-label">ENERGY STAR Score: </span>
-                    <div class="energy-star-gauge">
-                        <div class="gauge-number {energy_star_class}">{energy_star}</div>
-                        <div class="gauge-container">
-                            <svg viewBox="0 0 200 120" style="width: 100%; max-width: 300px; margin: 0 auto; display: block;">
-                                <!-- Background arc -->
-                                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="20"/>
-                                <!-- Colored sections -->
-                                <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
-                                <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
-                                <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
-                                <!-- Needle -->
-                                <line x1="100" y1="100" x2="{needle_x}" y2="{needle_y}" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-                                <circle cx="100" cy="100" r="8" fill="#333"/>
-                                <!-- Labels -->
-                                <text x="20" y="115" text-anchor="middle" font-size="12" fill="#666">0</text>
-                                <text x="100" y="20" text-anchor="middle" font-size="12" fill="#666">50</text>
-                                <text x="180" y="115" text-anchor="middle" font-size="12" fill="#666">100</text>
-                            </svg>
+                    <div style="display: flex; align-items: center; gap: 30px;">
+                        <svg viewBox="0 0 200 120" style="width: 200px; height: 120px;">
+                            <!-- Background arc -->
+                            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                            <!-- Colored sections -->
+                            <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
+                            <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
+                            <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
+                            <!-- Score number in center -->
+                            <text x="100" y="85" text-anchor="middle" font-size="36" font-weight="bold" fill="{energy_star_color}">{energy_star}</text>
+                            <!-- Needle -->
+                            <line x1="100" y1="100" x2="{needle_x}" y2="{needle_y}" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="100" cy="100" r="6" fill="#333"/>
+                            <!-- Labels -->
+                            <text x="20" y="115" text-anchor="middle" font-size="12" fill="#666">0</text>
+                            <text x="180" y="115" text-anchor="middle" font-size="12" fill="#666">100</text>
+                        </svg>
+                        <div>
+                            <div style="font-size: 0.9em; color: #666;">Target Score: {target_energy_star}</div>
+                            <div style="font-size: 1.1em; margin-top: 5px;">{energy_star_delta}</div>
                         </div>
                     </div>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Target ENERGY STAR Score: </span>
-                    <span class="stat-value">{target_energy_star} {energy_star_delta}</span>
                 </div>
                 {energy_star_discrepancy_html}
                 <div class="stat">
@@ -1189,7 +1138,8 @@ building_template = """<!DOCTYPE html>
             name: 'Elec', 
             type: 'scatter', 
             mode: 'lines+markers', 
-            line: {{color: rzeroColors.primary, width: 3}},
+            line: {{color: rzeroColors.primary, width: 5}},
+            marker: {{size: 10}},
             hovertemplate: '%{{x}}<br>Elec: %{{y:,.0s}} kBtu<br>(%{{customdata}} kWh)<extra></extra>',
             customdata: {elec_usage}.map(v => formatValue(kBtuToKwh(v)))
         }};
@@ -1200,7 +1150,8 @@ building_template = """<!DOCTYPE html>
             name: 'Gas', 
             type: 'scatter', 
             mode: 'lines+markers', 
-            line: {{color: rzeroColors.accent1, width: 3}},
+            line: {{color: rzeroColors.accent1, width: 5}},
+            marker: {{size: 10}},
             hovertemplate: '%{{x}}<br>Gas: %{{y:,.0s}} kBtu<br>(%{{customdata}} Therms)<extra></extra>',
             customdata: {gas_usage}.map(v => formatValue(kBtuToTherms(v)))
         }};
@@ -1211,7 +1162,8 @@ building_template = """<!DOCTYPE html>
             name: 'Steam', 
             type: 'scatter', 
             mode: 'lines+markers', 
-            line: {{color: rzeroColors.accent2, width: 3}},
+            line: {{color: rzeroColors.accent2, width: 5}},
+            marker: {{size: 10}},
             hovertemplate: '%{{x}}<br>Steam: %{{y:,.0s}} kBtu<br>(%{{customdata}} lb)<extra></extra>',
             customdata: {steam_usage}.map(v => formatValue(kBtuToLbs(v)))
         }};
@@ -1231,15 +1183,15 @@ building_template = """<!DOCTYPE html>
                     showgrid: false
                 }},
                 hovermode: 'x unified',
-                font: {{family: 'Inter, sans-serif'}},
-                height: 400
+                font: {{family: 'Inter, sans-serif', size: 16}},
+                height: 500
             }}, {{displayModeBar: false}});
         }}
         
         // Building Energy Cost Chart
-        const elecCost = {{x: months, y: {elec_cost}, name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary, width: 3}}}};
-        const gasCost = {{x: months, y: {gas_cost}, name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1, width: 3}}}};
-        const steamCost = {{x: months, y: {steam_cost}, name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2, width: 3}}}};
+        const elecCost = {{x: months, y: {elec_cost}, name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary, width: 5}}, marker: {{size: 10}}}};
+        const gasCost = {{x: months, y: {gas_cost}, name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1, width: 5}}, marker: {{size: 10}}}};
+        const steamCost = {{x: months, y: {steam_cost}, name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2, width: 5}}, marker: {{size: 10}}}};
         
         const costData = [elecCost, gasCost, steamCost].filter(d => d.y.some(v => v > 0));
         
@@ -1250,14 +1202,20 @@ building_template = """<!DOCTYPE html>
                     title: 'USD',
                     tickformat: '$,.0f',
                     rangemode: 'tozero',
-                    showgrid: false
+                    showgrid: true,
+                    gridcolor: '#e0e0e0',
+                    tickfont: {{size: 16}},
+                    titlefont: {{size: 18}}
                 }},
                 xaxis: {{
-                    showgrid: false
+                    showgrid: false,
+                    tickfont: {{size: 16}}
                 }},
                 hovermode: 'x unified',
-                font: {{family: 'Inter, sans-serif'}},
-                height: 400
+                font: {{family: 'Inter, sans-serif', size: 16}},
+                legend: {{font: {{size: 16}}}},
+                height: 500,
+                margin: {{l: 80, r: 50, t: 50, b: 80}}
             }}, {{displayModeBar: false}});
         }}
         
@@ -1275,15 +1233,15 @@ building_template = """<!DOCTYPE html>
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 barmode: 'group',
-                font: {{family: 'Inter, sans-serif'}},
-                height: 400
+                font: {{family: 'Inter, sans-serif', size: 16}},
+                height: 500
             }}, {{displayModeBar: false}});
         }}
         
         // Office Cost Chart
-        const officeElecCost = {{x: months, y: {office_elec_cost}, name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary, width: 3}}}};
-        const officeGasCost = {{x: months, y: {office_gas_cost}, name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1, width: 3}}}};
-        const officeSteamCost = {{x: months, y: {office_steam_cost}, name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2, width: 3}}}};
+        const officeElecCost = {{x: months, y: {office_elec_cost}, name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary, width: 5}}, marker: {{size: 10}}}};
+        const officeGasCost = {{x: months, y: {office_gas_cost}, name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1, width: 5}}, marker: {{size: 10}}}};
+        const officeSteamCost = {{x: months, y: {office_steam_cost}, name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2, width: 5}}, marker: {{size: 10}}}};
         
         const officeCostData = [officeElecCost, officeGasCost, officeSteamCost].filter(d => d.y.some(v => v > 0));
         
@@ -1293,8 +1251,8 @@ building_template = """<!DOCTYPE html>
                 yaxis: {{title: 'USD', tickformat: '$,.0f', rangemode: 'tozero', showgrid: false}},
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
-                font: {{family: 'Inter, sans-serif'}},
-                height: 400
+                font: {{family: 'Inter, sans-serif', size: 16}},
+                height: 500
             }}, {{displayModeBar: false}});
         }}
         
@@ -1320,8 +1278,8 @@ building_template = """<!DOCTYPE html>
                 title: 'Hybrid Work Pattern - {neighborhood_name}',
                 yaxis: {{title: 'Relative Occupancy %', range: [0, 110]}},
                 xaxis: {{title: 'Day of Week'}},
-                font: {{family: 'Inter, sans-serif'}},
-                height: 400
+                font: {{family: 'Inter, sans-serif', size: 16}},
+                height: 500
             }}, {{displayModeBar: false}});
         }}, 100);
         
@@ -1334,7 +1292,8 @@ building_template = """<!DOCTYPE html>
             mode: 'lines+markers', 
             fill: 'tozeroy', 
             fillcolor: 'rgba(0, 118, 157, 0.1)', 
-            line: {{color: rzeroColors.primary, width: 3}}
+            line: {{color: rzeroColors.primary, width: 5}},
+            marker: {{size: 10}}
         }};
         
         // Calculate average HVAC percentage
@@ -1352,8 +1311,8 @@ building_template = """<!DOCTYPE html>
                 showgrid: false
             }},
             hovermode: 'x unified',
-            font: {{family: 'Inter, sans-serif'}},
-            height: 400,
+            font: {{family: 'Inter, sans-serif', size: 16}},
+            height: 500,
             shapes: [{{
                 type: 'line',
                 x0: 0, x1: 1,
@@ -1404,8 +1363,8 @@ building_template = """<!DOCTYPE html>
                 }},
                 hovermode: 'x unified',
                 barmode: 'stack',
-                font: {{family: 'Inter, sans-serif'}},
-                height: 400
+                font: {{family: 'Inter, sans-serif', size: 16}},
+                height: 500
             }}, {{displayModeBar: false}});
         }}
         
@@ -1423,7 +1382,7 @@ building_template = """<!DOCTYPE html>
             if (carouselIndex[bbl] < 0) carouselIndex[bbl] = slides.length - 1;
             if (carouselIndex[bbl] >= slides.length) carouselIndex[bbl] = 0;
             
-            track.style.transform = `translateX(-${{carouselIndex[bbl] * 90}}%)`;  // Changed from 100% to 90%
+            track.style.transform = `translateX(-${{carouselIndex[bbl] * 100}}%)`;  // Change from 90% to 100%
             
             dots.forEach((dot, i) => {{
                 dot.classList.toggle('active', i === carouselIndex[bbl]);
@@ -1536,6 +1495,7 @@ for idx, row in all_buildings.iterrows():
         # Calculate delta if both scores exist
         energy_star_delta = ""
         energy_star_class = ""
+        energy_star_color = "#00769d"
         energy_star_gauge_width = "0"
         
         # Calculate needle position for SVG
@@ -1561,8 +1521,10 @@ for idx, row in all_buildings.iterrows():
                 if delta > 0:
                     energy_star_delta = f'<span style="color: #dc3545;">↑ {delta:.0f} needed</span>'
                     energy_star_class = "below-target"
+                    energy_star_color = "#dc3545"
                 else:
                     energy_star_delta = f'<span style="color: #38a169;">✓ Exceeds target by {abs(delta):.0f}</span>'
+                    energy_star_color = "#00769d"
             except:
                 pass
         
@@ -1856,7 +1818,8 @@ for idx, row in all_buildings.iterrows():
                         type: 'scatter',
                         mode: 'lines+markers',
                         name: 'Monthly Average',
-                        line: {{color: rzeroColors.primary, width: 3}},
+                        line: {{color: rzeroColors.primary, width: 5}},
+                        marker: {{size: 10}},
                         fill: 'tozeroy',
                         fillcolor: 'rgba(0, 118, 157, 0.1)'
                     }};
@@ -1886,8 +1849,8 @@ for idx, row in all_buildings.iterrows():
                         }},
                         xaxis: {{title: 'Month'}},
                         hovermode: 'x unified',
-                        font: {{family: 'Inter, sans-serif'}},
-                        height: 400
+                        font: {{family: 'Inter, sans-serif', size: 16}},
+                        height: 500
                     }}, {{displayModeBar: false}});
                 }}
                 """
@@ -1957,7 +1920,7 @@ for idx, row in all_buildings.iterrows():
 
             # 360° Street View with Pannellum (configured for partial panoramas with smart yaw)
             street_view_360 = f'''
-<div id="viewer_{bbl}" style="width:100%;height:400px;border-radius:8px;"></div>
+<div id="viewer_{bbl}" style="width:100%;height:600px;border-radius:8px;"></div>
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
 <script>
@@ -2101,6 +2064,7 @@ document.addEventListener('DOMContentLoaded', function() {{
             total_area=total_area,
             energy_star=escape(str(energy_star_display)),
             energy_star_class=energy_star_class,
+            energy_star_color=energy_star_color,
             energy_star_gauge_width=energy_star_gauge_width,
             needle_x=needle_x,
             needle_y=needle_y,
@@ -2368,6 +2332,9 @@ homepage_html = f"""<!DOCTYPE html>
             gap: 10px;
         }}
         
+        details summary {{
+            list-style: none;
+        }}
         details summary::-webkit-details-marker {{
             display: none;
         }}
@@ -2659,7 +2626,7 @@ homepage_html = f"""<!DOCTYPE html>
             margin-top: 0;
         }}
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt_cBgP_yqhIzUacpoz6TAVupvhmA0ZBA&libraries=places&callback=initMap&loading=async" async defer></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt_cBgP_yqhIzUacpoz6TAVupvhmA0ZBA&libraries=places&callback=initMap&loading=async" async defer></script> -->
 </head>
 <body>
     <div class="container">
@@ -2713,8 +2680,8 @@ if top_portfolios:
 homepage_html += f"""
         <div class="info-box">
             <details>
-                <summary style="cursor: pointer; font-size: 1.5em; color: var(--rzero-primary); font-weight: 600; padding: 10px 0;">
-                    Understanding the Rankings <span style="font-size: 0.8em;">▼</span>
+                <summary style="cursor: pointer; font-size: 1.5em; color: var(--rzero-primary); font-weight: 600; padding: 10px 0; list-style: none;">
+                    Understanding the Rankings <span style="font-size: 0.8em; transition: transform 0.3s;">▼</span>
                 </summary>
                 <div style="margin-top: 15px;">
                     <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
@@ -2837,14 +2804,9 @@ homepage_html += f"""
 
 homepage_html += """
     <script>
+    // Initialize Google Maps when ready
     function initMap() {
-        const searchInput = document.getElementById('search');
-        if (searchInput) {
-            const autocomplete = new google.maps.places.Autocomplete(searchInput, {
-                types: ['address'],
-                componentRestrictions: { country: 'US' }
-            });
-        }
+        // Google Maps disabled for now due to API issues
     }
     
     let activeOwnerFilter = null;
@@ -2859,10 +2821,10 @@ homepage_html += """
         rows.sort((a, b) => {
             let aVal, bVal;
             
-            if (col === 5) {  // Annual Savings column
+            if (col === 5) {
                 aVal = parseFloat(a.cells[col].getAttribute('data-value') || 0);
                 bVal = parseFloat(b.cells[col].getAttribute('data-value') || 0);
-            } else if (col === 1 || col === 6) {  // Rank or Score columns
+            } else if (col === 1 || col === 6) {
                 aVal = parseFloat(a.cells[col].textContent.replace('#', '') || 0);
                 bVal = parseFloat(b.cells[col].textContent.replace('#', '') || 0);
             } else {
@@ -2878,163 +2840,38 @@ homepage_html += """
         rows.forEach(row => tbody.appendChild(row));
     }
     
+    function filterTable() {
+        const input = document.getElementById('search').value.toLowerCase();
+        const rows = document.querySelectorAll('#buildingTable tbody tr');
+        
+        rows.forEach(row => {
+            const searchText = row.getAttribute('data-search');
+            const matchesSearch = searchText && searchText.includes(input);
+            row.style.display = matchesSearch ? '' : 'none';
+        });
+    }
+    
     function filterByOwner(ownerName) {
         const rows = document.querySelectorAll('#buildingTable tbody tr');
         rows.forEach(row => {
-            const ownerCell = row.cells[3]; // Owner column index
+            const ownerCell = row.cells[3];
             const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
             row.style.display = isMatch ? '' : 'none';
         });
     }
-
+    
     function filterByManager(managerName) {
         const rows = document.querySelectorAll('#buildingTable tbody tr');
         rows.forEach(row => {
-            const managerCell = row.cells[4]; // Property Manager column index
+            const managerCell = row.cells[4];
             const isMatch = managerCell && managerCell.textContent.trim() === managerName;
             row.style.display = isMatch ? '' : 'none';
         });
     }
     
-    function filterTable() {{
-        const input = document.getElementById('search').value.toLowerCase();
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        
-        // Clear owner filter if user starts typing
-        if (input && activeOwnerFilter) {{
-            activeOwnerFilter = null;
-            // Remove active styling from all tiles
-            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
-                tile.style.outline = '';
-                tile.style.boxShadow = '';
-            }});
-        }}
-        
-        rows.forEach(row => {{
-            const searchText = row.getAttribute('data-search');
-            const matchesSearch = searchText.includes(input);
-            
-            // Check if row matches owner filter (if active)
-            let matchesOwner = true;
-            if (activeOwnerFilter) {{
-                const ownerCell = row.cells[3];
-                matchesOwner = ownerCell && ownerCell.textContent === activeOwnerFilter;
-            }}
-            
-            row.style.display = (matchesSearch && matchesOwner) ? '' : 'none';
-        }});
-    }}
-    
-    
-    // Filter by owner when clicking portfolio tiles
-    function filterByOwner(ownerName) {{
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        const searchBox = document.getElementById('search');
-        
-        if (activeOwnerFilter === ownerName) {{
-            // If clicking the same owner, reset the filter
-            activeOwnerFilter = null;
-            searchBox.value = '';
-            rows.forEach(row => {{
-                row.style.display = '';
-            }});
-            // Remove active styling from all tiles
-            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
-                tile.style.outline = '';
-                tile.style.boxShadow = '0 4px 12px rgba(0, 118, 157, 0.2)';
-            }});
-        }} else {{
-            // Apply new owner filter
-            activeOwnerFilter = ownerName;
-            searchBox.value = ''; // Clear search box
-            
-            rows.forEach(row => {{
-                const ownerCell = row.cells[3]; // Owner column (0-indexed)
-                const isMatch = ownerCell && ownerCell.textContent === ownerName;
-                row.style.display = isMatch ? '' : 'none';
-            }});
-            
-            // Add active styling to clicked tile
-            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
-                const tileOwner = tile.querySelector('strong').textContent;
-                if (tileOwner === ownerName) {{
-                    tile.style.outline = '3px solid var(--rzero-primary)';
-                    tile.style.boxShadow = '0 4px 16px rgba(0, 118, 157, 0.4)';
-                }} else {{
-                    tile.style.outline = '';
-                    tile.style.boxShadow = '0 4px 12px rgba(0, 118, 157, 0.2)';
-                }}
-            }});
-        }}
-    }}
-    
-    // Back to top
-    function scrollToTop() {{
-        const tableWrapper = document.querySelector('.table-wrapper');
-        const startPosition = tableWrapper.scrollTop;
-        const startTime = performance.now();
-        const duration = 500;
-        
-        function animation(currentTime) {{
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-            
-            tableWrapper.scrollTop = startPosition * (1 - easeOutCubic);
-            
-            if (progress < 1) {{
-                requestAnimationFrame(animation);
-            }}
-        }}
-        
-        requestAnimationFrame(animation);
-    }}
-    
-    // Show/hide back to top based on scroll
-    document.querySelector('.table-wrapper').addEventListener('scroll', function() {{
-        const scrollTop = this.scrollTop;
-        const backToTopBtn = document.getElementById('backToTop');
-        
-        if (scrollTop > 300) {{
-            backToTopBtn.style.display = 'block';
-            backToTopBtn.style.transform = 'scale(1)';
-        }} else {{
-            backToTopBtn.style.transform = 'scale(0)';
-            setTimeout(() => {{
-                if (scrollTop <= 300) {{
-                    backToTopBtn.style.display = 'none';
-                }}
-            }}, 300);
-        }}
-        
-        // Add progress indicator
-        const scrollHeight = this.scrollHeight - this.clientHeight;
-        const scrollProgress = (scrollTop / scrollHeight) * 100;
-        backToTopBtn.style.background = `conic-gradient(var(--rzero-primary) ${{scrollProgress}}%, var(--rzero-primary-dark) ${{scrollProgress}}%)`;
-    }});
-    
-    // Dynamic shadow on scroll
-    document.querySelector('.table-wrapper').addEventListener('scroll', function(e) {{
-        const thead = document.querySelector('thead');
-        if (e.target.scrollTop > 0) {{
-            thead.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
-        }} else {{
-            thead.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-        }}
-    }});
-    
-    
-    // Initialize on page load
-    window.addEventListener('DOMContentLoaded', function() {{
-        // Add tooltips to high-value savings
-        document.querySelectorAll('td[data-value]').forEach(cell => {{
-            const value = parseFloat(cell.getAttribute('data-value'));
-            if (value >= 1000000) {{
-                cell.title = `${{(value/1000000).toFixed(2)}}M annual savings - TOP OPPORTUNITY`;
-            }}
-        }});
-        
-    }});
+    function scrollToTop() {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
     </script>
 </body>
 </html>"""
