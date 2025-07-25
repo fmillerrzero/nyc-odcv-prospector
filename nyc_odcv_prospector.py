@@ -960,6 +960,7 @@ building_template = """<!DOCTYPE html>
                         <div class="carousel-slide">
                             {satellite_image}
                         </div>
+                        {conditional_3d_slide}
                     </div>
                     <button class="carousel-btn carousel-prev" onclick="moveCarousel('{bbl}', -1)">❮</button>
                     <button class="carousel-btn carousel-next" onclick="moveCarousel('{bbl}', 1)">❯</button>
@@ -967,6 +968,7 @@ building_template = """<!DOCTYPE html>
                         <span class="dot active" onclick="goToSlide('{bbl}', 0)"></span>
                         <span class="dot" onclick="goToSlide('{bbl}', 1)"></span>
                         <span class="dot" onclick="goToSlide('{bbl}', 2)"></span>
+                        {conditional_4th_dot}
                     </div>
                 </div>
             </div>
@@ -978,8 +980,6 @@ building_template = """<!DOCTYPE html>
                     {street_view_360}
                 </div>
             </div>
-            
-            {model_3d_section}
             
             <!-- Page 1.1 - Site -->
             <div class="page">
@@ -1028,6 +1028,30 @@ building_template = """<!DOCTYPE html>
                 <div class="stat">
                     <span class="stat-label">% Leased: </span>
                     <span class="stat-value">{pct_leased}%</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Building Automation System: </span>
+                    <span class="stat-value"><span class="{bas_class}">{bas_text}</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Heating System: </span>
+                    <span class="stat-value">{heating_type}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Cooling System: </span>
+                    <span class="stat-value">{cooling_type}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Heating Automation: </span>
+                    <span class="stat-value"><span class="{heating_auto_class}">{heating_automation}</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Cooling Automation: </span>
+                    <span class="stat-value"><span class="{cooling_auto_class}">{cooling_automation}</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">System Data Date: </span>
+                    <span class="stat-value">{submission_date}</span>
                 </div>
             </div>
         </div>
@@ -1504,7 +1528,7 @@ for idx, row in all_buildings.iterrows():
             manager_logo_style = "max-height:80px;max-width:200px;margin-left:15px;vertical-align:middle;" if "Vornado" in property_manager else "max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;"
             manager_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{manager_logo}" alt="{escape(property_manager)}" style="{manager_logo_style}">'
         
-        landlord_contact = safe_val(data['buildings'], bbl, 'landlord_contact', safe_val(data['buildings'], bbl, 'ownername', 'Unknown'))
+        landlord_contact = safe_val(data['buildings'], bbl, 'LandlordContact', 'N/A')
         building_class = safe_val(data['buildings'], bbl, 'Class', 'N/A')
         pct_leased = int(float(safe_val(data['buildings'], bbl, '% Leased', 0)))
         num_floors = int(float(safe_val(data['buildings'], bbl, 'numfloors', 0)))
@@ -1642,6 +1666,13 @@ for idx, row in all_buildings.iterrows():
         
         # BAS status from system_BIG.csv (needed for occupancy adjustment)
         bas = safe_val(data['system'], bbl, 'Has Building Automation', 'N/A')
+        heating_type = safe_val(data['system'], bbl, 'Heating System Type', 'N/A')
+        cooling_type = safe_val(data['system'], bbl, 'Cooling System Type', 'N/A')
+        heating_automation = safe_val(data['system'], bbl, 'Heating Automation', 'N/A')
+        cooling_automation = safe_val(data['system'], bbl, 'Cooling Automation', 'N/A')
+        heating_auto_class = 'yes' if heating_automation == 'yes' else 'no' if heating_automation == 'no' else ''
+        cooling_auto_class = 'yes' if cooling_automation == 'yes' else 'no' if cooling_automation == 'no' else ''
+        submission_date = str(safe_val(data['system'], bbl, 'Submission Date', 'N/A'))
         
         # Total ODCV savings from scoring data - now with occupancy adjustment
         base_odcv_savings = float(row.get('Total_ODCV_Savings_Annual_USD', 0))
@@ -2088,33 +2119,13 @@ document.addEventListener('DOMContentLoaded', function() {{
                 '360° Street View not available</div>'
             )
         
-        # 3D Model section (only for buildings with models)
-        model_3d_section = ""
-        if bbl in models_3d_map:
-            model_filename = models_3d_map[bbl]
-            model_3d_section = f'''
-            <!-- Page 1.4 - Interactive 3D Model -->
-            <div class="page">
-                <h3 class="page-title">Interactive 3D Model</h3>
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid rgba(0, 118, 157, 0.2);">
-                    <model-viewer 
-                        src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/3d-models/{bbl}/{model_filename}" 
-                        alt="Interactive 3D model of {escape(main_address)}"
-                        camera-controls
-                        auto-rotate
-                        loading="eager"
-                        reveal="auto"
-                        style="width: 100%; height: 600px; background-color: #000000; border-radius: 10px;">
-                        <div slot="progress-bar" class="progress-bar"></div>
-                        <div slot="error">Failed to load 3D model</div>
-                    </model-viewer>
-                    <p style="text-align: center; margin-top: 10px; color: #666;">
-                        🖱️ Drag to rotate • Scroll to zoom<br>
-                        <span style="font-size: 0.9em; opacity: 0.8;">Architectural Model</span>
-                    </p>
-                </div>
-            </div>
-            '''
+        # Conditional 3D model carousel elements (only for 4 Times Square)
+        if bbl == 1009950005:
+            conditional_3d_slide = '<div class="carousel-slide"><div style="width: 100%; height: 100%; background-color: #000000; display: flex; align-items: center; justify-content: center;"><model-viewer src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/3d-models/' + str(bbl) + '/conde-nast.glb" alt="Interactive 3D model" camera-controls auto-rotate style="width: 100%; height: 100%; background-color: #000000;"></model-viewer></div></div>'
+            conditional_4th_dot = f'<span class="dot" onclick="goToSlide(\'{bbl}\', 3)"></span>'
+        else:
+            conditional_3d_slide = ''
+            conditional_4th_dot = ''
         
         # Monthly data arrays
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -2184,7 +2195,8 @@ document.addEventListener('DOMContentLoaded', function() {{
             street_image=street_image,
             satellite_image=satellite_image,
             street_view_360=street_view_360,
-            model_3d_section=model_3d_section,
+            conditional_3d_slide=conditional_3d_slide,
+            conditional_4th_dot=conditional_4th_dot,
             # Building identity
             neighborhood=escape(neighborhood) if neighborhood else "Manhattan",
             green_rating_badge=green_rating_badge,
@@ -2266,7 +2278,16 @@ document.addEventListener('DOMContentLoaded', function() {{
             hvac_pct=safe_json(hvac_pct),
             odcv_elec_savings=safe_json(odcv_elec_savings),
             odcv_gas_savings=safe_json(odcv_gas_savings),
-            odcv_steam_savings=safe_json(odcv_steam_savings)
+            odcv_steam_savings=safe_json(odcv_steam_savings),
+            bas_class=bas_class,
+            bas_text=bas_text,
+            heating_type=escape(heating_type),
+            cooling_type=escape(cooling_type),
+            heating_automation=escape(heating_automation),
+            cooling_automation=escape(cooling_automation),
+            heating_auto_class=heating_auto_class,
+            cooling_auto_class=cooling_auto_class,
+            submission_date=escape(submission_date)
         )
         
         # Save file
