@@ -712,13 +712,13 @@ document.addEventListener('DOMContentLoaded', function() {
             "showFullscreenCtrl": false,
             "showControls": false,
             "haov": 360,
-            "vaov": 60,          // Limit vertical angle to 60 degrees
-            "vOffset": -10,      // Shift view down slightly
+            "vaov": 120,         // Wide vertical view for NYC skyscrapers
+            "vOffset": 0,        // Keep centered
             "yaw": yaw,
-            "pitch": 0,
+            "pitch": 10,         // Start looking slightly up at buildings
             "hfov": 90,
-            "minPitch": -30,     // Don't let user look down past -30 degrees
-            "maxPitch": 30,      // Don't let user look up past 30 degrees
+            "minPitch": -45,     // Look down at sidewalk/street level
+            "maxPitch": 75,      // Look almost straight up at towers
             "minHfov": 50,
             "maxHfov": 120
         });
