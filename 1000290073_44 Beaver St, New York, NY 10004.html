@@ -706,8 +706,24 @@ document.addEventListener('DOMContentLoaded', function() {
         // For 360 panoramas, typical ratio is 1:2, but adjust to actual
         let optimalHeight = containerWidth * aspectRatio;
         
-        // Cap height between 400px and 1200px
-        optimalHeight = Math.max(400, Math.min(1200, optimalHeight));
+        // Special handling for Times Square and other tall buildings
+        const address = "44 Beaver St, New York, NY 10004";
+        const isTimesSquareArea = address.includes("Broadway") && 
+                                 (address.includes("10036") || address.includes("10018"));
+        const isTallBuilding = address.includes("Times Square") || 
+                              address.includes("1472 Broadway") ||
+                              address.includes("Empire State") ||
+                              address.includes("Rockefeller");
+        
+        if (isTimesSquareArea || isTallBuilding) {
+            // Make it extra tall for Times Square buildings
+            optimalHeight = Math.max(900, optimalHeight * 1.2);
+            // Cap at 1400px for Times Square area
+            optimalHeight = Math.min(1400, optimalHeight);
+        } else {
+            // Normal buildings: Cap between 400px and 1200px
+            optimalHeight = Math.max(400, Math.min(1200, optimalHeight));
+        }
         
         // Update viewer height
         viewerEl.style.height = optimalHeight + 'px';
@@ -724,8 +740,10 @@ document.addEventListener('DOMContentLoaded', function() {
             "haov": 360,
             "vaov": Math.min(180, (aspectRatio * 360)),  // Adjust vertical angle based on image
             "yaw": getBuildingYaw("44 Beaver St, New York, NY 10004"),
-            "pitch": 0,
-            "hfov": 90
+            "pitch": isTimesSquareArea ? 15 : 0,  // Look up more for tall buildings
+            "hfov": isTimesSquareArea ? 100 : 90,  // Wider view for Times Square
+            "minPitch": -45,
+            "maxPitch": 80
         });
     };
     img.src = imgUrl;
