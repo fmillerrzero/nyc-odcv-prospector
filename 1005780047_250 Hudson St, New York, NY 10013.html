@@ -961,11 +961,15 @@ document.addEventListener('DOMContentLoaded', function() {
         function kBtuToTherms(kbtu) { return kbtu / 100; }
         function kBtuToLbs(kbtu) { return kbtu / 1.194; }
         
-        // Format hover text
-        function formatValue(val) {
-            if (val >= 1000000) return (val/1000000).toFixed(2) + 'M';
-            if (val >= 1000) return (val/1000).toFixed(0) + 'k';
-            return val.toFixed(0);
+        // Format hover text with proper units
+        function formatValue(val, decimals = 0) {
+            if (val >= 1000000) {
+                return (val/1000000).toFixed(1) + 'M';
+            } else if (val >= 1000) {
+                return (val/1000).toFixed(0) + 'k';
+            } else {
+                return val.toFixed(decimals);
+            }
         }
         
         // Building Energy Usage Chart
@@ -977,7 +981,7 @@ document.addEventListener('DOMContentLoaded', function() {
             mode: 'lines+markers', 
             line: {color: rzeroColors.primary, width: 5},
             marker: {size: 10},
-            hovertemplate: '%{x}<br>Elec: %{y:,.0s} kBtu<br>(%{customdata} kWh)<extra></extra>',
+            hovertemplate: '%{x}<br>Elec: %{y:,.0f} kBtu<br>(%{customdata} kWh)<extra></extra>',
             customdata: [824780.2000000001, 793754.9, 851286.4000000001, 794503.9, 882761.0, 969737.9, 1134087.4, 1125738.2000000002, 965050.1000000001, 841510.8, 746183.0, 676076.1000000001].map(v => formatValue(kBtuToKwh(v)))
         };
         
@@ -989,7 +993,7 @@ document.addEventListener('DOMContentLoaded', function() {
             mode: 'lines+markers', 
             line: {color: rzeroColors.accent1, width: 5},
             marker: {size: 10},
-            hovertemplate: '%{x}<br>Gas: %{y:,.0s} kBtu<br>(%{customdata} Therms)<extra></extra>',
+            hovertemplate: '%{x}<br>Gas: %{y:,.0f} kBtu<br>(%{customdata} Therms)<extra></extra>',
             customdata: [1192844.1, 502576.9, 505249.0, 282728.0, 31861.0, 15253.0, 15738.0, 21755.0, 18939.0, 10745.0, 696644.9, 1038372.9].map(v => formatValue(kBtuToTherms(v)))
         };
         
@@ -1001,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', function() {
             mode: 'lines+markers', 
             line: {color: rzeroColors.accent2, width: 5},
             marker: {size: 10},
-            hovertemplate: '%{x}<br>Steam: %{y:,.0s} kBtu<br>(%{customdata} lb)<extra></extra>',
+            hovertemplate: '%{x}<br>Steam: %{y:,.0f} kBtu<br>(%{customdata} lbs)<extra></extra>',
             customdata: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0].map(v => formatValue(kBtuToLbs(v)))
         };
         
