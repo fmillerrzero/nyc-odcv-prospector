@@ -77,6 +77,9 @@
             gap: 10px;
         }
         
+        details summary {
+            list-style: none;
+        }
         details summary::-webkit-details-marker {
             display: none;
         }
@@ -421,8 +424,8 @@
     
         <div class="info-box">
             <details>
-                <summary style="cursor: pointer; font-size: 1.5em; color: var(--rzero-primary); font-weight: 600; padding: 10px 0;">
-                    Understanding the Rankings <span style="font-size: 0.8em;">▼</span>
+                <summary style="cursor: pointer; font-size: 1.5em; color: var(--rzero-primary); font-weight: 600; padding: 10px 0; list-style: none;">
+                    Understanding the Rankings <span style="font-size: 0.8em; transition: transform 0.3s;">▼</span>
                 </summary>
                 <div style="margin-top: 15px;">
                     <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
