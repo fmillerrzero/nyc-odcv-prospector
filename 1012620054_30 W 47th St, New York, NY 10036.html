@@ -44,27 +44,46 @@
         
         /* Section styling */
         .section { 
-            padding: 20px; 
-            border-bottom: 1px solid var(--border); 
+            padding: 40px 20px; 
+            border-bottom: 3px solid var(--rzero-primary); 
+            background: white;
+            position: relative;
+        }
+        
+        .section:nth-child(even) {
+            background: #f8fafb;
+        }
+        
+        .section::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(0, 118, 157, 0.05), transparent);
         }
         
         .section-header { 
-            font-size: 1.8em; 
+            font-size: 2em; 
             color: var(--rzero-primary); 
-            margin-bottom: 30px; 
-            font-weight: 600;
+            margin-bottom: 40px; 
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 118, 157, 0.2);
         }
         
         .section-header::before {
             content: '';
-            width: 4px;
-            height: 30px;
+            width: 6px;
+            height: 40px;
             background: var(--rzero-primary);
-            border-radius: 2px;
+            border-radius: 3px;
         }
+        
         
         .page { margin-bottom: 40px; }
         .page-title { 
