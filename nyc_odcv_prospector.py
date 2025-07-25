@@ -2100,9 +2100,16 @@ document.addEventListener('DOMContentLoaded', function() {{
                         alt="Interactive 3D model of {escape(main_address)}"
                         camera-controls
                         auto-rotate
-                        style="width: 100%; height: 600px; background-color: #f5f5f5; border-radius: 10px;">
+                        loading="eager"
+                        reveal="auto"
+                        style="width: 100%; height: 600px; background-color: #000000; border-radius: 10px;">
+                        <div slot="progress-bar" class="progress-bar"></div>
+                        <div slot="error">Failed to load 3D model</div>
                     </model-viewer>
-                    <p style="text-align: center; margin-top: 10px;">🖱️ Drag to rotate • Scroll to zoom</p>
+                    <p style="text-align: center; margin-top: 10px; color: #666;">
+                        🖱️ Drag to rotate • Scroll to zoom<br>
+                        <span style="font-size: 0.9em; opacity: 0.8;">Architectural Model</span>
+                    </p>
                 </div>
             </div>
             '''
