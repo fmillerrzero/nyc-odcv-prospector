@@ -17,7 +17,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import math
 
-base_dir = "/Users/forrestmiller/Desktop/FINAL NYC/BIG"
+base_dir = "/Users/forrestmiller/Desktop/nyc-odcv-prospector/data"
 output_dir = "/Users/forrestmiller/Desktop/nyc-odcv-prospector/building_reports"
 os.makedirs(output_dir, exist_ok=True)
 
@@ -3298,8 +3298,8 @@ if failed > 0:
     print(f"\nFailed: {failed} buildings")
 
 print(f"\nNEXT STEPS:")
-print(f"1. Copy images: cp -r '/Users/forrestmiller/Desktop/FINAL NYC/BIG/images' '{output_dir}/images'")
-thumbnails_dir = '/Users/forrestmiller/Desktop/FINAL NYC/BIG/hero_thumbnails'
+print(f"1. Copy images: cp -r '/Users/forrestmiller/Desktop/nyc-odcv-prospector/images' '{output_dir}/images'")
+thumbnails_dir = '/Users/forrestmiller/Desktop/nyc-odcv-prospector/hero_thumbnails'
 if os.path.exists(thumbnails_dir):
     print(f"2. Copy thumbnails: cp -r '{thumbnails_dir}' '{output_dir}/hero_thumbnails'")
     print(f"3. Open: file://{output_dir}/index.html")
