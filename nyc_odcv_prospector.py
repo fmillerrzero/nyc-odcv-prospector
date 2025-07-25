@@ -338,6 +338,7 @@ building_template = """<!DOCTYPE html>
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 3rem; /* Add clear horizontal spacing between sections */
         }}
         
         /* Section styling */
@@ -932,16 +933,20 @@ building_template = """<!DOCTYPE html>
 
         <!-- Section 0.0 - Title -->
         <div class="title-section">
-            <div>
-                <h1 style="margin: 0; font-size: 2em; font-weight: 600;">
-                    <span style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 25px; margin-right: 15px; font-size: 0.8em;">#{rank}</span>
-                    {address}
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <h1 style="margin: 0; font-size: 2em; font-weight: 600; display: flex; align-items: center; gap: 1rem;">
+                    <span style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 25px; font-size: 0.8em;">#{rank}</span>
+                    <span>{address}</span>
                 </h1>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">{neighborhood} • {office_occupancy}% avg occupancy {trend_indicator}</p>
+                <p style="margin: 0; opacity: 0.9; font-size: 1.1em; padding-left: 0.5rem;">
+                    <span style="margin-right: 1.5rem;">{neighborhood}</span>
+                    <span>{office_occupancy}% avg occupancy</span>
+                    <span style="margin-left: 1rem;">{trend_indicator}</span>
+                </p>
             </div>
-            <div style="text-align: center;">
-                <div style="font-size: 0.9em; opacity: 0.8; margin-bottom: 5px;">2026 ODCV Savings</div>
-                <div style="font-size: 2.5em; font-weight: 700;">${total_2026_savings:,.0f}</div>
+            <div style="text-align: center; min-width: 200px;">
+                <div style="font-size: 0.9em; opacity: 0.8; margin-bottom: 8px;">2026 ODCV Savings</div>
+                <div style="font-size: 2.5em; font-weight: 700; line-height: 1;">${total_2026_savings:,.0f}</div>
                 {penalty_breakdown_html}
             </div>
             <!-- Logo removed per request -->
@@ -1230,18 +1235,30 @@ building_template = """<!DOCTYPE html>
                     y: 0.95
                 }},
                 yaxis: {{
-                    title: 'kBtu',
-                    tickformat: ',.0s',
+                    title: {{
+                        text: 'kBtu',
+                        standoff: 20  // Add space between title and axis
+                    }},
+                    tickformat: '.2s',  // Use SI notation (K, M, G)
+                    tickvals: null,  // Let Plotly choose tick values
+                    tickmode: 'auto',
                     showgrid: false,
                     autorange: true
                 }},
                 xaxis: {{
                     showgrid: false
                 }},
+                legend: {{
+                    orientation: 'h',
+                    x: 0.5,
+                    xanchor: 'center',
+                    y: -0.15,
+                    yanchor: 'top'
+                }},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 600,
-                margin: {{l: 60, r: 30, t: 60, b: 60}},
+                margin: {{l: 80, r: 50, t: 60, b: 100}},  // Increased margins for legend
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
         }}
@@ -1322,7 +1339,15 @@ building_template = """<!DOCTYPE html>
                     text: 'Office Space Energy Usage',
                     y: 0.95
                 }},
-                yaxis: {{title: 'kBtu', tickformat: ',.0f', rangemode: 'tozero', showgrid: false}},
+                yaxis: {{
+                    title: {{
+                        text: 'kBtu',
+                        standoff: 25  // Add space between title and axis
+                    }},
+                    tickformat: '.2s',  // Use SI notation (K, M) like Whole Building chart
+                    rangemode: 'tozero',
+                    showgrid: false
+                }},
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 barmode: 'group',
@@ -1330,7 +1355,7 @@ building_template = """<!DOCTYPE html>
                 bargroupgap: 0.2,    // Space between bars in a group (20%)
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 80, r: 80, t: 60, b: 60}},
+                margin: {{l: 100, r: 100, t: 60, b: 60}},  // Increased left/right margins for centering
                 width: null,
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
@@ -1635,6 +1660,15 @@ for idx, row in all_buildings.iterrows():
             try:
                 score = float(energy_star)
                 energy_star_gauge_width = str(int(score))
+                
+                # Color-code based on score ranges
+                if score < 50:
+                    energy_star_color = "#c41e3a"  # Red
+                elif score < 75:
+                    energy_star_color = "#ffc107"  # Yellow
+                else:
+                    energy_star_color = "#38a169"  # Green
+                
                 # Convert score (0-100) to angle (-90 to 90 degrees)
                 angle = (score / 100 * 180 - 90) * (3.14159 / 180)
                 needle_x = 100 + 70 * math.cos(angle)
@@ -1653,10 +1687,10 @@ for idx, row in all_buildings.iterrows():
                 if delta > 0:
                     energy_star_delta = f'<span style="color: #c41e3a;">↑ {delta:.0f} needed</span>'
                     energy_star_class = "below-target"
-                    energy_star_color = "#c41e3a"
+                    # Don't override the score-based color
                 else:
                     energy_star_delta = f'<span style="color: #38a169;">✓ Exceeds target by {abs(delta):.0f}</span>'
-                    energy_star_color = "#0066cc"
+                    # Don't override the score-based color
             except:
                 pass
         
