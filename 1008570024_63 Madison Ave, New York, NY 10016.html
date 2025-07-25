@@ -707,16 +707,16 @@ document.addEventListener('DOMContentLoaded', function() {
             "showZoomCtrl": false,
             "showFullscreenCtrl": false,
             "showControls": false,
-            "haov": 180,
-            "vaov": 90,
-            "vOffset": 0,
+            "haov": 360,
+            "vaov": 60,          // Limit vertical angle to 60 degrees
+            "vOffset": -10,      // Shift view down slightly
             "yaw": yaw,
-            "pitch": 20,
+            "pitch": 0,
             "hfov": 90,
-            "minYaw": -90,   // Add this - prevents rotating left beyond image
-            "maxYaw": 90,    // Add this - prevents rotating right beyond image
-            "minHfov": 50,   // Add this - minimum zoom
-            "maxHfov": 120   // Add this - maximum zoom
+            "minPitch": -30,     // Don't let user look down past -30 degrees
+            "maxPitch": 30,      // Don't let user look up past 30 degrees
+            "minHfov": 50,
+            "maxHfov": 120
         });
     } catch(e) {
         document.getElementById('viewer_1008570024').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
