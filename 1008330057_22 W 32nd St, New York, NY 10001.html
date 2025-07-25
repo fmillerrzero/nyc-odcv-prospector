@@ -753,30 +753,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h3 class="page-title">Performance</h3>
                 <div class="stat">
                     <span class="stat-label">ENERGY STAR Score: </span>
-                    <div class="energy-star-gauge">
-                        <div class="gauge-number ">73</div>
-                        <div class="gauge-container">
-                            <svg viewBox="0 0 200 120" style="width: 100%; max-width: 300px; margin: 0 auto; display: block;">
-                                <!-- Background arc -->
-                                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="20"/>
-                                <!-- Colored sections -->
-                                <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
-                                <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
-                                <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
-                                <!-- Needle -->
-                                <line x1="100" y1="100" x2="152.5078031272141" y2="53.70820147419495" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-                                <circle cx="100" cy="100" r="8" fill="#333"/>
-                                <!-- Labels -->
-                                <text x="20" y="115" text-anchor="middle" font-size="12" fill="#666">0</text>
-                                <text x="100" y="20" text-anchor="middle" font-size="12" fill="#666">50</text>
-                                <text x="180" y="115" text-anchor="middle" font-size="12" fill="#666">100</text>
-                            </svg>
+                    <div style="display: flex; align-items: center; gap: 30px;">
+                        <svg viewBox="0 0 200 120" style="width: 200px; height: 120px;">
+                            <!-- Background arc -->
+                            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                            <!-- Colored sections -->
+                            <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
+                            <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
+                            <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
+                            <!-- Score number in center -->
+                            <text x="100" y="85" text-anchor="middle" font-size="36" font-weight="bold" fill="#00769d">73</text>
+                            <!-- Needle -->
+                            <line x1="100" y1="100" x2="152.5078031272141" y2="53.70820147419495" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="100" cy="100" r="6" fill="#333"/>
+                            <!-- Labels -->
+                            <text x="20" y="115" text-anchor="middle" font-size="12" fill="#666">0</text>
+                            <text x="180" y="115" text-anchor="middle" font-size="12" fill="#666">100</text>
+                        </svg>
+                        <div>
+                            <div style="font-size: 0.9em; color: #666;">Target Score: N/A</div>
+                            <div style="font-size: 1.1em; margin-top: 5px;"></div>
                         </div>
                     </div>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Target ENERGY STAR Score: </span>
-                    <span class="stat-value">N/A </span>
                 </div>
                 
                 <div class="stat">
