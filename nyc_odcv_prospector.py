@@ -1962,7 +1962,7 @@ for idx, row in all_buildings.iterrows():
 
             # 360° Street View with Pannellum (configured for partial panoramas with smart yaw)
             street_view_360 = f'''
-<div id="viewer_{bbl}" style="width:100%;height:600px;border-radius:8px;background:#f0f0f0;"></div>
+<div id="viewer_{bbl}" style="width:100%;height:1100px;border-radius:8px;background:#f0f0f0;"></div>
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
 <script>
@@ -2006,9 +2006,9 @@ document.addEventListener('DOMContentLoaded', function() {{
         
         if (isTimesSquareArea || isTallBuilding) {{
             // Make it extra tall for Times Square buildings
-            optimalHeight = Math.max(900, optimalHeight * 1.2);
-            // Cap at 1400px for Times Square area
-            optimalHeight = Math.min(1400, optimalHeight);
+            optimalHeight = Math.max(1100, optimalHeight * 1.2);
+            // Cap at 1600px for Times Square area
+            optimalHeight = Math.min(1600, optimalHeight);
         }} else {{
             // Normal buildings: Cap between 400px and 1200px
             optimalHeight = Math.max(400, Math.min(1200, optimalHeight));
