@@ -2102,12 +2102,7 @@ document.addEventListener('DOMContentLoaded', function() {{
                         auto-rotate
                         loading="eager"
                         reveal="auto"
-                        shadow-intensity="1"
-                        shadow-softness="0.5"
-                        exposure="1.2"
-                        environment-image="neutral"
-                        skybox-image="neutral"
-                        style="width: 100%; height: 600px; background-color: #2a2a2a; border-radius: 10px;">
+                        style="width: 100%; height: 600px; background-color: #000000; border-radius: 10px;">
                         <div slot="progress-bar" class="progress-bar"></div>
                         <div slot="error">Failed to load 3D model</div>
                     </model-viewer>
