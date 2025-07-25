@@ -412,7 +412,7 @@
         .carousel-container {
             position: relative;
             width: 100%;
-            height: 900px;  /* Increased from 600px */
+            height: 900px;
             overflow: hidden;
             border-radius: 12px;
             margin: 20px 0;
@@ -422,13 +422,14 @@
             display: flex;
             transition: transform 0.3s ease;
             height: 100%;
-            margin: 0 -5%;  /* Add negative margin to show edges */
         }
         
         .carousel-slide {
-            min-width: 90%;  /* Changed from 100% to show edges */
+            min-width: 100%;
             height: 100%;
-            margin: 0 5%;  /* Add margin between slides */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .carousel-slide img {
@@ -1196,7 +1197,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (carouselIndex[bbl] < 0) carouselIndex[bbl] = slides.length - 1;
             if (carouselIndex[bbl] >= slides.length) carouselIndex[bbl] = 0;
             
-            track.style.transform = `translateX(-${carouselIndex[bbl] * 90}%)`;  // Changed from 100% to 90%
+            track.style.transform = `translateX(-${carouselIndex[bbl] * 100}%)`;  // Change from 90% to 100%
             
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === carouselIndex[bbl]);
