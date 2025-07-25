@@ -1117,15 +1117,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 yaxis: {
                     title: 'kBtu',
                     tickformat: ',.0s',
-                    rangemode: 'tozero',
-                    showgrid: false
+                    showgrid: false,
+                    autorange: true
                 },
                 xaxis: {
                     showgrid: false
                 },
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif', size: 16},
-                height: 500,
+                height: 600,
                 margin: {l: 60, r: 30, t: 30, b: 60},
                 autosize: true
             }, {displayModeBar: false, responsive: true});
@@ -1373,6 +1373,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
                 // Monthly PM2.5 Chart with EPA Benchmarks
                 if (document.getElementById('monthly_pm25_chart') && ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].length > 0) {
+                    // Add variance band
+                    const varianceBand = {
+                        x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].concat(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].slice().reverse()),
+                        y: [0.0, 0.0, 0.0, 8.205, 15.865416666666668, 20.99375, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0].concat([0.0, 0.0, 0.0, 3.4570833333333333, 3.25, 4.581666666666666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0].slice().reverse()),
+                        fill: 'toself',
+                        fillcolor: 'rgba(0, 118, 157, 0.1)',
+                        line: {color: 'transparent'},
+                        showlegend: false,
+                        hoverinfo: 'skip',
+                        type: 'scatter'
+                    };
+                    
                     const monthlyMean = {
                         x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                         y: [7.2884543010752685, 7.023407738095238, 6.3322043010752695, 6.501319444444444, 13.39646505376344, 11.039625, 12.334139784946236, 10.907614035087718, 6.470888888888889, 6.619650537634409, 6.550013888888889, 7.679341397849463],
@@ -1380,9 +1392,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         mode: 'lines+markers',
                         name: 'Monthly Average',
                         line: {color: rzeroColors.primary, width: 5},
-                        marker: {size: 10},
-                        fill: 'tozeroy',
-                        fillcolor: 'rgba(0, 118, 157, 0.1)'
+                        marker: {size: 10}
                     };
                     
                     // Add EPA threshold lines
@@ -1396,8 +1406,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Remove moderateThreshold since it's at 35.4 (off chart)
                     
-                    Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold], {
-                        title: 'Monthly PM2.5 Levels',
+                    Plotly.newPlot('monthly_pm25_chart', [varianceBand, monthlyMean, goodThreshold], {
+                        title: {
+                            text: 'Monthly PM2.5 Levels',
+                            y: 0.95
+                        },
                         yaxis: {
                             title: 'PM2.5 (μg/m³)', 
                             range: [0, Math.max(20, Math.max(...[7.2884543010752685, 7.023407738095238, 6.3322043010752695, 6.501319444444444, 13.39646505376344, 11.039625, 12.334139784946236, 10.907614035087718, 6.470888888888889, 6.619650537634409, 6.550013888888889, 7.679341397849463]) * 1.5)],
@@ -1412,15 +1425,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             orientation: 'h',
                             x: 0.5,
                             xanchor: 'center',
-                            y: -0.15,         // Move legend below chart
-                            yanchor: 'top',
+                            y: 1.1,
+                            yanchor: 'bottom',
                             bgcolor: 'transparent',
                             borderwidth: 0
                         },
                         hovermode: 'x unified',
                         font: {family: 'Inter, sans-serif', size: 16},
                         height: 500,
-                        margin: {t: 60, l: 80, r: 50, b: 100}  // Add bottom margin for legend
+                        margin: {t: 80, l: 80, r: 50, b: 60}  // Adjust margins for legend above
                     }, {displayModeBar: false});
                 }
                 

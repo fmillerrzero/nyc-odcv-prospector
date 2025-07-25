@@ -1238,15 +1238,15 @@ building_template = """<!DOCTYPE html>
                 yaxis: {{
                     title: 'kBtu',
                     tickformat: ',.0s',
-                    rangemode: 'tozero',
-                    showgrid: false
+                    showgrid: false,
+                    autorange: true
                 }},
                 xaxis: {{
                     showgrid: false
                 }},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
-                height: 500,
+                height: 600,
                 margin: {{l: 60, r: 30, t: 30, b: 60}},
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
@@ -1836,8 +1836,21 @@ for idx, row in all_buildings.iterrows():
                         monthly_values.append(monthly_data_map.get(i, 0))
                     
                     monthly_means = safe_json(monthly_values)
-                    monthly_mins = json.dumps([0] * 12)  # Not used anymore
-                    monthly_maxs = json.dumps([0] * 12)  # Not used anymore
+                    
+                    # Get min/max from daily data for variance band
+                    monthly_mins = []
+                    monthly_maxs = []
+                    for month in range(1, 13):
+                        month_data = daily_iaq[daily_iaq['date'].dt.month == month]['pm25_mean']
+                        if not month_data.empty:
+                            monthly_mins.append(float(month_data.min()))
+                            monthly_maxs.append(float(month_data.max()))
+                        else:
+                            monthly_mins.append(0)
+                            monthly_maxs.append(0)
+                    
+                    monthly_mins = safe_json(monthly_mins)
+                    monthly_maxs = safe_json(monthly_maxs)
                 else:
                     monthly_dates = json.dumps(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
                     monthly_means = json.dumps([0] * 12)
@@ -1903,6 +1916,18 @@ for idx, row in all_buildings.iterrows():
                 iaq_javascript = f"""
                 // Monthly PM2.5 Chart with EPA Benchmarks
                 if (document.getElementById('monthly_pm25_chart') && {monthly_dates}.length > 0) {{
+                    // Add variance band
+                    const varianceBand = {{
+                        x: {monthly_dates}.concat({monthly_dates}.slice().reverse()),
+                        y: {monthly_maxs}.concat({monthly_mins}.slice().reverse()),
+                        fill: 'toself',
+                        fillcolor: 'rgba(0, 118, 157, 0.1)',
+                        line: {{color: 'transparent'}},
+                        showlegend: false,
+                        hoverinfo: 'skip',
+                        type: 'scatter'
+                    }};
+                    
                     const monthlyMean = {{
                         x: {monthly_dates},
                         y: {monthly_means},
@@ -1910,9 +1935,7 @@ for idx, row in all_buildings.iterrows():
                         mode: 'lines+markers',
                         name: 'Monthly Average',
                         line: {{color: rzeroColors.primary, width: 5}},
-                        marker: {{size: 10}},
-                        fill: 'tozeroy',
-                        fillcolor: 'rgba(0, 118, 157, 0.1)'
+                        marker: {{size: 10}}
                     }};
                     
                     // Add EPA threshold lines
@@ -1926,8 +1949,11 @@ for idx, row in all_buildings.iterrows():
                     
                     // Remove moderateThreshold since it's at 35.4 (off chart)
                     
-                    Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold], {{
-                        title: 'Monthly PM2.5 Levels',
+                    Plotly.newPlot('monthly_pm25_chart', [varianceBand, monthlyMean, goodThreshold], {{
+                        title: {{
+                            text: 'Monthly PM2.5 Levels',
+                            y: 0.95
+                        }},
                         yaxis: {{
                             title: 'PM2.5 (μg/m³)', 
                             range: [0, Math.max(20, Math.max(...{monthly_means}) * 1.5)],
@@ -1942,15 +1968,15 @@ for idx, row in all_buildings.iterrows():
                             orientation: 'h',
                             x: 0.5,
                             xanchor: 'center',
-                            y: -0.15,         // Move legend below chart
-                            yanchor: 'top',
+                            y: 1.1,
+                            yanchor: 'bottom',
                             bgcolor: 'transparent',
                             borderwidth: 0
                         }},
                         hovermode: 'x unified',
                         font: {{family: 'Inter, sans-serif', size: 16}},
                         height: 500,
-                        margin: {{t: 60, l: 80, r: 50, b: 100}}  // Add bottom margin for legend
+                        margin: {{t: 80, l: 80, r: 50, b: 60}}  // Adjust margins for legend above
                     }}, {{displayModeBar: false}});
                 }}
                 """
