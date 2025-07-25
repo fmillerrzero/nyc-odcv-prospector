@@ -1241,7 +1241,7 @@ building_template = """<!DOCTYPE html>
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 600,
-                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                margin: {{l: 60, r: 30, t: 60, b: 60}},
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
         }}
@@ -1330,7 +1330,7 @@ building_template = """<!DOCTYPE html>
                 bargroupgap: 0.2,    // Space between bars in a group (20%)
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 80, r: 80, t: 30, b: 60}},
+                margin: {{l: 80, r: 80, t: 60, b: 60}},
                 width: null,
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
@@ -1357,7 +1357,7 @@ building_template = """<!DOCTYPE html>
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 80, r: 80, t: 30, b: 60}},
+                margin: {{l: 80, r: 80, t: 60, b: 60}},
                 width: null,
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
@@ -1388,7 +1388,7 @@ building_template = """<!DOCTYPE html>
                 bargap: 0.3,         // Space between bars (30%)
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                margin: {{l: 60, r: 30, t: 60, b: 60}},
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
         }}, 100);
@@ -2977,7 +2977,7 @@ homepage_html += f"""
                 <div style="margin-top: 15px;">
                     <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
                     <ul style="line-height: 1.8;">
-                        <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
+                        <li><strong>Financial Impact (40 pts):</strong> ODCV savings & LL97 penalty avoidance</li>
                         <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
                         <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
                         <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
