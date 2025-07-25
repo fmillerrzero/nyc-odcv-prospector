@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: nyc-odcv-prospector
+    env: static
+    buildCommand: ""
+    staticPublishPath: ./building_reports
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /*
+        name: Pragma
+        value: no-cache
+      - path: /*
+        name: Expires
+        value: "0"
+    routes:
+      - type: rewrite
+        source: /
+        destination: /index.html
