@@ -323,14 +323,14 @@ building_template = """<!DOCTYPE html>
             margin: 0 auto; 
             background: white;
             box-shadow: 0 4px 20px rgba(0, 118, 157, 0.08);
-            padding: 0 15%;
+            padding: 0;
         }}
         
         /* Section 0 - Title */
         .title-section {{
             background: linear-gradient(to right, #0066cc, #0052a3);
             color: white;
-            padding: 30px 40px;
+            padding: 30px 15%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -911,13 +911,18 @@ building_template = """<!DOCTYPE html>
 <body>
     <div class="container">
         <!-- Navigation Bar -->
-        <div style="background: #f8f8f8; padding: 10px 20px; border-bottom: 1px solid #e2e8f0;">
-            <a href="index.html" style="text-decoration: none;">
-                <button style="background: var(--rzero-primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.3s ease;" 
-                        onmouseover="this.style.background='var(--rzero-primary-dark)'" 
-                        onmouseout="this.style.background='var(--rzero-primary)'">
-                    ← Back to Rankings
-                </button>
+        <div style="background: linear-gradient(to right, #0066cc, #0052a3); padding: 0; margin: 0; width: 100%; position: relative;">
+            <a href="index.html" style="text-decoration: none; display: block;">
+                <div style="padding: 15px 40px; display: flex; align-items: center; gap: 10px; color: white; cursor: pointer; transition: all 0.3s ease;"
+                     onmouseover="this.style.background='rgba(255,255,255,0.1)'" 
+                     onmouseout="this.style.background='transparent'">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;"
+                         onmouseover="this.style.transform='translateX(-5px)'" 
+                         onmouseout="this.style.transform='translateX(0)'">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span style="font-size: 16px; font-weight: 500; opacity: 0.9;">Back to Rankings</span>
+                </div>
             </a>
         </div>
 
@@ -1135,17 +1140,17 @@ building_template = """<!DOCTYPE html>
         // R-Zero brand colors with distinct energy type colors
         const rzeroColors = {{
             primary: '#0066cc',      // Blue for electricity
-            secondary: '#ff6b35',    // Orange for gas  
+            secondary: '#ffc107',    // Yellow for gas  
             success: '#38a169',      // Keep green
-            accent1: '#ff6b35',      // Orange for gas
-            accent2: '#8b5cf6'       // Purple for steam
+            accent1: '#ffc107',      // Yellow for gas
+            accent2: '#dc3545'       // Red for steam
         }};
         
         // Energy type colors for clarity
         const energyColors = {{
             electricity: '#0066cc',  // Blue - like electrical current
-            gas: '#ff6b35',         // Orange - like gas flame
-            steam: '#8b5cf6'        // Purple - like steam/vapor
+            gas: '#ffc107',         // Yellow - like gas flame
+            steam: '#dc3545'        // Red - like steam heat
         }};
         
         // Unit conversion functions
@@ -1236,8 +1241,7 @@ building_template = """<!DOCTYPE html>
                 yaxis: {{
                     tickformat: '$,.0f',
                     rangemode: 'tozero',
-                    showgrid: true,
-                    gridcolor: '#e0e0e0',
+                    showgrid: false,
                     tickfont: {{size: 16}}
                 }},
                 xaxis: {{
@@ -1248,7 +1252,7 @@ building_template = """<!DOCTYPE html>
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 legend: {{font: {{size: 16}}}},
                 height: 500,
-                margin: {{l: 80, r: 50, t: 50, b: 80}}
+                margin: {{l: 100, r: 50, t: 50, b: 80}}
             }}, {{displayModeBar: false}});
         }}
         
@@ -1274,21 +1278,22 @@ building_template = """<!DOCTYPE html>
         }}
         
         // Office Cost Chart
-        const officeElecCost = {{x: months, y: {office_elec_cost}, name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.primary, width: 5}}, marker: {{size: 10}}}};
-        const officeGasCost = {{x: months, y: {office_gas_cost}, name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent1, width: 5}}, marker: {{size: 10}}}};
-        const officeSteamCost = {{x: months, y: {office_steam_cost}, name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {{color: rzeroColors.accent2, width: 5}}, marker: {{size: 10}}}};
+        const officeElecCost = {{x: months, y: {office_elec_cost}, name: 'Elec', type: 'bar', marker: {{color: rzeroColors.primary}}}};
+        const officeGasCost = {{x: months, y: {office_gas_cost}, name: 'Gas', type: 'bar', marker: {{color: rzeroColors.accent1}}}};
+        const officeSteamCost = {{x: months, y: {office_steam_cost}, name: 'Steam', type: 'bar', marker: {{color: rzeroColors.accent2}}}};
         
         const officeCostData = [officeElecCost, officeGasCost, officeSteamCost].filter(d => d.y.some(v => v > 0));
         
         if (officeCostData.length > 0) {{
             Plotly.newPlot('office_cost_chart', officeCostData, {{
                 title: '',
+                barmode: 'group',
                 yaxis: {{tickformat: '$,.0f', rangemode: 'tozero', showgrid: false}},
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                margin: {{l: 100, r: 30, t: 30, b: 60}},
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
         }}
@@ -1313,8 +1318,8 @@ building_template = """<!DOCTYPE html>
             
             Plotly.newPlot('day_of_week_chart', [dayOfWeek], {{
                 title: 'Hybrid Work Pattern - {neighborhood_name}',
-                yaxis: {{title: 'Relative Occupancy %', range: [0, 110]}},
-                xaxis: {{title: 'Day of Week'}},
+                yaxis: {{title: 'Relative Occupancy %', range: [0, 110], showgrid: false}},
+                xaxis: {{title: 'Day of Week', showgrid: false}},
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
                 margin: {{l: 60, r: 30, t: 30, b: 60}},
@@ -1403,7 +1408,16 @@ building_template = """<!DOCTYPE html>
                 barmode: 'stack',
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                margin: {{l: 100, r: 100, t: 60, b: 80}},
+                legend: {{
+                    x: 1,
+                    xanchor: 'right',
+                    y: 1,
+                    yanchor: 'top',
+                    bgcolor: 'rgba(255,255,255,0.8)',
+                    bordercolor: 'rgba(0,0,0,0.1)',
+                    borderwidth: 1
+                }},
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
         }}
@@ -1892,19 +1906,18 @@ for idx, row in all_buildings.iterrows():
                             showgrid: false  // Remove grid lines
                         }},
                         legend: {{
-                            orientation: 'h',  // Horizontal layout
-                            x: 0.5,           // Center horizontally
+                            orientation: 'h',
+                            x: 0.5,
                             xanchor: 'center',
-                            y: 1.15,          // Position above chart
+                            y: -0.15,         // Move legend below chart
                             yanchor: 'top',
-                            bgcolor: 'rgba(255,255,255,0.8)',
-                            bordercolor: 'rgba(0,0,0,0.1)',
-                            borderwidth: 1
+                            bgcolor: 'transparent',
+                            borderwidth: 0
                         }},
                         hovermode: 'x unified',
                         font: {{family: 'Inter, sans-serif', size: 16}},
                         height: 500,
-                        margin: {{t: 80}}  // Add top margin for legend
+                        margin: {{t: 60, l: 80, r: 50, b: 100}}  // Add bottom margin for legend
                     }}, {{displayModeBar: false}});
                 }}
                 """
@@ -1974,7 +1987,7 @@ for idx, row in all_buildings.iterrows():
 
             # 360° Street View with Pannellum (configured for partial panoramas with smart yaw)
             # Special height for 1472 Broadway's unique high-res panorama
-            viewer_height = "1100px" if bbl == "1009950005" else "800px"
+            viewer_height = "1600px" if bbl == "1009950005" else "800px"
             street_view_360 = f'''
 <div id="viewer_{bbl}" style="width:100%;height:{viewer_height};border-radius:8px;background:#f0f0f0;"></div>
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
@@ -2021,8 +2034,8 @@ document.addEventListener('DOMContentLoaded', function() {{
         if (isTimesSquareArea || isTallBuilding) {{
             // Make it extra tall for Times Square buildings
             optimalHeight = Math.max(1100, optimalHeight * 1.2);
-            // Cap at 1600px for Times Square area
-            optimalHeight = Math.min(1600, optimalHeight);
+            // Cap at 2000px for Times Square area
+            optimalHeight = Math.min(2000, optimalHeight);
         }} else {{
             // Normal buildings: Cap between 400px and 1200px
             optimalHeight = Math.max(400, Math.min(1200, optimalHeight));
@@ -2037,17 +2050,27 @@ document.addEventListener('DOMContentLoaded', function() {{
             "panorama": imgUrl,
             "autoLoad": true,
             "autoRotate": -2,
-            "showZoomCtrl": true,
+            "showZoomCtrl": "{bbl}" === "1009950005" ? false : true,  // Disable zoom controls for 4 Times Square
             "showFullscreenCtrl": true,
             "showControls": true,
             "haov": 360,
             "vaov": Math.min(180, (aspectRatio * 360)),  // Adjust vertical angle based on image
             "yaw": "{bbl}" === "1009950005" ? 135 : getBuildingYaw("{main_address}"),  // 135° points SE toward 4 Times Square
             "pitch": isTimesSquareArea ? 35 : 0,  // Look up more for tall buildings
-            "hfov": "{bbl}" === "1009950005" ? 130 : (isTimesSquareArea ? 120 : 90),  // Extra wide view for 4 Times Square
+            "hfov": "{bbl}" === "1009950005" ? 120 : (isTimesSquareArea ? 100 : 90),  // Max zoom out for 4 Times Square
+            "minHfov": "{bbl}" === "1009950005" ? 120 : 50,    // Prevent zoom in
+            "maxHfov": "{bbl}" === "1009950005" ? 120 : 120,   // Lock at max zoom
             "minPitch": -60,
             "maxPitch": 90
         }});
+        
+        if ("{bbl}" === "1009950005") {{
+            // Disable mouse wheel zoom for 4 Times Square
+            viewerEl.addEventListener('wheel', function(e) {{
+                e.preventDefault();
+                e.stopPropagation();
+            }}, {{ passive: false }});
+        }}
     }};
     img.src = imgUrl;
 }});
@@ -2467,17 +2490,35 @@ homepage_html = f"""<!DOCTYPE html>
             margin-top: 0; 
         }}
         
-        .portfolio-tile:hover {{
-            background-color: rgba(0, 118, 157, 0.15) !important;
-            transform: translateY(-2px);
+        .portfolio-tile:not(.selected):hover {{
+            background-color: rgba(0, 118, 157, 0.08) !important;
+            transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 118, 157, 0.2);
         }}
         
         .portfolio-tile.selected {{
-            background-color: rgba(0, 118, 157, 0.2) !important;
-            border: 2px solid var(--rzero-primary) !important;
-            box-shadow: 0 6px 16px rgba(0, 118, 157, 0.3);
-            transform: translateY(-2px);
+            background-color: rgba(0, 118, 157, 0.15) !important;
+            border: 3px solid var(--rzero-primary) !important;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.3), 0 8px 20px rgba(0, 118, 157, 0.4) !important;
+            transform: translateY(-3px) scale(1.02);
+            position: relative;
+        }}
+        
+        .portfolio-tile.selected::before {{
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--rzero-primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
         }}
         
         .search-box {{ 
@@ -2786,7 +2827,7 @@ if top_portfolios:
         logo_style = "position: absolute; top: 15px; right: 15px; max-height: 60px; max-width: 120px; opacity: 0.8;" if "Vornado" in owner else "position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;"
         
         homepage_html += f"""
-                <div class="portfolio-tile" onclick="filterByOwner('{escape(owner).replace("'", "\\'")}')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.2s ease; position: relative; min-height: 100px;">
+                <div class="portfolio-tile" onclick="filterByOwner('{escape(owner).replace("'", "\\'")}')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; min-height: 100px;">
                     {f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{logo}" alt="{escape(owner)}" style="{logo_style}">' if logo else ''}
                     <strong style="color: var(--rzero-primary); display: block; margin-bottom: 5px;">{escape(owner)}</strong>
                     <span style="color: #666;">{stats['count']} buildings • ${stats['total']/1000000:.1f}M savings</span>
@@ -2823,7 +2864,7 @@ homepage_html += f"""
 homepage_html += f"""
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()" style="flex: 1; margin: 0;">
-            <button onclick="clearAllFilters()" style="background: #c41e3a; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s;">
+            <button id="clearFilterBtn" onclick="clearAllFilters()" style="background: #e0e0e0; color: #999; border: none; padding: 15px 25px; border-radius: 8px; cursor: not-allowed; font-size: 16px; font-weight: 600; transition: all 0.2s;" disabled>
                 Clear Filter
             </button>
         </div>
@@ -2937,6 +2978,28 @@ homepage_html += """
     let activeOwnerFilter = null;
     let sortDir = {};
     
+    function updateClearButtonState() {
+        const btn = document.getElementById('clearFilterBtn');
+        const searchBox = document.getElementById('search');
+        const hasActiveFilter = (searchBox.value.trim() !== '') || (activeOwnerFilter !== null);
+        
+        if (hasActiveFilter) {
+            btn.disabled = false;
+            btn.style.background = '#c41e3a';
+            btn.style.color = 'white';
+            btn.style.cursor = 'pointer';
+            btn.onmouseover = function() { this.style.background='#a01729'; };
+            btn.onmouseout = function() { this.style.background='#c41e3a'; };
+        } else {
+            btn.disabled = true;
+            btn.style.background = '#e0e0e0';
+            btn.style.color = '#999';
+            btn.style.cursor = 'not-allowed';
+            btn.onmouseover = null;
+            btn.onmouseout = null;
+        }
+    }
+    
     function sortTable(col) {
         const tbody = document.querySelector('#buildingTable tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
@@ -2974,6 +3037,8 @@ homepage_html += """
             const matchesSearch = searchText && searchText.includes(input);
             row.style.display = matchesSearch ? '' : 'none';
         });
+        
+        updateClearButtonState();
     }
     
     function filterByOwner(ownerName) {
@@ -2999,6 +3064,8 @@ homepage_html += """
             const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
             row.style.display = isMatch ? '' : 'none';
         });
+        
+        updateClearButtonState();
     }
     
     function clearAllFilters() {
@@ -3018,6 +3085,8 @@ homepage_html += """
         document.querySelectorAll('.portfolio-tile').forEach(tile => {
             tile.classList.remove('selected');
         });
+        
+        updateClearButtonState();
     }
     
     function filterByManager(managerName) {
@@ -3032,6 +3101,11 @@ homepage_html += """
     function scrollToTop() {
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateClearButtonState();
+    });
     </script>
 </body>
 </html>"""
