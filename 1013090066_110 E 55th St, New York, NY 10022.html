@@ -965,7 +965,8 @@ document.addEventListener('DOMContentLoaded', function() {
             name: 'Elec', 
             type: 'scatter', 
             mode: 'lines+markers', 
-            line: {color: rzeroColors.primary, width: 3},
+            line: {color: rzeroColors.primary, width: 5},
+            marker: {size: 10},
             hovertemplate: '%{x}<br>Elec: %{y:,.0s} kBtu<br>(%{customdata} kWh)<extra></extra>',
             customdata: [326249.4997, 308124.52749999997, 308124.52747, 289999.5553, 289999.55529, 308124.52749999997, 326249.49968999997, 326249.49968999997, 308124.52748, 289999.55533, 289999.55533999996, 308124.52747].map(v => formatValue(kBtuToKwh(v)))
         };
@@ -976,7 +977,8 @@ document.addEventListener('DOMContentLoaded', function() {
             name: 'Gas', 
             type: 'scatter', 
             mode: 'lines+markers', 
-            line: {color: rzeroColors.accent1, width: 3},
+            line: {color: rzeroColors.accent1, width: 5},
+            marker: {size: 10},
             hovertemplate: '%{x}<br>Gas: %{y:,.0s} kBtu<br>(%{customdata} Therms)<extra></extra>',
             customdata: [124262.8, 115165.3, 115618.2, 63974.3, 48763.9, 44479.3, 48344.5, 46067.0, 43437.5, 52820.6, 97166.1, 118210.5].map(v => formatValue(kBtuToTherms(v)))
         };
@@ -987,7 +989,8 @@ document.addEventListener('DOMContentLoaded', function() {
             name: 'Steam', 
             type: 'scatter', 
             mode: 'lines+markers', 
-            line: {color: rzeroColors.accent2, width: 3},
+            line: {color: rzeroColors.accent2, width: 5},
+            marker: {size: 10},
             hovertemplate: '%{x}<br>Steam: %{y:,.0s} kBtu<br>(%{customdata} lb)<extra></extra>',
             customdata: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0].map(v => formatValue(kBtuToLbs(v)))
         };
@@ -1007,15 +1010,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     showgrid: false
                 },
                 hovermode: 'x unified',
-                font: {family: 'Inter, sans-serif'},
+                font: {family: 'Inter, sans-serif', size: 16},
                 height: 500
             }, {displayModeBar: false});
         }
         
         // Building Energy Cost Chart
-        const elecCost = {x: months, y: [12556.619999999999, 12466.34, 11016.99, 10714.52, 11460.35, 14638.030003, 16483.699998, 15809.889997, 15615.110002000001, 11212.32, 11392.54, 11444.439999999999], name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.primary, width: 3}};
-        const gasCost = {x: months, y: [2771.06, 2568.19, 2578.29, 1426.63, 1087.43, 991.89, 1078.08, 1027.29, 968.66, 1177.9, 2166.8, 2636.09], name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent1, width: 3}};
-        const steamCost = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent2, width: 3}};
+        const elecCost = {x: months, y: [12556.619999999999, 12466.34, 11016.99, 10714.52, 11460.35, 14638.030003, 16483.699998, 15809.889997, 15615.110002000001, 11212.32, 11392.54, 11444.439999999999], name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.primary, width: 5}, marker: {size: 10}};
+        const gasCost = {x: months, y: [2771.06, 2568.19, 2578.29, 1426.63, 1087.43, 991.89, 1078.08, 1027.29, 968.66, 1177.9, 2166.8, 2636.09], name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent1, width: 5}, marker: {size: 10}};
+        const steamCost = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent2, width: 5}, marker: {size: 10}};
         
         const costData = [elecCost, gasCost, steamCost].filter(d => d.y.some(v => v > 0));
         
@@ -1026,14 +1029,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     title: 'USD',
                     tickformat: '$,.0f',
                     rangemode: 'tozero',
-                    showgrid: false
+                    showgrid: true,
+                    gridcolor: '#e0e0e0',
+                    tickfont: {size: 16},
+                    titlefont: {size: 18}
                 },
                 xaxis: {
-                    showgrid: false
+                    showgrid: false,
+                    tickfont: {size: 16}
                 },
                 hovermode: 'x unified',
-                font: {family: 'Inter, sans-serif'},
-                height: 500
+                font: {family: 'Inter, sans-serif', size: 16},
+                legend: {font: {size: 16}},
+                height: 500,
+                margin: {l: 80, r: 50, t: 50, b: 80}
             }, {displayModeBar: false});
         }
         
@@ -1051,15 +1060,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 xaxis: {showgrid: false},
                 hovermode: 'x unified',
                 barmode: 'group',
-                font: {family: 'Inter, sans-serif'},
+                font: {family: 'Inter, sans-serif', size: 16},
                 height: 500
             }, {displayModeBar: false});
         }
         
         // Office Cost Chart
-        const officeElecCost = {x: months, y: [10564.59, 10471.58, 9491.82, 9045.61, 9613.61, 11679.33, 12444.71, 12762.5, 11961.46, 9332.99, 9589.98, 9510.33], name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.primary, width: 3}};
-        const officeGasCost = {x: months, y: [2989.16, 2770.5, 2781.38, 1540.13, 1174.55, 1071.55, 1164.45, 1109.73, 1046.53, 1272.05, 2337.89, 2843.69], name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent1, width: 3}};
-        const officeSteamCost = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent2, width: 3}};
+        const officeElecCost = {x: months, y: [10564.59, 10471.58, 9491.82, 9045.61, 9613.61, 11679.33, 12444.71, 12762.5, 11961.46, 9332.99, 9589.98, 9510.33], name: 'Elec', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.primary, width: 5}, marker: {size: 10}};
+        const officeGasCost = {x: months, y: [2989.16, 2770.5, 2781.38, 1540.13, 1174.55, 1071.55, 1164.45, 1109.73, 1046.53, 1272.05, 2337.89, 2843.69], name: 'Gas', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent1, width: 5}, marker: {size: 10}};
+        const officeSteamCost = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Steam', type: 'scatter', mode: 'lines+markers', line: {color: rzeroColors.accent2, width: 5}, marker: {size: 10}};
         
         const officeCostData = [officeElecCost, officeGasCost, officeSteamCost].filter(d => d.y.some(v => v > 0));
         
@@ -1069,7 +1078,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 yaxis: {title: 'USD', tickformat: '$,.0f', rangemode: 'tozero', showgrid: false},
                 xaxis: {showgrid: false},
                 hovermode: 'x unified',
-                font: {family: 'Inter, sans-serif'},
+                font: {family: 'Inter, sans-serif', size: 16},
                 height: 500
             }, {displayModeBar: false});
         }
@@ -1096,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: 'Hybrid Work Pattern - Midtown East',
                 yaxis: {title: 'Relative Occupancy %', range: [0, 110]},
                 xaxis: {title: 'Day of Week'},
-                font: {family: 'Inter, sans-serif'},
+                font: {family: 'Inter, sans-serif', size: 16},
                 height: 500
             }, {displayModeBar: false});
         }, 100);
@@ -1110,7 +1119,8 @@ document.addEventListener('DOMContentLoaded', function() {
             mode: 'lines+markers', 
             fill: 'tozeroy', 
             fillcolor: 'rgba(0, 118, 157, 0.1)', 
-            line: {color: rzeroColors.primary, width: 3}
+            line: {color: rzeroColors.primary, width: 5},
+            marker: {size: 10}
         };
         
         // Calculate average HVAC percentage
@@ -1128,7 +1138,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showgrid: false
             },
             hovermode: 'x unified',
-            font: {family: 'Inter, sans-serif'},
+            font: {family: 'Inter, sans-serif', size: 16},
             height: 500,
             shapes: [{
                 type: 'line',
@@ -1180,7 +1190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 hovermode: 'x unified',
                 barmode: 'stack',
-                font: {family: 'Inter, sans-serif'},
+                font: {family: 'Inter, sans-serif', size: 16},
                 height: 500
             }, {displayModeBar: false});
         }
@@ -1237,7 +1247,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         type: 'scatter',
                         mode: 'lines+markers',
                         name: 'Monthly Average',
-                        line: {color: rzeroColors.primary, width: 3},
+                        line: {color: rzeroColors.primary, width: 5},
+                        marker: {size: 10},
                         fill: 'tozeroy',
                         fillcolor: 'rgba(0, 118, 157, 0.1)'
                     };
@@ -1267,7 +1278,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         xaxis: {title: 'Month'},
                         hovermode: 'x unified',
-                        font: {family: 'Inter, sans-serif'},
+                        font: {family: 'Inter, sans-serif', size: 16},
                         height: 500
                     }, {displayModeBar: false});
                 }
