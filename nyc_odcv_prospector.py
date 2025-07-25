@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 import math
 
 base_dir = "/Users/forrestmiller/Desktop/FINAL NYC/BIG"
-output_dir = "/Users/forrestmiller/Desktop/building_reports"
+output_dir = "/Users/forrestmiller/Desktop/nyc-odcv-prospector/building_reports"
 os.makedirs(output_dir, exist_ok=True)
 
 print("R-ZERO NYC ODCV WEBSITE GENERATOR V2")
