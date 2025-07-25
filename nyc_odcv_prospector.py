@@ -1219,13 +1219,11 @@ building_template = """<!DOCTYPE html>
             Plotly.newPlot('energy_cost_chart', costData, {{
                 title: '',
                 yaxis: {{
-                    title: 'USD',
                     tickformat: '$,.0f',
                     rangemode: 'tozero',
                     showgrid: true,
                     gridcolor: '#e0e0e0',
-                    tickfont: {{size: 16}},
-                    titlefont: {{size: 18}}
+                    tickfont: {{size: 16}}
                 }},
                 xaxis: {{
                     showgrid: false,
@@ -1270,7 +1268,7 @@ building_template = """<!DOCTYPE html>
         if (officeCostData.length > 0) {{
             Plotly.newPlot('office_cost_chart', officeCostData, {{
                 title: '',
-                yaxis: {{title: 'USD', tickformat: '$,.0f', rangemode: 'tozero', showgrid: false}},
+                yaxis: {{tickformat: '$,.0f', rangemode: 'tozero', showgrid: false}},
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
@@ -1379,7 +1377,6 @@ building_template = """<!DOCTYPE html>
             Plotly.newPlot('odcv_savings_chart', savingsData, {{
                 title: `Monthly ODCV Savings - Total: ${{formattedTotalSavings}}`,
                 yaxis: {{
-                    title: 'USD',
                     tickformat: '$,.0f',
                     rangemode: 'tozero',
                     showgrid: false
