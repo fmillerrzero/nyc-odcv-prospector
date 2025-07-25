@@ -1474,23 +1474,21 @@ for idx, row in all_buildings.iterrows():
                 '<div style="background: #f0f0f0; height: 300px; display: none; align-items: center; justify-content: center; color: #999;">Satellite view not available</div>'
             )
 
-            # 360° Street View with Marzipano
+            # 360° Street View with Photo Sphere Viewer
             street_view_360 = f'''
-<div id="pano_{bbl}" style="width:100%;height:400px;border-radius:8px;"></div>
-<script src="https://cdn.jsdelivr.net/npm/marzipano@0.10.2/build/marzipano.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/marzipano@0.10.2/build/marzipano.css"/>
+<div id="viewer_{bbl}" style="width:100%;height:400px;border-radius:8px;"></div>
+<script src="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@5/dist/photo-sphere-viewer.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@5/dist/photo-sphere-viewer.min.css">
 <script>
 document.addEventListener('DOMContentLoaded', function() {{
     try {{
-        const viewer_{bbl} = new Marzipano.Viewer(document.querySelector('#pano_{bbl}'));
-        const source_{bbl} = Marzipano.ImageUrlSource.fromString('{base_url}/{image_360_filename_base}.jpg');
-        const geometry_{bbl} = new Marzipano.EquirectGeometry([{{ width: 4096 }}]);
-        const limiter_{bbl} = Marzipano.RectilinearView.limit.traditional(1024, 100*Math.PI/180);
-        const view_{bbl} = new Marzipano.RectilinearView(null, limiter_{bbl});
-        const scene_{bbl} = viewer_{bbl}.createScene({{ source: source_{bbl}, geometry: geometry_{bbl}, view: view_{bbl} }});
-        scene_{bbl}.switchTo();
+        new PhotoSphereViewer.Viewer({{
+            container: document.querySelector('#viewer_{bbl}'),
+            panorama: '{base_url}/{image_360_filename_base}.jpg',
+            navbar: false
+        }});
     }} catch(e) {{
-        document.getElementById('pano_{bbl}').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
+        document.getElementById('viewer_{bbl}').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
     }}
 }});
 </script>
