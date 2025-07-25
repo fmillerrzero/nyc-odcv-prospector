@@ -1479,17 +1479,19 @@ for idx, row in all_buildings.iterrows():
 <div id="pano_{bbl}" style="width:100%;height:400px;border-radius:8px;"></div>
 <script src="https://www.marzipano.net/demos/vendor/marzipano.js"></script>
 <script>
-try {{
-    const viewer_{bbl} = new Marzipano.Viewer(document.querySelector('#pano_{bbl}'));
-    const source_{bbl} = Marzipano.ImageUrlSource.fromString('{base_url}/{image_360_filename_base}.jpg');
-    const geometry_{bbl} = new Marzipano.EquirectGeometry([{{ width: 4096 }}]);
-    const limiter_{bbl} = Marzipano.RectilinearView.limit.traditional(1024, 100*Math.PI/180);
-    const view_{bbl} = new Marzipano.RectilinearView(null, limiter_{bbl});
-    const scene_{bbl} = viewer_{bbl}.createScene({{ source: source_{bbl}, geometry: geometry_{bbl}, view: view_{bbl} }});
-    scene_{bbl}.switchTo();
-}} catch(e) {{
-    document.getElementById('pano_{bbl}').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
-}}
+document.addEventListener('DOMContentLoaded', function() {{
+    try {{
+        const viewer_{bbl} = new Marzipano.Viewer(document.querySelector('#pano_{bbl}'));
+        const source_{bbl} = Marzipano.ImageUrlSource.fromString('{base_url}/{image_360_filename_base}.jpg');
+        const geometry_{bbl} = new Marzipano.EquirectGeometry([{{ width: 4096 }}]);
+        const limiter_{bbl} = Marzipano.RectilinearView.limit.traditional(1024, 100*Math.PI/180);
+        const view_{bbl} = new Marzipano.RectilinearView(null, limiter_{bbl});
+        const scene_{bbl} = viewer_{bbl}.createScene({{ source: source_{bbl}, geometry: geometry_{bbl}, view: view_{bbl} }});
+        scene_{bbl}.switchTo();
+    }} catch(e) {{
+        document.getElementById('pano_{bbl}').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
+    }}
+}});
 </script>
 '''
         else:

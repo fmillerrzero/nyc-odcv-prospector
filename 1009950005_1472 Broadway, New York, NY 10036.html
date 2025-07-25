@@ -503,17 +503,19 @@
 <div id="pano_1009950005" style="width:100%;height:400px;border-radius:8px;"></div>
 <script src="https://www.marzipano.net/demos/vendor/marzipano.js"></script>
 <script>
-try {
-    const viewer_1009950005 = new Marzipano.Viewer(document.querySelector('#pano_1009950005'));
-    const source_1009950005 = Marzipano.ImageUrlSource.fromString('https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/images/1009950005/1009950005_360.jpg');
-    const geometry_1009950005 = new Marzipano.EquirectGeometry([{ width: 4096 }]);
-    const limiter_1009950005 = Marzipano.RectilinearView.limit.traditional(1024, 100*Math.PI/180);
-    const view_1009950005 = new Marzipano.RectilinearView(null, limiter_1009950005);
-    const scene_1009950005 = viewer_1009950005.createScene({ source: source_1009950005, geometry: geometry_1009950005, view: view_1009950005 });
-    scene_1009950005.switchTo();
-} catch(e) {
-    document.getElementById('pano_1009950005').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
-}
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const viewer_1009950005 = new Marzipano.Viewer(document.querySelector('#pano_1009950005'));
+        const source_1009950005 = Marzipano.ImageUrlSource.fromString('https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/images/1009950005/1009950005_360.jpg');
+        const geometry_1009950005 = new Marzipano.EquirectGeometry([{ width: 4096 }]);
+        const limiter_1009950005 = Marzipano.RectilinearView.limit.traditional(1024, 100*Math.PI/180);
+        const view_1009950005 = new Marzipano.RectilinearView(null, limiter_1009950005);
+        const scene_1009950005 = viewer_1009950005.createScene({ source: source_1009950005, geometry: geometry_1009950005, view: view_1009950005 });
+        scene_1009950005.switchTo();
+    } catch(e) {
+        document.getElementById('pano_1009950005').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
+    }
+});
 </script>
 
                 </div>
