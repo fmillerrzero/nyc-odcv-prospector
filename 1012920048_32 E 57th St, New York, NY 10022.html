@@ -94,7 +94,13 @@
             color: white;
             border-color: var(--rzero-primary);
         }
-        .chart-container { transition: opacity 0.3s ease; }
+        .chart-container { 
+            transition: opacity 0.3s ease; 
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         
         /* Stats and info */
         .stat { 
@@ -150,11 +156,13 @@
         
         /* Graphs */
         .chart { 
-            margin: 20px 0; 
+            margin: 20px auto; 
             background: #f8f8f8; 
-            padding: 15px; 
-            border-radius: 4px;
+            padding: 20px; 
+            border-radius: 8px;
             border: 1px solid #ddd;
+            width: 100%;
+            max-width: 1200px;
         }
         
         .chart-title { 
@@ -953,7 +961,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif'},
-                height: 400
+                height: 500
             }, {displayModeBar: false});
         }
         
@@ -978,7 +986,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif'},
-                height: 400
+                height: 500
             }, {displayModeBar: false});
         }
         
@@ -997,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 hovermode: 'x unified',
                 barmode: 'group',
                 font: {family: 'Inter, sans-serif'},
-                height: 400
+                height: 500
             }, {displayModeBar: false});
         }
         
@@ -1015,7 +1023,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 xaxis: {showgrid: false},
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif'},
-                height: 400
+                height: 500
             }, {displayModeBar: false});
         }
         
@@ -1042,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 yaxis: {title: 'Relative Occupancy %', range: [0, 110]},
                 xaxis: {title: 'Day of Week'},
                 font: {family: 'Inter, sans-serif'},
-                height: 400
+                height: 500
             }, {displayModeBar: false});
         }, 100);
         
@@ -1074,7 +1082,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             hovermode: 'x unified',
             font: {family: 'Inter, sans-serif'},
-            height: 400,
+            height: 500,
             shapes: [{
                 type: 'line',
                 x0: 0, x1: 1,
@@ -1126,7 +1134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 hovermode: 'x unified',
                 barmode: 'stack',
                 font: {family: 'Inter, sans-serif'},
-                height: 400
+                height: 500
             }, {displayModeBar: false});
         }
         
@@ -1213,7 +1221,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         xaxis: {title: 'Month'},
                         hovermode: 'x unified',
                         font: {family: 'Inter, sans-serif'},
-                        height: 400
+                        height: 500
                     }, {displayModeBar: false});
                 }
                 
