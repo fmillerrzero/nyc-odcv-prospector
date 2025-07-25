@@ -371,7 +371,7 @@
             margin-top: 0;
         }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt_cBgP_yqhIzUacpoz6TAVupvhmA0ZBA&libraries=places&callback=initMap&loading=async" async defer></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt_cBgP_yqhIzUacpoz6TAVupvhmA0ZBA&libraries=places&callback=initMap&loading=async" async defer></script> -->
 </head>
 <body>
     <div class="container">
@@ -8094,14 +8094,9 @@
     </div>
 
     <script>
+    // Initialize Google Maps when ready
     function initMap() {
-        const searchInput = document.getElementById('search');
-        if (searchInput) {
-            const autocomplete = new google.maps.places.Autocomplete(searchInput, {
-                types: ['address'],
-                componentRestrictions: { country: 'US' }
-            });
-        }
+        // Google Maps disabled for now due to API issues
     }
     
     let activeOwnerFilter = null;
@@ -8116,10 +8111,10 @@
         rows.sort((a, b) => {
             let aVal, bVal;
             
-            if (col === 5) {  // Annual Savings column
+            if (col === 5) {
                 aVal = parseFloat(a.cells[col].getAttribute('data-value') || 0);
                 bVal = parseFloat(b.cells[col].getAttribute('data-value') || 0);
-            } else if (col === 1 || col === 6) {  // Rank or Score columns
+            } else if (col === 1 || col === 6) {
                 aVal = parseFloat(a.cells[col].textContent.replace('#', '') || 0);
                 bVal = parseFloat(b.cells[col].textContent.replace('#', '') || 0);
             } else {
@@ -8135,163 +8130,38 @@
         rows.forEach(row => tbody.appendChild(row));
     }
     
+    function filterTable() {
+        const input = document.getElementById('search').value.toLowerCase();
+        const rows = document.querySelectorAll('#buildingTable tbody tr');
+        
+        rows.forEach(row => {
+            const searchText = row.getAttribute('data-search');
+            const matchesSearch = searchText && searchText.includes(input);
+            row.style.display = matchesSearch ? '' : 'none';
+        });
+    }
+    
     function filterByOwner(ownerName) {
         const rows = document.querySelectorAll('#buildingTable tbody tr');
         rows.forEach(row => {
-            const ownerCell = row.cells[3]; // Owner column index
+            const ownerCell = row.cells[3];
             const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
             row.style.display = isMatch ? '' : 'none';
         });
     }
-
+    
     function filterByManager(managerName) {
         const rows = document.querySelectorAll('#buildingTable tbody tr');
         rows.forEach(row => {
-            const managerCell = row.cells[4]; // Property Manager column index
+            const managerCell = row.cells[4];
             const isMatch = managerCell && managerCell.textContent.trim() === managerName;
             row.style.display = isMatch ? '' : 'none';
         });
     }
     
-    function filterTable() {{
-        const input = document.getElementById('search').value.toLowerCase();
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        
-        // Clear owner filter if user starts typing
-        if (input && activeOwnerFilter) {{
-            activeOwnerFilter = null;
-            // Remove active styling from all tiles
-            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
-                tile.style.outline = '';
-                tile.style.boxShadow = '';
-            }});
-        }}
-        
-        rows.forEach(row => {{
-            const searchText = row.getAttribute('data-search');
-            const matchesSearch = searchText.includes(input);
-            
-            // Check if row matches owner filter (if active)
-            let matchesOwner = true;
-            if (activeOwnerFilter) {{
-                const ownerCell = row.cells[3];
-                matchesOwner = ownerCell && ownerCell.textContent === activeOwnerFilter;
-            }}
-            
-            row.style.display = (matchesSearch && matchesOwner) ? '' : 'none';
-        }});
-    }}
-    
-    
-    // Filter by owner when clicking portfolio tiles
-    function filterByOwner(ownerName) {{
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        const searchBox = document.getElementById('search');
-        
-        if (activeOwnerFilter === ownerName) {{
-            // If clicking the same owner, reset the filter
-            activeOwnerFilter = null;
-            searchBox.value = '';
-            rows.forEach(row => {{
-                row.style.display = '';
-            }});
-            // Remove active styling from all tiles
-            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
-                tile.style.outline = '';
-                tile.style.boxShadow = '0 4px 12px rgba(0, 118, 157, 0.2)';
-            }});
-        }} else {{
-            // Apply new owner filter
-            activeOwnerFilter = ownerName;
-            searchBox.value = ''; // Clear search box
-            
-            rows.forEach(row => {{
-                const ownerCell = row.cells[3]; // Owner column (0-indexed)
-                const isMatch = ownerCell && ownerCell.textContent === ownerName;
-                row.style.display = isMatch ? '' : 'none';
-            }});
-            
-            // Add active styling to clicked tile
-            document.querySelectorAll('.portfolio-tile').forEach(tile => {{
-                const tileOwner = tile.querySelector('strong').textContent;
-                if (tileOwner === ownerName) {{
-                    tile.style.outline = '3px solid var(--rzero-primary)';
-                    tile.style.boxShadow = '0 4px 16px rgba(0, 118, 157, 0.4)';
-                }} else {{
-                    tile.style.outline = '';
-                    tile.style.boxShadow = '0 4px 12px rgba(0, 118, 157, 0.2)';
-                }}
-            }});
-        }}
-    }}
-    
-    // Back to top
-    function scrollToTop() {{
-        const tableWrapper = document.querySelector('.table-wrapper');
-        const startPosition = tableWrapper.scrollTop;
-        const startTime = performance.now();
-        const duration = 500;
-        
-        function animation(currentTime) {{
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-            
-            tableWrapper.scrollTop = startPosition * (1 - easeOutCubic);
-            
-            if (progress < 1) {{
-                requestAnimationFrame(animation);
-            }}
-        }}
-        
-        requestAnimationFrame(animation);
-    }}
-    
-    // Show/hide back to top based on scroll
-    document.querySelector('.table-wrapper').addEventListener('scroll', function() {{
-        const scrollTop = this.scrollTop;
-        const backToTopBtn = document.getElementById('backToTop');
-        
-        if (scrollTop > 300) {{
-            backToTopBtn.style.display = 'block';
-            backToTopBtn.style.transform = 'scale(1)';
-        }} else {{
-            backToTopBtn.style.transform = 'scale(0)';
-            setTimeout(() => {{
-                if (scrollTop <= 300) {{
-                    backToTopBtn.style.display = 'none';
-                }}
-            }}, 300);
-        }}
-        
-        // Add progress indicator
-        const scrollHeight = this.scrollHeight - this.clientHeight;
-        const scrollProgress = (scrollTop / scrollHeight) * 100;
-        backToTopBtn.style.background = `conic-gradient(var(--rzero-primary) ${{scrollProgress}}%, var(--rzero-primary-dark) ${{scrollProgress}}%)`;
-    }});
-    
-    // Dynamic shadow on scroll
-    document.querySelector('.table-wrapper').addEventListener('scroll', function(e) {{
-        const thead = document.querySelector('thead');
-        if (e.target.scrollTop > 0) {{
-            thead.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
-        }} else {{
-            thead.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-        }}
-    }});
-    
-    
-    // Initialize on page load
-    window.addEventListener('DOMContentLoaded', function() {{
-        // Add tooltips to high-value savings
-        document.querySelectorAll('td[data-value]').forEach(cell => {{
-            const value = parseFloat(cell.getAttribute('data-value'));
-            if (value >= 1000000) {{
-                cell.title = `${{(value/1000000).toFixed(2)}}M annual savings - TOP OPPORTUNITY`;
-            }}
-        }});
-        
-    }});
+    function scrollToTop() {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
     </script>
 </body>
 </html>
