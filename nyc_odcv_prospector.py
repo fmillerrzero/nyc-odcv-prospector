@@ -1001,8 +1001,20 @@ building_template = """<!DOCTYPE html>
                     <span class="stat-value">{total_area:,} sq ft</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Office Square Footage: </span>
+                    <span class="stat-label">Office Floor Area: </span>
                     <span class="stat-value">{office_sqft:,} sq ft ({office_pct}%)</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Building Automation System: </span>
+                    <span class="stat-value"><span class="{bas_class}">{bas_text}</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Heating System: </span>
+                    <span class="stat-value">{heating_type}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Cooling System: </span>
+                    <span class="stat-value">{cooling_type}</span>
                 </div>
             </div>
             
@@ -1028,30 +1040,6 @@ building_template = """<!DOCTYPE html>
                 <div class="stat">
                     <span class="stat-label">% Leased: </span>
                     <span class="stat-value">{pct_leased}%</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Building Automation System: </span>
-                    <span class="stat-value"><span class="{bas_class}">{bas_text}</span></span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Heating System: </span>
-                    <span class="stat-value">{heating_type}</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Cooling System: </span>
-                    <span class="stat-value">{cooling_type}</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Heating Automation: </span>
-                    <span class="stat-value"><span class="{heating_auto_class}">{heating_automation}</span></span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Cooling Automation: </span>
-                    <span class="stat-value"><span class="{cooling_auto_class}">{cooling_automation}</span></span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">System Data Date: </span>
-                    <span class="stat-value">{submission_date}</span>
                 </div>
             </div>
         </div>
@@ -1082,7 +1070,7 @@ building_template = """<!DOCTYPE html>
                             <text x="180" y="115" text-anchor="middle" font-size="12" fill="#666">100</text>
                         </svg>
                         <div>
-                            <div style="font-size: 0.9em; color: #666;">Target Score: {target_energy_star}</div>
+                            <div style="font-size: 1.2em; color: #666; font-weight: 500;">Target Score: {target_energy_star}</div>
                             <div style="font-size: 1.1em; margin-top: 5px;">{energy_star_delta}</div>
                         </div>
                     </div>
@@ -1103,11 +1091,9 @@ building_template = """<!DOCTYPE html>
                         <button class="toggle-btn" onclick="showChart('usage', 'office')">Office</button>
                     </div>
                     <div id="building_usage_container" class="chart-container">
-                        <h4 style="text-align: center; color: #666;">Whole Building Energy Usage</h4>
                         <div class="chart" id="energy_usage_chart"></div>
                     </div>
                     <div id="office_usage_container" class="chart-container" style="display: none;">
-                        <h4 style="text-align: center; color: #666;">Office Space Energy Usage</h4>
                         <div class="chart" id="office_usage_chart"></div>
                     </div>
                 </div>
@@ -1122,11 +1108,9 @@ building_template = """<!DOCTYPE html>
                         <button class="toggle-btn" onclick="showChart('cost', 'office')">Office</button>
                     </div>
                     <div id="building_cost_container" class="chart-container">
-                        <h4 style="text-align: center; color: #666;">Whole Building Cost</h4>
                         <div class="chart" id="energy_cost_chart"></div>
                     </div>
                     <div id="office_cost_container" class="chart-container" style="display: none;">
-                        <h4 style="text-align: center; color: #666;">Office Space Cost</h4>
                         <div class="chart" id="office_cost_chart"></div>
                     </div>
                 </div>
@@ -1140,7 +1124,7 @@ building_template = """<!DOCTYPE html>
             
             <!-- Page 3.3 - Disaggregation -->
             <div class="page">
-                <h3 class="page-title">HVAC Energy Breakdown</h3>
+                <h3 class="page-title">HVAC Electricity Usage (% of Total)</h3>
                 <div class="chart" id="hvac_pct_chart"></div>
                 <div class="chart" id="odcv_savings_chart"></div>
             </div>
@@ -1164,17 +1148,17 @@ building_template = """<!DOCTYPE html>
         // R-Zero brand colors with distinct energy type colors
         const rzeroColors = {{
             primary: '#0066cc',      // Blue for electricity
-            secondary: '#ffc107',    // Yellow for gas  
+            secondary: '#ffc107',    // Yellow for steam  
             success: '#38a169',      // Keep green
-            accent1: '#ffc107',      // Yellow for gas
-            accent2: '#dc3545'       // Red for steam
+            accent1: '#ff6600',      // Orange for gas
+            accent2: '#ffc107'       // Yellow for steam
         }};
         
         // Energy type colors for clarity
         const energyColors = {{
             electricity: '#0066cc',  // Blue - like electrical current
-            gas: '#ffc107',         // Yellow - like gas flame
-            steam: '#dc3545'        // Red - like steam heat
+            gas: '#ff6600',         // Orange - like gas flame
+            steam: '#ffc107'        // Yellow - like steam heat
         }};
         
         // Unit conversion functions
@@ -1234,7 +1218,10 @@ building_template = """<!DOCTYPE html>
         
         if (usageData.length > 0) {{
             Plotly.newPlot('energy_usage_chart', usageData, {{
-                title: '',
+                title: {{
+                    text: 'Whole Building Energy Usage',
+                    y: 0.95
+                }},
                 yaxis: {{
                     title: 'kBtu',
                     tickformat: ',.0s',
@@ -1261,7 +1248,10 @@ building_template = """<!DOCTYPE html>
         
         if (costData.length > 0) {{
             Plotly.newPlot('energy_cost_chart', costData, {{
-                title: '',
+                title: {{
+                    text: 'Whole Building Cost',
+                    y: 0.95
+                }},
                 yaxis: {{
                     tickformat: '$,.0f',
                     rangemode: 'tozero',
@@ -1274,29 +1264,66 @@ building_template = """<!DOCTYPE html>
                 }},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
-                legend: {{font: {{size: 16}}}},
+                legend: {{
+                    font: {{size: 16}},
+                    orientation: 'h',
+                    x: 0.5,
+                    xanchor: 'center',
+                    y: -0.15,
+                    yanchor: 'top',
+                    tracegroupgap: 20
+                }},
                 height: 500,
-                margin: {{l: 100, r: 50, t: 50, b: 80}}
+                margin: {{l: 100, r: 50, t: 50, b: 120}}
             }}, {{displayModeBar: false}});
         }}
         
         // Office Usage Chart
-        const officeElecUsage = {{x: months, y: {office_elec_usage}, name: 'Elec', type: 'bar', marker: {{color: rzeroColors.primary}}}};
-        const officeGasUsage = {{x: months, y: {office_gas_usage}, name: 'Gas', type: 'bar', marker: {{color: rzeroColors.accent1}}}};
-        const officeSteamUsage = {{x: months, y: {office_steam_usage}, name: 'Steam', type: 'bar', marker: {{color: rzeroColors.accent2}}}};
+        const officeElecUsage = {{
+            x: months, 
+            y: {office_elec_usage}, 
+            name: 'Elec', 
+            type: 'bar', 
+            marker: {{color: rzeroColors.primary}},
+            hovertemplate: '%{{x}}<br>Elec: %{{y:,.0f}} kBtu<br>(%{{customdata}} kWh)<extra></extra>',
+            customdata: {office_elec_usage}.map(v => formatValue(kBtuToKwh(v)))
+        }};
+        const officeGasUsage = {{
+            x: months, 
+            y: {office_gas_usage}, 
+            name: 'Gas', 
+            type: 'bar', 
+            marker: {{color: rzeroColors.accent1}},
+            hovertemplate: '%{{x}}<br>Gas: %{{y:,.0f}} kBtu<br>(%{{customdata}} Therms)<extra></extra>',
+            customdata: {office_gas_usage}.map(v => formatValue(kBtuToTherms(v)))
+        }};
+        const officeSteamUsage = {{
+            x: months, 
+            y: {office_steam_usage}, 
+            name: 'Steam', 
+            type: 'bar', 
+            marker: {{color: rzeroColors.accent2}},
+            hovertemplate: '%{{x}}<br>Steam: %{{y:,.0f}} kBtu<br>(%{{customdata}} lbs)<extra></extra>',
+            customdata: {office_steam_usage}.map(v => formatValue(kBtuToLbs(v)))
+        }};
         
         const officeUsageData = [officeElecUsage, officeGasUsage, officeSteamUsage].filter(d => d.y.some(v => v > 0));
         
         if (officeUsageData.length > 0) {{
             Plotly.newPlot('office_usage_chart', officeUsageData, {{
-                title: '',
+                title: {{
+                    text: 'Office Space Energy Usage',
+                    y: 0.95
+                }},
                 yaxis: {{title: 'kBtu', tickformat: ',.0f', rangemode: 'tozero', showgrid: false}},
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 barmode: 'group',
+                bargap: 0.3,         // Space between bar groups (30%)
+                bargroupgap: 0.2,    // Space between bars in a group (20%)
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 120, r: 60, t: 30, b: 60}},
+                margin: {{l: 80, r: 80, t: 30, b: 60}},
                 width: null,
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
@@ -1311,14 +1338,19 @@ building_template = """<!DOCTYPE html>
         
         if (officeCostData.length > 0) {{
             Plotly.newPlot('office_cost_chart', officeCostData, {{
-                title: '',
+                title: {{
+                    text: 'Office Space Cost',
+                    y: 0.95
+                }},
                 barmode: 'group',
+                bargap: 0.3,         // Space between bar groups (30%)
+                bargroupgap: 0.2,    // Space between bars in a group (20%)
                 yaxis: {{tickformat: '$,.0f', rangemode: 'tozero', showgrid: false}},
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 120, r: 60, t: 30, b: 60}},
+                margin: {{l: 80, r: 80, t: 30, b: 60}},
                 width: null,
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
@@ -1331,7 +1363,7 @@ building_template = """<!DOCTYPE html>
             name: 'Typical Week Pattern',
             type: 'bar',
             marker: {{
-                color: ['#ffc107', rzeroColors.primary, rzeroColors.primary, rzeroColors.primary, '#ffc107']
+                color: ['#ff6600', rzeroColors.primary, rzeroColors.primary, rzeroColors.primary, '#ff6600']
             }}
         }};
         
@@ -1346,6 +1378,7 @@ building_template = """<!DOCTYPE html>
                 title: 'Hybrid Work Pattern - {neighborhood_name}',
                 yaxis: {{title: 'Relative Occupancy %', range: [0, 110], showgrid: false}},
                 xaxis: {{title: 'Day of Week', showgrid: false}},
+                bargap: 0.3,         // Space between bars (30%)
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
                 margin: {{l: 60, r: 30, t: 30, b: 60}},
@@ -1383,6 +1416,12 @@ building_template = """<!DOCTYPE html>
             hovermode: 'x unified',
             font: {{family: 'Inter, sans-serif', size: 16}},
             height: 500,
+            margin: {{
+                l: 80,   // Increased left margin for Y-axis labels
+                b: 60,   // Increased bottom margin for X-axis labels
+                t: 50,
+                r: 50
+            }},
             shapes: [{{
                 type: 'line',
                 x0: 0, x1: 1,
@@ -1391,14 +1430,15 @@ building_template = """<!DOCTYPE html>
                 line: {{color: 'red', width: 2, dash: 'dash'}}
             }}],
             annotations: [{{
-                x: 1,
+                x: 0.95,
                 y: avgHvac,
                 xref: 'paper',
                 text: `Avg: ${{(avgHvac*100).toFixed(0)}}%`,
                 showarrow: false,
-                xanchor: 'left',
+                xanchor: 'right',
                 bgcolor: 'white',
                 bordercolor: 'red',
+                borderwidth: 1,
                 font: {{size: 14, color: '#333'}}
             }}]
         }}, {{displayModeBar: false}});
@@ -1406,7 +1446,7 @@ building_template = """<!DOCTYPE html>
         // ODCV Savings Chart
         const odcvElecSave = {{x: months, y: {odcv_elec_savings}, name: 'Elec', type: 'bar', marker: {{color: rzeroColors.primary}}}};
         const odcvGasSave = {{x: months, y: {odcv_gas_savings}, name: 'Gas', type: 'bar', marker: {{color: rzeroColors.accent1}}}};
-        const odcvSteamSave = {{x: months, y: {odcv_steam_savings}, name: 'Steam', type: 'bar', marker: {{color: rzeroColors.secondary}}}};
+        const odcvSteamSave = {{x: months, y: {odcv_steam_savings}, name: 'Steam', type: 'bar', marker: {{color: rzeroColors.accent2}}}};
         
         const savingsData = [odcvElecSave, odcvGasSave, odcvSteamSave].filter(d => d.y.some(v => v > 0));
         
@@ -1421,7 +1461,7 @@ building_template = """<!DOCTYPE html>
             }}).format(totalSavings);
             
             Plotly.newPlot('odcv_savings_chart', savingsData, {{
-                title: `Monthly ODCV Savings - Total: ${{formattedTotalSavings}}`,
+                title: `Monthly ODCV Savings (Total: ${{formattedTotalSavings}})`,
                 yaxis: {{
                     tickformat: '$,.0f',
                     rangemode: 'tozero',
@@ -1432,6 +1472,7 @@ building_template = """<!DOCTYPE html>
                 }},
                 hovermode: 'x unified',
                 barmode: 'stack',
+                bargap: 0.3,         // Space between bars (30%)
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
                 margin: {{l: 100, r: 100, t: 60, b: 80}},
@@ -1528,7 +1569,7 @@ for idx, row in all_buildings.iterrows():
             manager_logo_style = "max-height:80px;max-width:200px;margin-left:15px;vertical-align:middle;" if "Vornado" in property_manager else "max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;"
             manager_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{manager_logo}" alt="{escape(property_manager)}" style="{manager_logo_style}">'
         
-        landlord_contact = safe_val(data['buildings'], bbl, 'LandlordContact', 'N/A')
+        landlord_contact = safe_val(data['buildings'], bbl, 'LandlordContact', 'Unavailable')
         building_class = safe_val(data['buildings'], bbl, 'Class', 'N/A')
         pct_leased = int(float(safe_val(data['buildings'], bbl, '% Leased', 0)))
         num_floors = int(float(safe_val(data['buildings'], bbl, 'numfloors', 0)))
@@ -1715,9 +1756,25 @@ for idx, row in all_buildings.iterrows():
         else:
             occupancy_adjustment_text = '<span style="color: #666;">Standard ODCV opportunity for this occupancy level</span>'
         
-        # BAS status display (already retrieved above)
+        # BAS status display with detailed automation type
         bas_class = 'bas' if bas == 'yes' else 'no-bas'
-        bas_text = 'BAS Ready' if bas == 'yes' else 'No BAS' if bas == 'no' else 'Unknown'
+        if bas == 'yes':
+            # Determine what type of automation is present
+            has_heating_auto = heating_automation == 'yes'
+            has_cooling_auto = cooling_automation == 'yes'
+            
+            if has_heating_auto and has_cooling_auto:
+                bas_text = 'Present (General & Heating/Cooling)'
+            elif has_heating_auto:
+                bas_text = 'Present (General & Heating)'
+            elif has_cooling_auto:
+                bas_text = 'Present (General & Cooling)'
+            else:
+                bas_text = 'Present (General)'
+        elif bas == 'no':
+            bas_text = 'Absent'
+        else:
+            bas_text = 'Unknown'
         
         # LL97 data from LL97_BIG.csv
         penalty_2026 = float(safe_val(data['ll97'], bbl, 'penalty_2026_dollars', 0))
@@ -1822,33 +1879,30 @@ for idx, row in all_buildings.iterrows():
                     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
                     monthly_dates = json.dumps(months)
                     
-                    # Create a mapping of existing data to months
-                    monthly_data_map = {}
+                    # Create mappings for all monthly data columns
+                    monthly_mean_map = {}
+                    monthly_min_map = {}
+                    monthly_max_map = {}
+                    
                     for _, row in monthly_iaq.iterrows():
                         month_str = str(row['month'])
                         if '-' in month_str:
                             month_num = int(month_str.split('-')[1])
-                            monthly_data_map[month_num] = row['pm25_monthly_mean']
+                            monthly_mean_map[month_num] = row['pm25_monthly_mean']
+                            monthly_min_map[month_num] = row['pm25_monthly_min']
+                            monthly_max_map[month_num] = row['pm25_monthly_max']
                     
                     # Fill in all 12 months with data or 0
                     monthly_values = []
-                    for i in range(1, 13):
-                        monthly_values.append(monthly_data_map.get(i, 0))
-                    
-                    monthly_means = safe_json(monthly_values)
-                    
-                    # Get min/max from daily data for variance band
                     monthly_mins = []
                     monthly_maxs = []
-                    for month in range(1, 13):
-                        month_data = daily_iaq[daily_iaq['date'].dt.month == month]['pm25_mean']
-                        if not month_data.empty:
-                            monthly_mins.append(float(month_data.min()))
-                            monthly_maxs.append(float(month_data.max()))
-                        else:
-                            monthly_mins.append(0)
-                            monthly_maxs.append(0)
                     
+                    for i in range(1, 13):
+                        monthly_values.append(monthly_mean_map.get(i, 0))
+                        monthly_mins.append(monthly_min_map.get(i, 0))
+                        monthly_maxs.append(monthly_max_map.get(i, 0))
+                    
+                    monthly_means = safe_json(monthly_values)
                     monthly_mins = safe_json(monthly_mins)
                     monthly_maxs = safe_json(monthly_maxs)
                 else:
@@ -1899,7 +1953,7 @@ for idx, row in all_buildings.iterrows():
                             </div>
                             <div class="iaq-stat">
                                 <div class="iaq-label">Maximum Recorded</div>
-                                <div class="iaq-value">{max_pm25:.1f} μg/m³</div>
+                                <div class="iaq-value" style="color: #FF0000">{max_pm25:.1f} μg/m³</div>
                             </div>
                             <div class="iaq-stat">
                                 <div class="iaq-label">Monitoring Station</div>
@@ -1968,15 +2022,21 @@ for idx, row in all_buildings.iterrows():
                             orientation: 'h',
                             x: 0.5,
                             xanchor: 'center',
-                            y: 1.1,
+                            y: 1.15,
                             yanchor: 'bottom',
                             bgcolor: 'transparent',
-                            borderwidth: 0
+                            borderwidth: 0,
+                            font: {{
+                                size: 12
+                            }},
+                            tracegroupgap: 30,
+                            itemsizing: 'constant',
+                            itemwidth: 30
                         }},
                         hovermode: 'x unified',
                         font: {{family: 'Inter, sans-serif', size: 16}},
                         height: 500,
-                        margin: {{t: 80, l: 80, r: 50, b: 60}}  // Adjust margins for legend above
+                        margin: {{t: 100, l: 80, r: 50, b: 60}}  // Adjust margins for legend above
                     }}, {{displayModeBar: false}});
                 }}
                 """
@@ -2114,13 +2174,14 @@ document.addEventListener('DOMContentLoaded', function() {{
             "showControls": true,
             "haov": 360,
             "vaov": Math.min(180, (aspectRatio * 360)),  // Adjust vertical angle based on image
-            "yaw": "{bbl}" === "1009950005" ? 135 : getBuildingYaw("{main_address}"),  // 135° points SE toward 4 Times Square
+            "yaw": "{bbl}" === "1009950005" ? 160 : getBuildingYaw("{main_address}"),  // 160° points toward 4 Times Square
             "pitch": isTimesSquareArea ? 35 : 0,  // Look up more for tall buildings
             "hfov": "{bbl}" === "1009950005" ? 120 : (isTimesSquareArea ? 100 : 90),  // Max zoom out for 4 Times Square
             "minHfov": "{bbl}" === "1009950005" ? 120 : 50,    // Prevent zoom in
             "maxHfov": "{bbl}" === "1009950005" ? 120 : 120,   // Lock at max zoom
             "minPitch": -60,
-            "maxPitch": 90
+            "maxPitch": 90,
+            "mouseZoom": false  // Prevent scroll wheel capture to allow page scrolling
         }});
         
         if ("{bbl}" === "1009950005") {{
@@ -2329,7 +2390,12 @@ document.addEventListener('DOMContentLoaded', function() {{
         
     except Exception as e:
         failed += 1
-        print(f"Failed BBL {bbl}: {str(e)}")
+        import traceback
+        print(f"\n========== Failed BBL {bbl} ==========")
+        print(f"Error: {str(e)}")
+        print("Full traceback:")
+        traceback.print_exc()
+        print("="*40 + "\n")
 
 # Generate homepage
 print("\nGenerating homepage...")
@@ -2560,22 +2626,6 @@ homepage_html = f"""<!DOCTYPE html>
             position: relative;
         }}
         
-        .portfolio-tile.selected::before {{
-            content: '✓';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: var(--rzero-primary);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-        }}
         
         .search-box {{ 
             width: 100%; 
@@ -3098,28 +3148,53 @@ homepage_html += """
     }
     
     function filterByOwner(ownerName) {
-        // Update active filter
-        activeOwnerFilter = ownerName;
+        // Check if this owner is already selected
+        const isAlreadySelected = activeOwnerFilter === ownerName;
         
-        // Remove previous selection styling
-        document.querySelectorAll('.portfolio-tile').forEach(tile => {
-            tile.classList.remove('selected');
-        });
-        
-        // Add selection styling to clicked tile
-        document.querySelectorAll('.portfolio-tile').forEach(tile => {
-            if (tile.querySelector('strong') && tile.querySelector('strong').textContent === ownerName) {
-                tile.classList.add('selected');
-            }
-        });
-        
-        // Filter table rows
-        const rows = document.querySelectorAll('#buildingTable tbody tr');
-        rows.forEach(row => {
-            const ownerCell = row.cells[3];
-            const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
-            row.style.display = isMatch ? '' : 'none';
-        });
+        if (isAlreadySelected) {
+            // Unselect: clear filter and show all buildings
+            activeOwnerFilter = null;
+            
+            // Clear search bar
+            document.getElementById('search').value = '';
+            
+            // Remove selection styling
+            document.querySelectorAll('.portfolio-tile').forEach(tile => {
+                tile.classList.remove('selected');
+            });
+            
+            // Show all rows
+            const rows = document.querySelectorAll('#buildingTable tbody tr');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+        } else {
+            // Select: apply filter
+            activeOwnerFilter = ownerName;
+            
+            // Populate search bar with owner name
+            document.getElementById('search').value = ownerName;
+            
+            // Remove previous selection styling
+            document.querySelectorAll('.portfolio-tile').forEach(tile => {
+                tile.classList.remove('selected');
+            });
+            
+            // Add selection styling to clicked tile
+            document.querySelectorAll('.portfolio-tile').forEach(tile => {
+                if (tile.querySelector('strong') && tile.querySelector('strong').textContent === ownerName) {
+                    tile.classList.add('selected');
+                }
+            });
+            
+            // Filter table rows
+            const rows = document.querySelectorAll('#buildingTable tbody tr');
+            rows.forEach(row => {
+                const ownerCell = row.cells[3];
+                const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
+                row.style.display = isMatch ? '' : 'none';
+            });
+        }
         
         updateClearButtonState();
     }
@@ -3146,12 +3221,20 @@ homepage_html += """
     }
     
     function filterByManager(managerName) {
+        // Update active filter to track manager filters too
+        activeOwnerFilter = managerName;
+        
+        // Populate search bar with manager name
+        document.getElementById('search').value = managerName;
+        
         const rows = document.querySelectorAll('#buildingTable tbody tr');
         rows.forEach(row => {
             const managerCell = row.cells[4];
             const isMatch = managerCell && managerCell.textContent.trim() === managerName;
             row.style.display = isMatch ? '' : 'none';
         });
+        
+        updateClearButtonState();
     }
     
     function scrollToTop() {
