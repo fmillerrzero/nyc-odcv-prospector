@@ -1098,13 +1098,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (officeUsageData.length > 0) {
             Plotly.newPlot('office_usage_chart', officeUsageData, {
                 title: '',
-                yaxis: {title: 'kBtu', tickformat: ',.0s', rangemode: 'tozero', showgrid: false},
+                yaxis: {title: 'kBtu', tickformat: ',.0f', rangemode: 'tozero', showgrid: false},
                 xaxis: {showgrid: false},
                 hovermode: 'x unified',
                 barmode: 'group',
                 font: {family: 'Inter, sans-serif', size: 16},
                 height: 500,
-                margin: {l: 60, r: 30, t: 30, b: 60},
+                margin: {l: 120, r: 60, t: 30, b: 60},
+                width: null,
                 autosize: true
             }, {displayModeBar: false, responsive: true});
         }
@@ -1125,7 +1126,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif', size: 16},
                 height: 500,
-                margin: {l: 100, r: 30, t: 30, b: 60},
+                margin: {l: 120, r: 60, t: 30, b: 60},
+                width: null,
                 autosize: true
             }, {displayModeBar: false, responsive: true});
         }

@@ -1266,13 +1266,14 @@ building_template = """<!DOCTYPE html>
         if (officeUsageData.length > 0) {{
             Plotly.newPlot('office_usage_chart', officeUsageData, {{
                 title: '',
-                yaxis: {{title: 'kBtu', tickformat: ',.0s', rangemode: 'tozero', showgrid: false}},
+                yaxis: {{title: 'kBtu', tickformat: ',.0f', rangemode: 'tozero', showgrid: false}},
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 barmode: 'group',
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                margin: {{l: 120, r: 60, t: 30, b: 60}},
+                width: null,
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
         }}
@@ -1293,7 +1294,8 @@ building_template = """<!DOCTYPE html>
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
                 height: 500,
-                margin: {{l: 100, r: 30, t: 30, b: 60}},
+                margin: {{l: 120, r: 60, t: 30, b: 60}},
+                width: null,
                 autosize: true
             }}, {{displayModeBar: false, responsive: true}});
         }}
@@ -2831,7 +2833,7 @@ if top_portfolios:
     """
     for owner, stats, logo in top_portfolios:
         # Special styling for Vornado logo
-        logo_style = "position: absolute; top: 15px; right: 15px; max-height: 60px; max-width: 120px; opacity: 0.8;" if "Vornado" in owner else "position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;"
+        logo_style = "position: absolute; top: 10px; right: 15px; max-height: 60px; max-width: 120px; opacity: 0.8;" if "Vornado" in owner else "position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;"
         
         homepage_html += f"""
                 <div class="portfolio-tile" onclick="filterByOwner('{escape(owner).replace("'", "\\'")}')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; min-height: 100px;">
