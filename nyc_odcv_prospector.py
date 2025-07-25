@@ -409,6 +409,9 @@ building_template = """<!DOCTYPE html>
         .chart-container {{ 
             transition: opacity 0.3s ease; 
             width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -474,7 +477,9 @@ building_template = """<!DOCTYPE html>
             border-radius: 8px;
             border: 1px solid #ddd;
             width: 100%;
-            max-width: 1200px;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
         }}
         
         .chart-title {{ 
@@ -1192,8 +1197,10 @@ building_template = """<!DOCTYPE html>
                 }},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
-                height: 500
-            }}, {{displayModeBar: false}});
+                height: 500,
+                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                autosize: true
+            }}, {{displayModeBar: false, responsive: true}});
         }}
         
         // Building Energy Cost Chart
@@ -1242,8 +1249,10 @@ building_template = """<!DOCTYPE html>
                 hovermode: 'x unified',
                 barmode: 'group',
                 font: {{family: 'Inter, sans-serif', size: 16}},
-                height: 500
-            }}, {{displayModeBar: false}});
+                height: 500,
+                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                autosize: true
+            }}, {{displayModeBar: false, responsive: true}});
         }}
         
         // Office Cost Chart
@@ -1260,8 +1269,10 @@ building_template = """<!DOCTYPE html>
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif', size: 16}},
-                height: 500
-            }}, {{displayModeBar: false}});
+                height: 500,
+                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                autosize: true
+            }}, {{displayModeBar: false, responsive: true}});
         }}
         
         // Day of week pattern
@@ -1287,8 +1298,10 @@ building_template = """<!DOCTYPE html>
                 yaxis: {{title: 'Relative Occupancy %', range: [0, 110]}},
                 xaxis: {{title: 'Day of Week'}},
                 font: {{family: 'Inter, sans-serif', size: 16}},
-                height: 500
-            }}, {{displayModeBar: false}});
+                height: 500,
+                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                autosize: true
+            }}, {{displayModeBar: false, responsive: true}});
         }}, 100);
         
         // HVAC Percentage Chart
@@ -1372,8 +1385,10 @@ building_template = """<!DOCTYPE html>
                 hovermode: 'x unified',
                 barmode: 'stack',
                 font: {{family: 'Inter, sans-serif', size: 16}},
-                height: 500
-            }}, {{displayModeBar: false}});
+                height: 500,
+                margin: {{l: 60, r: 30, t: 30, b: 60}},
+                autosize: true
+            }}, {{displayModeBar: false, responsive: true}});
         }}
         
         // Carousel control functions
