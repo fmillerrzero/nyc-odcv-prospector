@@ -317,6 +317,7 @@ building_template = """<!DOCTYPE html>
             margin: 0 auto; 
             background: white;
             box-shadow: 0 4px 20px rgba(0, 118, 157, 0.08);
+            padding: 0 15%;
         }}
         
         /* Section 0 - Title */
@@ -331,7 +332,7 @@ building_template = """<!DOCTYPE html>
         
         /* Section styling */
         .section {{ 
-            padding: 40px 20px; 
+            padding: 40px 15%; 
             border-bottom: 3px solid var(--rzero-primary); 
             background: white;
             position: relative;
@@ -372,7 +373,12 @@ building_template = """<!DOCTYPE html>
         }}
         
         
-        .page {{ margin-bottom: 40px; }}
+        .page {{ 
+            margin-bottom: 40px; 
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }}
         .page-title {{ 
             font-size: 1.3em; 
             color: var(--text-dark); 
@@ -908,16 +914,14 @@ building_template = """<!DOCTYPE html>
         <div class="title-section">
             <div>
                 <h1 style="margin: 0; font-size: 2em; font-weight: 600;">{address}</h1>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">{neighborhood} • {office_occupancy}% occupancy {trend_indicator}</p>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">{neighborhood} • {office_occupancy}% avg occupancy {trend_indicator}</p>
             </div>
             <div style="text-align: center;">
                 <div style="font-size: 0.9em; opacity: 0.8; margin-bottom: 5px;">2026 ODCV Savings</div>
                 <div style="font-size: 2.5em; font-weight: 700;">${total_2026_savings:,.0f}</div>
                 {penalty_breakdown_html}
             </div>
-            <div style="background: white; padding: 10px 15px; border-radius: 8px;">
-                <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero" style="height: 40px;">
-            </div>
+            <!-- Logo removed per request -->
         </div>
         
         {critical_alert}
@@ -952,8 +956,9 @@ building_template = """<!DOCTYPE html>
             </div>
             
             <!-- Page 1.3 - 360° Street View -->
-            <div class="page">
-                <div class="image-360">
+            <div class="page" style="max-width:none;padding:0;">
+                <h3 class="page-title" style="padding:0 15%;">360° Street View</h3>
+                <div class="image-360" style="width:100%;overflow:hidden;">
                     {street_view_360}
                 </div>
             </div>
@@ -999,6 +1004,10 @@ building_template = """<!DOCTYPE html>
                     <span class="stat-value">{property_manager}{manager_logo}</span>
                 </div>
                 <div class="stat">
+                    <span class="stat-label">Owner Contact: </span>
+                    <span class="stat-value">{landlord_contact}</span>
+                </div>
+                <div class="stat">
                     <span class="stat-label">% Leased: </span>
                     <span class="stat-value">{pct_leased}%</span>
                 </div>
@@ -1016,17 +1025,16 @@ building_template = """<!DOCTYPE html>
                     <span class="stat-label">ENERGY STAR Score: </span>
                     <div style="display: flex; align-items: center; gap: 30px;">
                         <svg viewBox="0 0 200 120" style="width: 200px; height: 120px;">
-                            <!-- Background arc -->
-                            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                            <!-- Background arc removed for cleaner look -->
                             <!-- Colored sections -->
                             <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
                             <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
                             <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
                             <!-- Score number in center -->
                             <text x="100" y="85" text-anchor="middle" font-size="36" font-weight="bold" fill="{energy_star_color}">{energy_star}</text>
-                            <!-- Needle -->
-                            <line x1="100" y1="100" x2="{needle_x}" y2="{needle_y}" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-                            <circle cx="100" cy="100" r="6" fill="#333"/>
+                            <!-- Needle removed for cleaner look -->
+                            <!-- <line x1="100" y1="100" x2="{needle_x}" y2="{needle_y}" stroke="#333" stroke-width="3" stroke-linecap="round"/> -->
+                            <!-- <circle cx="100" cy="100" r="6" fill="#333"/> -->
                             <!-- Labels -->
                             <text x="20" y="115" text-anchor="middle" font-size="12" fill="#666">0</text>
                             <text x="180" y="115" text-anchor="middle" font-size="12" fill="#666">100</text>
@@ -1920,7 +1928,7 @@ for idx, row in all_buildings.iterrows():
 
             # 360° Street View with Pannellum (configured for partial panoramas with smart yaw)
             street_view_360 = f'''
-<div id="viewer_{bbl}" style="width:100%;height:600px;border-radius:8px;"></div>
+<div id="viewer_{bbl}" style="width:100%;height:600px;border-radius:8px;background:#f0f0f0;"></div>
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
 <script>
@@ -1938,34 +1946,44 @@ function getBuildingYaw(address) {{
         return isEven ? 0 : 180;   // Street: Even=North, Odd=South
     }}
 }}
-
 document.addEventListener('DOMContentLoaded', function() {{
-    try {{
-        const address = "{main_address}";
-        const yaw = getBuildingYaw(address);
+    const imgUrl = "{base_url}/{image_360_filename_base}.jpg";
+    const viewerEl = document.getElementById('viewer_{bbl}');
+    
+    // Load image to get dimensions
+    const img = new Image();
+    img.onload = function() {{
+        // Calculate aspect ratio
+        const aspectRatio = this.height / this.width;
+        const containerWidth = viewerEl.offsetWidth;
         
+        // Set height based on image aspect ratio
+        // For 360 panoramas, typical ratio is 1:2, but adjust to actual
+        let optimalHeight = containerWidth * aspectRatio;
+        
+        // Cap height between 400px and 1200px
+        optimalHeight = Math.max(400, Math.min(1200, optimalHeight));
+        
+        // Update viewer height
+        viewerEl.style.height = optimalHeight + 'px';
+        
+        // Initialize Pannellum with proper dimensions
         pannellum.viewer('viewer_{bbl}', {{
             "type": "equirectangular",
-            "panorama": "{base_url}/{image_360_filename_base}.jpg",
+            "panorama": imgUrl,
             "autoLoad": true,
             "autoRotate": -2,
             "showZoomCtrl": false,
             "showFullscreenCtrl": false,
             "showControls": false,
-            "haov": 180,
-            "vaov": 90,
-            "vOffset": 0,
-            "yaw": yaw,
-            "pitch": 20,
-            "hfov": 90,
-            "minYaw": -90,   // Add this - prevents rotating left beyond image
-            "maxYaw": 90,    // Add this - prevents rotating right beyond image
-            "minHfov": 50,   // Add this - minimum zoom
-            "maxHfov": 120   // Add this - maximum zoom
+            "haov": 360,
+            "vaov": Math.min(180, (aspectRatio * 360)),  // Adjust vertical angle based on image
+            "yaw": getBuildingYaw("{main_address}"),
+            "pitch": 0,
+            "hfov": 90
         }});
-    }} catch(e) {{
-        document.getElementById('viewer_{bbl}').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
-    }}
+    }};
+    img.src = imgUrl;
 }});
 </script>
 '''
@@ -2274,7 +2292,7 @@ homepage_html = f"""<!DOCTYPE html>
             background: #ffffff; 
         }}
         
-        .container {{ max-width: 1400px; margin: 0 auto; }}
+        .container {{ max-width: 1400px; margin: 0 auto; padding: 0 7.5%; }}
         
         .header {{
             background: white;
@@ -2393,7 +2411,7 @@ homepage_html = f"""<!DOCTYPE html>
             width: 100%; 
             background: white; 
             border-collapse: collapse; 
-            min-width: 1100px;
+            min-width: 900px;
         }}
         
         table a {{
@@ -2410,18 +2428,20 @@ homepage_html = f"""<!DOCTYPE html>
         th {{ 
             background: var(--rzero-primary); 
             color: white; 
-            padding: 14px; 
+            padding: 10px 8px; 
             text-align: left; 
             cursor: pointer; 
             position: sticky; 
             top: 0;
             font-weight: 600;
+            font-size: 14px;
             white-space: nowrap;
         }}
         
         td {{ 
-            padding: 10px; 
+            padding: 8px 6px; 
             border-bottom: 1px solid #eee; 
+            font-size: 13px;
         }}
         
         .yes {{ color: #38a169; font-weight: bold; }}
@@ -2443,22 +2463,22 @@ homepage_html = f"""<!DOCTYPE html>
             display: inline-block;
             background: var(--rzero-primary);
             color: white;
-            padding: 4px 12px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 0.85em;
+            font-size: 0.75em;
             font-weight: 600;
         }}
         
         /* Thumbnail styles */
         .thumb-cell {{ 
-            width: 110px; 
-            padding: 8px !important; 
+            width: 80px; 
+            padding: 5px !important; 
             text-align: center;
         }}
 
         .building-thumb {{ 
-            width: 90px; 
-            height: 90px; 
+            width: 70px; 
+            height: 70px; 
             object-fit: cover; 
             border-radius: 8px; 
             box-shadow: 0 2px 8px rgba(0, 118, 157, 0.15);
@@ -2632,23 +2652,25 @@ homepage_html = f"""<!DOCTYPE html>
     <div class="container">
         <div class="header">
             <div class="logo-header">
-                <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo" style="width: 200px; height: 50px;">
+                <a href="https://rzero.com" target="_blank" style="display: inline-block;">
+                    <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo" style="width: 200px; height: 50px; cursor: pointer;">
+                </a>
             </div>
             <h1>Prospector: NYC</h1>
         </div>
         
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-value">{bas_yes}</div>
-                <div class="stat-label">Buildings with BAS</div>
+                <div class="stat-value" style="color: #2e7d32;">${total_savings/1000000:.1f}M</div>
+                <div class="stat-label">Year One Savings</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" style="color: #dc3545;">{urgent}</div>
                 <div class="stat-label">Buildings facing ${total_penalties/1000000:.1f}M 2026 LL97 Penalties</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" style="color: #2e7d32;">${total_savings/1000000:.1f}M</div>
-                <div class="stat-label">Year One Savings</div>
+                <div class="stat-value">{bas_yes}</div>
+                <div class="stat-label">Buildings with BAS</div>
             </div>
         </div>
         """
@@ -2681,7 +2703,7 @@ homepage_html += f"""
         <div class="info-box">
             <details>
                 <summary style="cursor: pointer; font-size: 1.5em; color: var(--rzero-primary); font-weight: 600; padding: 10px 0; list-style: none;">
-                    Understanding the Rankings <span style="font-size: 0.8em; transition: transform 0.3s;">▼</span>
+                    Behind the Rankings <span style="font-size: 0.8em; transition: transform 0.3s;">▼</span>
                 </summary>
                 <div style="margin-top: 15px;">
                     <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
@@ -2701,7 +2723,12 @@ homepage_html += f"""
 """
 
 homepage_html += f"""
-        <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()">
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()" style="flex: 1; margin: 0;">
+            <button onclick="clearAllFilters()" style="background: #dc3545; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s;">
+                Clear Filter
+            </button>
+        </div>
         
         <div class="table-wrapper">
         <table id="buildingTable">
@@ -2763,8 +2790,8 @@ for b in homepage_data:
                     <td class="thumb-cell">{thumb_cell}</td>
                     <td>{rank_display}</td>
                     <td>{escape(get_street_address(b['address']))}</td>
-                    <td><a href="#" onclick="event.stopPropagation(); filterByOwner('{js_escape(b['owner'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['owner'])}</a></td>
-                    <td><a href="#" onclick="event.stopPropagation(); filterByManager('{js_escape(b['property_manager'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['property_manager'])}</a></td>
+                    <td><a href="javascript:void(0)" onclick="event.stopPropagation(); filterByOwner('{js_escape(b['owner'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['owner'])}</a></td>
+                    <td><a href="javascript:void(0)" onclick="event.stopPropagation(); filterByManager('{js_escape(b['property_manager'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['property_manager'])}</a></td>
                     <td data-value="{b['savings']}" class="{savings_class}">${b['savings']:,.0f}</td>
                     <td>{b['score']:.1f}</td>
                     <td style="text-align: center;">
@@ -2857,6 +2884,26 @@ homepage_html += """
             const ownerCell = row.cells[3];
             const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
             row.style.display = isMatch ? '' : 'none';
+        });
+    }
+    
+    function clearAllFilters() {
+        // Clear search box
+        document.getElementById('search').value = '';
+        
+        // Reset active filters
+        activeOwnerFilter = null;
+        
+        // Show all rows
+        const rows = document.querySelectorAll('#buildingTable tbody tr');
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+        
+        // Remove active styling from portfolio tiles
+        document.querySelectorAll('.portfolio-tile').forEach(tile => {
+            tile.style.outline = '';
+            tile.style.boxShadow = '';
         });
     }
     
