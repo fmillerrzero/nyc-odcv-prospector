@@ -2044,7 +2044,7 @@ document.addEventListener('DOMContentLoaded', function() {{
             "vaov": Math.min(180, (aspectRatio * 360)),  // Adjust vertical angle based on image
             "yaw": "{bbl}" === "1009950005" ? 135 : getBuildingYaw("{main_address}"),  // 135° points SE toward 4 Times Square
             "pitch": isTimesSquareArea ? 35 : 0,  // Look up more for tall buildings
-            "hfov": isTimesSquareArea ? 100 : 90,  // Wider view for Times Square
+            "hfov": "{bbl}" === "1009950005" ? 130 : (isTimesSquareArea ? 120 : 90),  // Extra wide view for 4 Times Square
             "minPitch": -60,
             "maxPitch": 90
         }});
