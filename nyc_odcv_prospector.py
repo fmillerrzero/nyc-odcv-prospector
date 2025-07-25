@@ -1961,8 +1961,10 @@ for idx, row in all_buildings.iterrows():
             )
 
             # 360° Street View with Pannellum (configured for partial panoramas with smart yaw)
+            # Special height for 1472 Broadway's unique high-res panorama
+            viewer_height = "1100px" if bbl == "1009950005" else "800px"
             street_view_360 = f'''
-<div id="viewer_{bbl}" style="width:100%;height:1100px;border-radius:8px;background:#f0f0f0;"></div>
+<div id="viewer_{bbl}" style="width:100%;height:{viewer_height};border-radius:8px;background:#f0f0f0;"></div>
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
 <script>

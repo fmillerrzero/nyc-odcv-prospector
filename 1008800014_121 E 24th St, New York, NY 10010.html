@@ -679,7 +679,7 @@
                 <h3 class="page-title" style="padding:0 15%;">360° Street View</h3>
                 <div class="image-360" style="width:100%;overflow:hidden;">
                     
-<div id="viewer_1008800014" style="width:100%;height:600px;border-radius:8px;background:#f0f0f0;"></div>
+<div id="viewer_1008800014" style="width:100%;height:800px;border-radius:8px;background:#f0f0f0;"></div>
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
 <script>
@@ -723,9 +723,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (isTimesSquareArea || isTallBuilding) {
             // Make it extra tall for Times Square buildings
-            optimalHeight = Math.max(900, optimalHeight * 1.2);
-            // Cap at 1400px for Times Square area
-            optimalHeight = Math.min(1400, optimalHeight);
+            optimalHeight = Math.max(1100, optimalHeight * 1.2);
+            // Cap at 1600px for Times Square area
+            optimalHeight = Math.min(1600, optimalHeight);
         } else {
             // Normal buildings: Cap between 400px and 1200px
             optimalHeight = Math.max(400, Math.min(1200, optimalHeight));
