@@ -26,7 +26,7 @@
         }
         
         .container { 
-            max-width: 1200px; 
+            max-width: 1600px; 
             margin: 0 auto; 
             background: white;
             box-shadow: 0 4px 20px rgba(0, 118, 157, 0.08);
@@ -35,9 +35,13 @@
         /* Section 0 - Title */
         .title-section { 
             position: relative; 
-            height: 120px; 
+            min-height: 140px;
             background: white; 
-            overflow: hidden; 
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
         
         .hero-image { 
@@ -60,38 +64,45 @@
             background: rgba(0, 118, 157, 0.8);
         }
         
-        .title-content { text-align: center; color: #333333; }
+        .title-content { 
+            text-align: center; 
+            color: #333333; 
+            width: 100%;
+            max-width: 800px;
+            padding: 0 20px;
+        }
         .title-content h1 { 
-            font-size: 3em; 
+            font-size: 2.2em; 
             margin: 0; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             font-weight: 700;
             letter-spacing: -0.02em;
+            word-wrap: break-word;
         }
         
         .neighborhood-subtitle {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #666;
-            margin: 5px 0 0 0;
+            margin: 8px 0 0 0;
             text-align: center;
         }
         
         .logo-container { 
             position: absolute; 
-            top: 30px; 
-            right: 30px; 
+            top: 20px;
+            right: 20px;
             background: white; 
-            padding: 15px 20px; 
+            padding: 12px 18px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border: 1px solid #e2e8f0;
             display: flex;
             align-items: center;
             gap: 10px;
+            z-index: 10;
         }
         
         .rzero-logo { 
-            width: 140px; 
+            width: 120px;
             height: auto;
         }
         
@@ -135,6 +146,28 @@
             margin-bottom: 20px; 
             font-weight: 500; 
         }
+        
+        .chart-carousel { position: relative; }
+        .chart-toggle { 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px; 
+            margin-bottom: 20px;
+        }
+        .toggle-btn {
+            padding: 8px 20px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .toggle-btn.active {
+            background: var(--rzero-primary);
+            color: white;
+            border-color: var(--rzero-primary);
+        }
+        .chart-container { transition: opacity 0.3s ease; }
         
         /* Stats and info */
         .stat { 
@@ -452,7 +485,7 @@
         .carousel-container {
             position: relative;
             width: 100%;
-            height: 600px;
+            height: 900px;  /* Increased from 600px */
             overflow: hidden;
             border-radius: 12px;
             margin: 20px 0;
@@ -462,11 +495,13 @@
             display: flex;
             transition: transform 0.3s ease;
             height: 100%;
+            margin: 0 -5%;  /* Add negative margin to show edges */
         }
         
         .carousel-slide {
-            min-width: 100%;
+            min-width: 90%;  /* Changed from 100% to show edges */
             height: 100%;
+            margin: 0 5%;  /* Add margin between slides */
         }
         
         .carousel-slide img {
@@ -514,19 +549,57 @@
         }
         
         .class-badge {
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.8em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent);
         }
-        
-        .class-A { background: #d4f1d4; color: #1e7e1e; }
-        .class-B { background: #e6f3d5; color: #5d7e1e; }
-        .class-C { background: #fff3cd; color: #856404; }
-        .class-D { background: #f8d7da; color: #721c24; }
-        .class-E { background: #f5c6cb; color: #721c24; }
-        .class-F { background: #f5c6cb; color: #721c24; }
+
+        .class-badge::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .class-A { 
+            background-color: #FFD700;
+            background-image: linear-gradient(135deg, #FFED4E 0%, #FFD700 50%, #B8860B 100%);
+            color: #6B4423;
+            border: 2px solid #B8860B;
+        }
+
+        .class-B { 
+            background-color: #C0C0C0;
+            background-image: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 50%, #8B8B8B 100%);
+            color: #2C2C2C;
+            border: 2px solid #8B8B8B;
+        }
+
+        .class-C { 
+            background-color: #CD7F32;
+            background-image: linear-gradient(135deg, #E89658 0%, #CD7F32 50%, #8B4513 100%);
+            color: #4A2511;
+            border: 2px solid #8B4513;
+        }
+
+        .class-D, .class-E, .class-F { 
+            background-color: #8B7355;
+            background-image: linear-gradient(135deg, #A0826D 0%, #8B7355 50%, #6B4423 100%);
+            color: #FFFFFF;
+            border: 2px solid #6B4423;
+        }
         
         .energy-star-gauge {
             margin-top: 10px;
@@ -578,18 +651,22 @@
 </head>
 <body>
     <div class="container">
+        <!-- Navigation Bar -->
+        <div style="background: #f8f8f8; padding: 10px 20px; border-bottom: 1px solid #e2e8f0;">
+            <a href="index.html" style="text-decoration: none;">
+                <button style="background: var(--rzero-primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.3s ease;" 
+                        onmouseover="this.style.background='var(--rzero-primary-dark)'" 
+                        onmouseout="this.style.background='var(--rzero-primary)'">
+                    ← Back to Rankings
+                </button>
+            </a>
+        </div>
+
         <!-- Section 0.0 - Title -->
         <div class="title-section">
             <div class="title-content">
-                <a href="index.html" style="text-decoration: none; display: inline-block; margin-bottom: 10px;">
-                    <button style="background: var(--rzero-primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.3s ease;" 
-                            onmouseover="this.style.background='var(--rzero-primary-dark)'" 
-                            onmouseout="this.style.background='var(--rzero-primary)'">
-                        ← Back to Rankings
-                    </button>
-                </a>
                 <h1>461 W 126th St, New York, NY 10027</h1>
-                <p class="neighborhood-subtitle">Manhattanville-West Harlem</p>
+                <p class="neighborhood-subtitle">Manhattanville-West Harlem • 88% occupancy <span style="color: #dc3545;">↓ 4.0% YoY</span></p>
             </div>
             <div class="logo-container">
                 <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo">
@@ -597,11 +674,10 @@
             </div>
         </div>
         
-        <div class="highlight-box">
-            <h4>2026 ODCV Savings</h4>
-            <div style="font-size: 2.5em; font-weight: bold; color: var(--rzero-primary);">$13,885</div>
-            <div style="margin-top: 10px; font-size: 1em; color: #666;">
-                <div>HVAC Savings: $13,885</div>
+        <div class="highlight-box" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 25px;">
+            <h4 style="margin: 0; font-size: 1.2em;">2026 ODCV Savings</h4>
+            <div style="font-size: 2em; font-weight: bold; color: var(--rzero-primary); margin: 0;">$13,885</div>
+            <div style="font-size: 0.9em; color: #666; text-align: right;">
                 
             </div>
         </div>
@@ -614,7 +690,7 @@
             
             <!-- Page 1.0 - Photo -->
             <div class="page">
-                <h3 class="page-title">Gallery</h3>
+                <h3 class="page-title">Image Gallery</h3>
                 <div class="carousel-container">
                     <div class="carousel-track" id="carousel-1019670045">
                         <div class="carousel-slide active">
@@ -678,7 +754,11 @@ document.addEventListener('DOMContentLoaded', function() {
             "vOffset": 0,
             "yaw": yaw,
             "pitch": 20,
-            "hfov": 90
+            "hfov": 90,
+            "minYaw": -90,   // Add this - prevents rotating left beyond image
+            "maxYaw": 90,    // Add this - prevents rotating right beyond image
+            "minHfov": 50,   // Add this - minimum zoom
+            "maxHfov": 120   // Add this - maximum zoom
         });
     } catch(e) {
         document.getElementById('viewer_1019670045').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
@@ -689,57 +769,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             
-            <!-- Page 1.1 - Commercial -->
+            <!-- Page 1.1 - Site -->
             <div class="page">
-                <h3 class="page-title">Commercial</h3>
+                <h3 class="page-title">Property Details</h3>
                 <div class="stat">
-                    <span class="stat-label">Building Class:</span>
-                    <span class="stat-value"><span class="class-badge class-A">A</span></span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Owner:</span>
-                    <span class="stat-value">Janus Property</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Property Manager:</span>
-                    <span class="stat-value">Newmark<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/Newmark.png" alt="Newmark" style="max-height:30px;max-width:100px;margin-left:10px;vertical-align:middle;"></span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Building % Leased:</span>
-                    <span class="stat-value">16%</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Other Manhattan Occupancy:</span>
-                    <span class="stat-value">88% <span style="color: #dc3545;">↓ 4.0% YoY</span></span>
-                </div>
-            </div>
-            
-            <!-- Page 1.2 - Site -->
-            <div class="page">
-                <h3 class="page-title">Property</h3>
-                <div class="stat">
-                    <span class="stat-label">Last Renovated:</span>
+                    <span class="stat-label">Last Renovated: </span>
                     <span class="stat-value">2021</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Floors:</span>
+                    <span class="stat-label">Floors: </span>
                     <span class="stat-value">11</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Units:</span>
+                    <span class="stat-label">Units: </span>
                     <span class="stat-value">20</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Total Gross Floor Area:</span>
+                    <span class="stat-label">Total Gross Floor Area: </span>
                     <span class="stat-value">153,404 sq ft</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Office Square Footage:</span>
-                    <span class="stat-value">130,393 sq ft</span>
+                    <span class="stat-label">Office Square Footage: </span>
+                    <span class="stat-value">130,393 sq ft (85%)</span>
+                </div>
+            </div>
+            
+            <!-- Page 1.2 - Commercial -->
+            <div class="page">
+                <h3 class="page-title">Commercial Stats</h3>
+                <div class="stat">
+                    <span class="stat-label">Class: </span>
+                    <span class="stat-value"><span class="class-badge class-A">A</span></span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Office % of Building:</span>
-                    <span class="stat-value">85%</span>
+                    <span class="stat-label">Owner: </span>
+                    <span class="stat-value">Janus Property</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Manager: </span>
+                    <span class="stat-value">Newmark<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/Newmark.png" alt="Newmark" style="max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;"></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">% Leased: </span>
+                    <span class="stat-value">16%</span>
                 </div>
             </div>
         </div>
@@ -752,72 +824,105 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="page">
                 <h3 class="page-title">Performance</h3>
                 <div class="stat">
-                    <span class="stat-label">ENERGY STAR Score:</span>
+                    <span class="stat-label">ENERGY STAR Score: </span>
                     <div class="energy-star-gauge">
                         <div class="gauge-number ">43</div>
-                        <div class="gauge-visual">
-                            <div class="gauge-fill" style="width: 43%;"></div>
-                        </div>
-                        <div class="gauge-scale">
-                            <span>0</span>
-                            <span>50</span>
-                            <span>100</span>
+                        <div class="gauge-container">
+                            <svg viewBox="0 0 200 120" style="width: 100%; max-width: 300px; margin: 0 auto; display: block;">
+                                <!-- Background arc -->
+                                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                                <!-- Colored sections -->
+                                <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
+                                <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
+                                <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
+                                <!-- Needle -->
+                                <line x1="100" y1="100" x2="168.31417617213827" y2="115.27001420831219" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="100" cy="100" r="8" fill="#333"/>
+                                <!-- Labels -->
+                                <text x="20" y="115" text-anchor="middle" font-size="12" fill="#666">0</text>
+                                <text x="100" y="20" text-anchor="middle" font-size="12" fill="#666">50</text>
+                                <text x="180" y="115" text-anchor="middle" font-size="12" fill="#666">100</text>
+                            </svg>
                         </div>
                     </div>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Target ENERGY STAR Score:</span>
+                    <span class="stat-label">Target ENERGY STAR Score: </span>
                     <span class="stat-value">N/A </span>
                 </div>
                 
                 <div class="stat">
-                    <span class="stat-label">LL33 Grade:</span>
+                    <span class="stat-label">LL33 Grade: </span>
                     <span class="stat-value"><span class="energy-grade grade-N(EXEMPT)">N (exempt)</span></span>
                 </div>
             </div>
             
             <!-- Page 2.1 - Usage -->
             <div class="page">
-                <h3 class="page-title">Usage</h3>
-                <div class="chart" id="energy_usage_chart"></div>
+                <h3 class="page-title">Energy Usage</h3>
+                <div class="chart-carousel">
+                    <div class="chart-toggle">
+                        <button class="toggle-btn active" onclick="showChart('usage', 'building')">Building</button>
+                        <button class="toggle-btn" onclick="showChart('usage', 'office')">Office</button>
+                    </div>
+                    <div id="building_usage_container" class="chart-container">
+                        <h4 style="text-align: center; color: #666;">Whole Building Usage</h4>
+                        <div class="chart" id="energy_usage_chart"></div>
+                    </div>
+                    <div id="office_usage_container" class="chart-container" style="display: none;">
+                        <h4 style="text-align: center; color: #666;">Office Space Usage</h4>
+                        <div class="chart" id="office_usage_chart"></div>
+                    </div>
+                </div>
             </div>
             
             <!-- Page 2.2 - Cost -->
             <div class="page">
-                <h3 class="page-title">Cost</h3>
-                <div class="chart" id="energy_cost_chart"></div>
+                <h3 class="page-title">Energy Cost</h3>
+                <div class="chart-carousel">
+                    <div class="chart-toggle">
+                        <button class="toggle-btn active" onclick="showChart('cost', 'building')">Building</button>
+                        <button class="toggle-btn" onclick="showChart('cost', 'office')">Office</button>
+                    </div>
+                    <div id="building_cost_container" class="chart-container">
+                        <h4 style="text-align: center; color: #666;">Whole Building Cost</h4>
+                        <div class="chart" id="energy_cost_chart"></div>
+                    </div>
+                    <div id="office_cost_container" class="chart-container" style="display: none;">
+                        <h4 style="text-align: center; color: #666;">Office Space Cost</h4>
+                        <div class="chart" id="office_cost_chart"></div>
+                    </div>
+                </div>
             </div>
         </div>
         
         <!-- Section 3: Office -->
         <div class="section">
-            <h2 class="section-header">Section 3: Office Space Analysis</h2>
+            <h2 class="section-header">ODCV</h2>
             
-            <!-- Page 3.1 - Consumption -->
-            <div class="page">
-                <h3 class="page-title">Office Usage</h3>
-                <div class="chart" id="office_usage_chart"></div>
-            </div>
-            
-            <!-- Page 3.2 - Office Cost -->
-            <div class="page">
-                <h3 class="page-title">Office Cost</h3>
-                <div class="chart" id="office_cost_chart"></div>
-            </div>
             
             <!-- Page 3.3 - Disaggregation -->
             <div class="page">
-                <h3 class="page-title">HVAC</h3>
+                <h3 class="page-title">HVAC Energy Breakdown</h3>
                 <div class="chart" id="hvac_pct_chart"></div>
                 <div class="chart" id="odcv_savings_chart"></div>
             </div>
         </div>
+        
+        
         
         <!-- Section 5: Indoor Air Quality Analysis -->
         <div class="section">
             <h2 class="section-header">Outdoor Air Quality</h2>
             
             
+                <!-- ODCV and Air Quality Insight -->
+                <div class="iaq-insight" style="margin-bottom: 30px;">
+                    <h4>ODCV and Air Quality</h4>
+                    <p>ODCV systems can reduce outside air intake by up to 50% during high pollution events 
+                    while maintaining required ventilation rates through demand-based control.</p>
+                </div>
+
                 <!-- Page 5.0 - PM2.5 Monitoring -->
                 <div class="page">
                     <h3 class="page-title">Local PM2.5 Levels</h3>
@@ -842,17 +947,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     
                     <div class="chart" id="monthly_pm25_chart"></div>
-                    
-                    <div class="iaq-insight">
-                        <h4>ODCV and Air Quality</h4>
-                        <p>ODCV systems can reduce outside air intake by up to 50% during high pollution events 
-                        while maintaining required ventilation rates through demand-based control.</p>
-                    </div>
                 </div>
                 
         </div>
-        
-        
     </div>
     
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -931,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif'},
                 height: 400
-            });
+            }, {displayModeBar: false});
         }
         
         // Building Energy Cost Chart
@@ -946,7 +1043,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: '',
                 yaxis: {
                     title: 'USD',
-                    tickformat: '$,.0s',
+                    tickformat: '$,.0f',
                     rangemode: 'tozero',
                     showgrid: false
                 },
@@ -956,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif'},
                 height: 400
-            });
+            }, {displayModeBar: false});
         }
         
         // Office Usage Chart
@@ -975,7 +1072,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 barmode: 'group',
                 font: {family: 'Inter, sans-serif'},
                 height: 400
-            });
+            }, {displayModeBar: false});
         }
         
         // Office Cost Chart
@@ -988,12 +1085,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (officeCostData.length > 0) {
             Plotly.newPlot('office_cost_chart', officeCostData, {
                 title: '',
-                yaxis: {title: 'USD', tickformat: '$,.0s', rangemode: 'tozero', showgrid: false},
+                yaxis: {title: 'USD', tickformat: '$,.0f', rangemode: 'tozero', showgrid: false},
                 xaxis: {showgrid: false},
                 hovermode: 'x unified',
                 font: {family: 'Inter, sans-serif'},
                 height: 400
-            });
+            }, {displayModeBar: false});
         }
         
         // Day of week pattern
@@ -1020,7 +1117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 xaxis: {title: 'Day of Week'},
                 font: {family: 'Inter, sans-serif'},
                 height: 400
-            });
+            }, {displayModeBar: false});
         }, 100);
         
         // HVAC Percentage Chart
@@ -1070,12 +1167,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 bordercolor: 'red',
                 font: {size: 14, color: '#333'}
             }]
-        });
+        }, {displayModeBar: false});
         
         // ODCV Savings Chart
-        const odcvElecSave = {x: months, y: [1493.34, 1915.289999999999, 1465.67, 324.09000000000015, 239.67999999999984, 272.7600000000002, 294.0500000000002, 167.6500000000001, 169.74000000000024, 143.6300000000001, 639.1300000000001, 1301.4500000000007], name: 'Elec', type: 'bar', marker: {color: rzeroColors.success}};
-        const odcvGasSave = {x: months, y: [1437.15, 1234.21, 1655.72, 188.21, 8.69, 0.0, 2.94, 0.0, 0.0, 63.32, 203.83, 664.38], name: 'Gas', type: 'bar', marker: {color: '#22c55e'}};
-        const odcvSteamSave = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Steam', type: 'bar', marker: {color: '#10b981'}};
+        const odcvElecSave = {x: months, y: [1493.34, 1915.289999999999, 1465.67, 324.09000000000015, 239.67999999999984, 272.7600000000002, 294.0500000000002, 167.6500000000001, 169.74000000000024, 143.6300000000001, 639.1300000000001, 1301.4500000000007], name: 'Elec', type: 'bar', marker: {color: rzeroColors.primary}};
+        const odcvGasSave = {x: months, y: [1437.15, 1234.21, 1655.72, 188.21, 8.69, 0.0, 2.94, 0.0, 0.0, 63.32, 203.83, 664.38], name: 'Gas', type: 'bar', marker: {color: rzeroColors.accent1}};
+        const odcvSteamSave = {x: months, y: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], name: 'Steam', type: 'bar', marker: {color: rzeroColors.secondary}};
         
         const savingsData = [odcvElecSave, odcvGasSave, odcvSteamSave].filter(d => d.y.some(v => v > 0));
         
@@ -1093,7 +1190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: `Monthly ODCV Savings - Total: ${formattedTotalSavings}`,
                 yaxis: {
                     title: 'USD',
-                    tickformat: '$,.0s',
+                    tickformat: '$,.0f',
                     rangemode: 'tozero',
                     showgrid: false
                 },
@@ -1104,7 +1201,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 barmode: 'stack',
                 font: {family: 'Inter, sans-serif'},
                 height: 400
-            });
+            }, {displayModeBar: false});
         }
         
         // Carousel control functions
@@ -1121,7 +1218,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (carouselIndex[bbl] < 0) carouselIndex[bbl] = slides.length - 1;
             if (carouselIndex[bbl] >= slides.length) carouselIndex[bbl] = 0;
             
-            track.style.transform = `translateX(-${carouselIndex[bbl] * 100}%)`;
+            track.style.transform = `translateX(-${carouselIndex[bbl] * 90}%)`;  // Changed from 100% to 90%
             
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === carouselIndex[bbl]);
@@ -1131,6 +1228,23 @@ document.addEventListener('DOMContentLoaded', function() {
         function goToSlide(bbl, index) {
             carouselIndex[bbl] = index;
             moveCarousel(bbl, 0);
+        }
+        
+        function showChart(type, view) {
+            const buildingContainer = document.getElementById(`building_${type}_container`);
+            const officeContainer = document.getElementById(`office_${type}_container`);
+            const buttons = event.target.parentElement.querySelectorAll('.toggle-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'building') {
+                buildingContainer.style.display = 'block';
+                officeContainer.style.display = 'none';
+            } else {
+                buildingContainer.style.display = 'none';
+                officeContainer.style.display = 'block';
+            }
         }
         
         
@@ -1166,12 +1280,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold, moderateThreshold], {
                         title: 'Monthly PM2.5 Levels',
-                        yaxis: {title: 'PM2.5 (μg/m³)', rangemode: 'tozero'},
+                        yaxis: {
+                            title: 'PM2.5 (μg/m³)', 
+                            range: [0, Math.max(20, Math.max(...[6.5828494623655915, 6.299940476190477, 6.132647849462365, 6.101475694444445, 11.80220430107527, 9.909125, 10.67967741935484, 9.875779569892472, 6.489097222222222, 6.331438172043011, 6.164333333333333, 9.090120967741935]) * 1.5)]  // Dynamic range with minimum of 20
+                        },
                         xaxis: {title: 'Month'},
                         hovermode: 'x unified',
                         font: {family: 'Inter, sans-serif'},
                         height: 400
-                    });
+                    }, {displayModeBar: false});
                 }
                 
     </script>

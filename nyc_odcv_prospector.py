@@ -15,6 +15,7 @@ from html import escape
 import re
 from collections import defaultdict
 from datetime import datetime, timedelta
+import math
 
 base_dir = "/Users/forrestmiller/Desktop/FINAL NYC/BIG"
 output_dir = "/Users/forrestmiller/Desktop/building_reports"
@@ -312,7 +313,7 @@ building_template = """<!DOCTYPE html>
         }}
         
         .container {{ 
-            max-width: 1200px; 
+            max-width: 1600px; 
             margin: 0 auto; 
             background: white;
             box-shadow: 0 4px 20px rgba(0, 118, 157, 0.08);
@@ -321,9 +322,13 @@ building_template = """<!DOCTYPE html>
         /* Section 0 - Title */
         .title-section {{ 
             position: relative; 
-            height: 120px; 
+            min-height: 140px;
             background: white; 
-            overflow: hidden; 
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }}
         
         .hero-image {{ 
@@ -346,38 +351,45 @@ building_template = """<!DOCTYPE html>
             background: rgba(0, 118, 157, 0.8);
         }}
         
-        .title-content {{ text-align: center; color: #333333; }}
+        .title-content {{ 
+            text-align: center; 
+            color: #333333; 
+            width: 100%;
+            max-width: 800px;
+            padding: 0 20px;
+        }}
         .title-content h1 {{ 
-            font-size: 3em; 
+            font-size: 2.2em; 
             margin: 0; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             font-weight: 700;
             letter-spacing: -0.02em;
+            word-wrap: break-word;
         }}
         
         .neighborhood-subtitle {{
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #666;
-            margin: 5px 0 0 0;
+            margin: 8px 0 0 0;
             text-align: center;
         }}
         
         .logo-container {{ 
             position: absolute; 
-            top: 30px; 
-            right: 30px; 
+            top: 20px;
+            right: 20px;
             background: white; 
-            padding: 15px 20px; 
+            padding: 12px 18px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border: 1px solid #e2e8f0;
             display: flex;
             align-items: center;
             gap: 10px;
+            z-index: 10;
         }}
         
         .rzero-logo {{ 
-            width: 140px; 
+            width: 120px;
             height: auto;
         }}
         
@@ -421,6 +433,28 @@ building_template = """<!DOCTYPE html>
             margin-bottom: 20px; 
             font-weight: 500; 
         }}
+        
+        .chart-carousel {{ position: relative; }}
+        .chart-toggle {{ 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px; 
+            margin-bottom: 20px;
+        }}
+        .toggle-btn {{
+            padding: 8px 20px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }}
+        .toggle-btn.active {{
+            background: var(--rzero-primary);
+            color: white;
+            border-color: var(--rzero-primary);
+        }}
+        .chart-container {{ transition: opacity 0.3s ease; }}
         
         /* Stats and info */
         .stat {{ 
@@ -738,7 +772,7 @@ building_template = """<!DOCTYPE html>
         .carousel-container {{
             position: relative;
             width: 100%;
-            height: 600px;
+            height: 900px;  /* Increased from 600px */
             overflow: hidden;
             border-radius: 12px;
             margin: 20px 0;
@@ -748,11 +782,13 @@ building_template = """<!DOCTYPE html>
             display: flex;
             transition: transform 0.3s ease;
             height: 100%;
+            margin: 0 -5%;  /* Add negative margin to show edges */
         }}
         
         .carousel-slide {{
-            min-width: 100%;
+            min-width: 90%;  /* Changed from 100% to show edges */
             height: 100%;
+            margin: 0 5%;  /* Add margin between slides */
         }}
         
         .carousel-slide img {{
@@ -800,19 +836,57 @@ building_template = """<!DOCTYPE html>
         }}
         
         .class-badge {{
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.8em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent);
         }}
-        
-        .class-A {{ background: #d4f1d4; color: #1e7e1e; }}
-        .class-B {{ background: #e6f3d5; color: #5d7e1e; }}
-        .class-C {{ background: #fff3cd; color: #856404; }}
-        .class-D {{ background: #f8d7da; color: #721c24; }}
-        .class-E {{ background: #f5c6cb; color: #721c24; }}
-        .class-F {{ background: #f5c6cb; color: #721c24; }}
+
+        .class-badge::before {{
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            z-index: -1;
+        }}
+
+        .class-A {{ 
+            background-color: #FFD700;
+            background-image: linear-gradient(135deg, #FFED4E 0%, #FFD700 50%, #B8860B 100%);
+            color: #6B4423;
+            border: 2px solid #B8860B;
+        }}
+
+        .class-B {{ 
+            background-color: #C0C0C0;
+            background-image: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 50%, #8B8B8B 100%);
+            color: #2C2C2C;
+            border: 2px solid #8B8B8B;
+        }}
+
+        .class-C {{ 
+            background-color: #CD7F32;
+            background-image: linear-gradient(135deg, #E89658 0%, #CD7F32 50%, #8B4513 100%);
+            color: #4A2511;
+            border: 2px solid #8B4513;
+        }}
+
+        .class-D, .class-E, .class-F {{ 
+            background-color: #8B7355;
+            background-image: linear-gradient(135deg, #A0826D 0%, #8B7355 50%, #6B4423 100%);
+            color: #FFFFFF;
+            border: 2px solid #6B4423;
+        }}
         
         .energy-star-gauge {{
             margin-top: 10px;
@@ -864,18 +938,22 @@ building_template = """<!DOCTYPE html>
 </head>
 <body>
     <div class="container">
+        <!-- Navigation Bar -->
+        <div style="background: #f8f8f8; padding: 10px 20px; border-bottom: 1px solid #e2e8f0;">
+            <a href="index.html" style="text-decoration: none;">
+                <button style="background: var(--rzero-primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.3s ease;" 
+                        onmouseover="this.style.background='var(--rzero-primary-dark)'" 
+                        onmouseout="this.style.background='var(--rzero-primary)'">
+                    ← Back to Rankings
+                </button>
+            </a>
+        </div>
+
         <!-- Section 0.0 - Title -->
         <div class="title-section">
             <div class="title-content">
-                <a href="index.html" style="text-decoration: none; display: inline-block; margin-bottom: 10px;">
-                    <button style="background: var(--rzero-primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.3s ease;" 
-                            onmouseover="this.style.background='var(--rzero-primary-dark)'" 
-                            onmouseout="this.style.background='var(--rzero-primary)'">
-                        ← Back to Rankings
-                    </button>
-                </a>
                 <h1>{address}</h1>
-                <p class="neighborhood-subtitle">{neighborhood}</p>
+                <p class="neighborhood-subtitle">{neighborhood} • {office_occupancy}% occupancy {trend_indicator}</p>
             </div>
             <div class="logo-container">
                 <img src="https://rzero.com/wp-content/uploads/2021/10/rzero-logo-pad.svg" alt="R-Zero Logo" class="rzero-logo">
@@ -883,11 +961,10 @@ building_template = """<!DOCTYPE html>
             </div>
         </div>
         
-        <div class="highlight-box">
-            <h4>2026 ODCV Savings</h4>
-            <div style="font-size: 2.5em; font-weight: bold; color: var(--rzero-primary);">${total_2026_savings:,.0f}</div>
-            <div style="margin-top: 10px; font-size: 1em; color: #666;">
-                <div>HVAC Savings: ${total_odcv_savings:,.0f}</div>
+        <div class="highlight-box" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 25px;">
+            <h4 style="margin: 0; font-size: 1.2em;">2026 ODCV Savings</h4>
+            <div style="font-size: 2em; font-weight: bold; color: var(--rzero-primary); margin: 0;">${total_2026_savings:,.0f}</div>
+            <div style="font-size: 0.9em; color: #666; text-align: right;">
                 {penalty_breakdown_html}
             </div>
         </div>
@@ -900,7 +977,7 @@ building_template = """<!DOCTYPE html>
             
             <!-- Page 1.0 - Photo -->
             <div class="page">
-                <h3 class="page-title">Gallery</h3>
+                <h3 class="page-title">Image Gallery</h3>
                 <div class="carousel-container">
                     <div class="carousel-track" id="carousel-{bbl}">
                         <div class="carousel-slide active">
@@ -930,57 +1007,49 @@ building_template = """<!DOCTYPE html>
                 </div>
             </div>
             
-            <!-- Page 1.1 - Commercial -->
+            <!-- Page 1.1 - Site -->
             <div class="page">
-                <h3 class="page-title">Commercial</h3>
+                <h3 class="page-title">Property Details</h3>
                 <div class="stat">
-                    <span class="stat-label">Building Class:</span>
-                    <span class="stat-value"><span class="class-badge class-{building_class}">{building_class}</span></span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Owner:</span>
-                    <span class="stat-value">{owner}{owner_logo}</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Property Manager:</span>
-                    <span class="stat-value">{property_manager}{manager_logo}</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Building % Leased:</span>
-                    <span class="stat-value">{pct_leased}%</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">{neighborhood_name} Occupancy:</span>
-                    <span class="stat-value">{office_occupancy}% {trend_indicator}</span>
-                </div>
-            </div>
-            
-            <!-- Page 1.2 - Site -->
-            <div class="page">
-                <h3 class="page-title">Property</h3>
-                <div class="stat">
-                    <span class="stat-label">Last Renovated:</span>
+                    <span class="stat-label">Last Renovated: </span>
                     <span class="stat-value">{year_altered}</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Floors:</span>
+                    <span class="stat-label">Floors: </span>
                     <span class="stat-value">{num_floors}</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Units:</span>
+                    <span class="stat-label">Units: </span>
                     <span class="stat-value">{total_units}</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Total Gross Floor Area:</span>
+                    <span class="stat-label">Total Gross Floor Area: </span>
                     <span class="stat-value">{total_area:,} sq ft</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Office Square Footage:</span>
-                    <span class="stat-value">{office_sqft:,} sq ft</span>
+                    <span class="stat-label">Office Square Footage: </span>
+                    <span class="stat-value">{office_sqft:,} sq ft ({office_pct}%)</span>
+                </div>
+            </div>
+            
+            <!-- Page 1.2 - Commercial -->
+            <div class="page">
+                <h3 class="page-title">Commercial Stats</h3>
+                <div class="stat">
+                    <span class="stat-label">Class: </span>
+                    <span class="stat-value"><span class="class-badge class-{building_class}">{building_class}</span></span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Office % of Building:</span>
-                    <span class="stat-value">{office_pct}%</span>
+                    <span class="stat-label">Owner: </span>
+                    <span class="stat-value">{owner}{owner_logo}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Manager: </span>
+                    <span class="stat-value">{property_manager}{manager_logo}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">% Leased: </span>
+                    <span class="stat-value">{pct_leased}%</span>
                 </div>
             </div>
         </div>
@@ -993,66 +1062,92 @@ building_template = """<!DOCTYPE html>
             <div class="page">
                 <h3 class="page-title">Performance</h3>
                 <div class="stat">
-                    <span class="stat-label">ENERGY STAR Score:</span>
+                    <span class="stat-label">ENERGY STAR Score: </span>
                     <div class="energy-star-gauge">
                         <div class="gauge-number {energy_star_class}">{energy_star}</div>
-                        <div class="gauge-visual">
-                            <div class="gauge-fill" style="width: {energy_star_gauge_width}%;"></div>
-                        </div>
-                        <div class="gauge-scale">
-                            <span>0</span>
-                            <span>50</span>
-                            <span>100</span>
+                        <div class="gauge-container">
+                            <svg viewBox="0 0 200 120" style="width: 100%; max-width: 300px; margin: 0 auto; display: block;">
+                                <!-- Background arc -->
+                                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                                <!-- Colored sections -->
+                                <path d="M 20 100 A 80 80 0 0 1 73 30" fill="none" stroke="#dc3545" stroke-width="20"/>
+                                <path d="M 73 30 A 80 80 0 0 1 127 30" fill="none" stroke="#ffc107" stroke-width="20"/>
+                                <path d="M 127 30 A 80 80 0 0 1 180 100" fill="none" stroke="#38a169" stroke-width="20"/>
+                                <!-- Needle -->
+                                <line x1="100" y1="100" x2="{needle_x}" y2="{needle_y}" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="100" cy="100" r="8" fill="#333"/>
+                                <!-- Labels -->
+                                <text x="20" y="115" text-anchor="middle" font-size="12" fill="#666">0</text>
+                                <text x="100" y="20" text-anchor="middle" font-size="12" fill="#666">50</text>
+                                <text x="180" y="115" text-anchor="middle" font-size="12" fill="#666">100</text>
+                            </svg>
                         </div>
                     </div>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Target ENERGY STAR Score:</span>
+                    <span class="stat-label">Target ENERGY STAR Score: </span>
                     <span class="stat-value">{target_energy_star} {energy_star_delta}</span>
                 </div>
                 {energy_star_discrepancy_html}
                 <div class="stat">
-                    <span class="stat-label">LL33 Grade:</span>
+                    <span class="stat-label">LL33 Grade: </span>
                     <span class="stat-value"><span class="energy-grade grade-{ll33_grade_raw}">{ll33_grade}</span></span>
                 </div>
             </div>
             
             <!-- Page 2.1 - Usage -->
             <div class="page">
-                <h3 class="page-title">Usage</h3>
-                <div class="chart" id="energy_usage_chart"></div>
+                <h3 class="page-title">Energy Usage</h3>
+                <div class="chart-carousel">
+                    <div class="chart-toggle">
+                        <button class="toggle-btn active" onclick="showChart('usage', 'building')">Building</button>
+                        <button class="toggle-btn" onclick="showChart('usage', 'office')">Office</button>
+                    </div>
+                    <div id="building_usage_container" class="chart-container">
+                        <h4 style="text-align: center; color: #666;">Whole Building Usage</h4>
+                        <div class="chart" id="energy_usage_chart"></div>
+                    </div>
+                    <div id="office_usage_container" class="chart-container" style="display: none;">
+                        <h4 style="text-align: center; color: #666;">Office Space Usage</h4>
+                        <div class="chart" id="office_usage_chart"></div>
+                    </div>
+                </div>
             </div>
             
             <!-- Page 2.2 - Cost -->
             <div class="page">
-                <h3 class="page-title">Cost</h3>
-                <div class="chart" id="energy_cost_chart"></div>
+                <h3 class="page-title">Energy Cost</h3>
+                <div class="chart-carousel">
+                    <div class="chart-toggle">
+                        <button class="toggle-btn active" onclick="showChart('cost', 'building')">Building</button>
+                        <button class="toggle-btn" onclick="showChart('cost', 'office')">Office</button>
+                    </div>
+                    <div id="building_cost_container" class="chart-container">
+                        <h4 style="text-align: center; color: #666;">Whole Building Cost</h4>
+                        <div class="chart" id="energy_cost_chart"></div>
+                    </div>
+                    <div id="office_cost_container" class="chart-container" style="display: none;">
+                        <h4 style="text-align: center; color: #666;">Office Space Cost</h4>
+                        <div class="chart" id="office_cost_chart"></div>
+                    </div>
+                </div>
             </div>
         </div>
         
         <!-- Section 3: Office -->
         <div class="section">
-            <h2 class="section-header">Section 3: Office Space Analysis</h2>
+            <h2 class="section-header">ODCV</h2>
             
-            <!-- Page 3.1 - Consumption -->
-            <div class="page">
-                <h3 class="page-title">Office Usage</h3>
-                <div class="chart" id="office_usage_chart"></div>
-            </div>
-            
-            <!-- Page 3.2 - Office Cost -->
-            <div class="page">
-                <h3 class="page-title">Office Cost</h3>
-                <div class="chart" id="office_cost_chart"></div>
-            </div>
             
             <!-- Page 3.3 - Disaggregation -->
             <div class="page">
-                <h3 class="page-title">HVAC</h3>
+                <h3 class="page-title">HVAC Energy Breakdown</h3>
                 <div class="chart" id="hvac_pct_chart"></div>
                 <div class="chart" id="odcv_savings_chart"></div>
             </div>
         </div>
+        
+        {penalty_section}
         
         <!-- Section 5: Indoor Air Quality Analysis -->
         <div class="section">
@@ -1060,8 +1155,6 @@ building_template = """<!DOCTYPE html>
             
             {iaq_section_content}
         </div>
-        
-        {penalty_section}
     </div>
     
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -1140,7 +1233,7 @@ building_template = """<!DOCTYPE html>
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif'}},
                 height: 400
-            }});
+            }}, {{displayModeBar: false}});
         }}
         
         // Building Energy Cost Chart
@@ -1155,7 +1248,7 @@ building_template = """<!DOCTYPE html>
                 title: '',
                 yaxis: {{
                     title: 'USD',
-                    tickformat: '$,.0s',
+                    tickformat: '$,.0f',
                     rangemode: 'tozero',
                     showgrid: false
                 }},
@@ -1165,7 +1258,7 @@ building_template = """<!DOCTYPE html>
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif'}},
                 height: 400
-            }});
+            }}, {{displayModeBar: false}});
         }}
         
         // Office Usage Chart
@@ -1184,7 +1277,7 @@ building_template = """<!DOCTYPE html>
                 barmode: 'group',
                 font: {{family: 'Inter, sans-serif'}},
                 height: 400
-            }});
+            }}, {{displayModeBar: false}});
         }}
         
         // Office Cost Chart
@@ -1197,12 +1290,12 @@ building_template = """<!DOCTYPE html>
         if (officeCostData.length > 0) {{
             Plotly.newPlot('office_cost_chart', officeCostData, {{
                 title: '',
-                yaxis: {{title: 'USD', tickformat: '$,.0s', rangemode: 'tozero', showgrid: false}},
+                yaxis: {{title: 'USD', tickformat: '$,.0f', rangemode: 'tozero', showgrid: false}},
                 xaxis: {{showgrid: false}},
                 hovermode: 'x unified',
                 font: {{family: 'Inter, sans-serif'}},
                 height: 400
-            }});
+            }}, {{displayModeBar: false}});
         }}
         
         // Day of week pattern
@@ -1229,7 +1322,7 @@ building_template = """<!DOCTYPE html>
                 xaxis: {{title: 'Day of Week'}},
                 font: {{family: 'Inter, sans-serif'}},
                 height: 400
-            }});
+            }}, {{displayModeBar: false}});
         }}, 100);
         
         // HVAC Percentage Chart
@@ -1279,12 +1372,12 @@ building_template = """<!DOCTYPE html>
                 bordercolor: 'red',
                 font: {{size: 14, color: '#333'}}
             }}]
-        }});
+        }}, {{displayModeBar: false}});
         
         // ODCV Savings Chart
-        const odcvElecSave = {{x: months, y: {odcv_elec_savings}, name: 'Elec', type: 'bar', marker: {{color: rzeroColors.success}}}};
-        const odcvGasSave = {{x: months, y: {odcv_gas_savings}, name: 'Gas', type: 'bar', marker: {{color: '#22c55e'}}}};
-        const odcvSteamSave = {{x: months, y: {odcv_steam_savings}, name: 'Steam', type: 'bar', marker: {{color: '#10b981'}}}};
+        const odcvElecSave = {{x: months, y: {odcv_elec_savings}, name: 'Elec', type: 'bar', marker: {{color: rzeroColors.primary}}}};
+        const odcvGasSave = {{x: months, y: {odcv_gas_savings}, name: 'Gas', type: 'bar', marker: {{color: rzeroColors.accent1}}}};
+        const odcvSteamSave = {{x: months, y: {odcv_steam_savings}, name: 'Steam', type: 'bar', marker: {{color: rzeroColors.secondary}}}};
         
         const savingsData = [odcvElecSave, odcvGasSave, odcvSteamSave].filter(d => d.y.some(v => v > 0));
         
@@ -1302,7 +1395,7 @@ building_template = """<!DOCTYPE html>
                 title: `Monthly ODCV Savings - Total: ${{formattedTotalSavings}}`,
                 yaxis: {{
                     title: 'USD',
-                    tickformat: '$,.0s',
+                    tickformat: '$,.0f',
                     rangemode: 'tozero',
                     showgrid: false
                 }},
@@ -1313,7 +1406,7 @@ building_template = """<!DOCTYPE html>
                 barmode: 'stack',
                 font: {{family: 'Inter, sans-serif'}},
                 height: 400
-            }});
+            }}, {{displayModeBar: false}});
         }}
         
         // Carousel control functions
@@ -1330,7 +1423,7 @@ building_template = """<!DOCTYPE html>
             if (carouselIndex[bbl] < 0) carouselIndex[bbl] = slides.length - 1;
             if (carouselIndex[bbl] >= slides.length) carouselIndex[bbl] = 0;
             
-            track.style.transform = `translateX(-${{carouselIndex[bbl] * 100}}%)`;
+            track.style.transform = `translateX(-${{carouselIndex[bbl] * 90}}%)`;  // Changed from 100% to 90%
             
             dots.forEach((dot, i) => {{
                 dot.classList.toggle('active', i === carouselIndex[bbl]);
@@ -1340,6 +1433,23 @@ building_template = """<!DOCTYPE html>
         function goToSlide(bbl, index) {{
             carouselIndex[bbl] = index;
             moveCarousel(bbl, 0);
+        }}
+        
+        function showChart(type, view) {{
+            const buildingContainer = document.getElementById(`building_${{type}}_container`);
+            const officeContainer = document.getElementById(`office_${{type}}_container`);
+            const buttons = event.target.parentElement.querySelectorAll('.toggle-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'building') {{
+                buildingContainer.style.display = 'block';
+                officeContainer.style.display = 'none';
+            }} else {{
+                buildingContainer.style.display = 'none';
+                officeContainer.style.display = 'block';
+            }}
         }}
         
         {iaq_javascript}
@@ -1369,11 +1479,11 @@ for idx, row in all_buildings.iterrows():
         # Create logo HTML
         owner_logo_html = ""
         if owner_logo:
-            owner_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{owner_logo}" alt="{escape(owner)}" style="max-height:30px;max-width:100px;margin-left:10px;vertical-align:middle;">'
+            owner_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{owner_logo}" alt="{escape(owner)}" style="max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;">'
         
         manager_logo_html = ""
         if manager_logo:
-            manager_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{manager_logo}" alt="{escape(property_manager)}" style="max-height:30px;max-width:100px;margin-left:10px;vertical-align:middle;">'
+            manager_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{manager_logo}" alt="{escape(property_manager)}" style="max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;">'
         
         landlord_contact = safe_val(data['buildings'], bbl, 'landlord_contact', safe_val(data['buildings'], bbl, 'ownername', 'Unknown'))
         building_class = safe_val(data['buildings'], bbl, 'Class', 'N/A')
@@ -1408,16 +1518,40 @@ for idx, row in all_buildings.iterrows():
         target_energy_star = safe_val(data['buildings'], bbl, 'Latest_Target_ENERGY_STAR_Score', 'N/A')
         estimated_target_energy_star = safe_val(data['buildings'], bbl, 'Estimated_Target_ENERGY_STAR_Score', 'N/A')
         
+        # Format energy star scores to remove decimals
+        if energy_star != 'N/A':
+            try:
+                energy_star_display = str(int(float(energy_star)))
+            except:
+                energy_star_display = energy_star
+        else:
+            energy_star_display = energy_star
+            
+        if target_energy_star != 'N/A':
+            try:
+                target_energy_star = str(int(float(target_energy_star)))
+            except:
+                pass
+        
         # Calculate delta if both scores exist
         energy_star_delta = ""
         energy_star_class = ""
         energy_star_gauge_width = "0"
         
+        # Calculate needle position for SVG
         if energy_star != 'N/A':
             try:
-                energy_star_gauge_width = str(int(float(energy_star)))
+                score = float(energy_star)
+                energy_star_gauge_width = str(int(score))
+                # Convert score (0-100) to angle (-90 to 90 degrees)
+                angle = (score / 100 * 180 - 90) * (3.14159 / 180)
+                needle_x = 100 + 70 * math.cos(angle)
+                needle_y = 100 - 70 * math.sin(angle)
             except:
                 energy_star_gauge_width = "0"
+                needle_x, needle_y = 100, 100
+        else:
+            needle_x, needle_y = 100, 100
         
         if energy_star != 'N/A' and target_energy_star != 'N/A':
             try:
@@ -1442,7 +1576,7 @@ for idx, row in all_buildings.iterrows():
                 if diff >= 5:
                     energy_star_discrepancy_html = f"""
                     <div class="stat" style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 10px;">
-                        <span class="stat-label">Target Variance:</span>
+                        <span class="stat-label">Target Variance: </span>
                         <span class="stat-value">Official: {latest:.0f} vs Estimated: {estimated:.0f} ({diff:.0f} point gap)</span>
                     </div>
                     """
@@ -1532,27 +1666,74 @@ for idx, row in all_buildings.iterrows():
         bas_class = 'bas' if bas == 'yes' else 'no-bas'
         bas_text = 'BAS Ready' if bas == 'yes' else 'No BAS' if bas == 'no' else 'Unknown'
         
-        # LL97 penalties from LL97_BIG.csv
+        # LL97 data from LL97_BIG.csv
         penalty_2026 = float(safe_val(data['ll97'], bbl, 'penalty_2026_dollars', 0))
         penalty_2030 = float(safe_val(data['ll97'], bbl, 'penalty_2030_dollars', 0))
+        compliance_2024 = safe_val(data['ll97'], bbl, 'compliance_2024', 'N/A')
+        compliance_2030 = safe_val(data['ll97'], bbl, 'compliance_2030', 'N/A')
+        carbon_limit_2024 = float(safe_val(data['ll97'], bbl, 'carbon_limit_2024_tCO2e', 0))
+        carbon_limit_2030 = float(safe_val(data['ll97'], bbl, 'carbon_limit_2030_tCO2e', 0))
+        total_carbon_emissions = float(safe_val(data['ll97'], bbl, 'total_carbon_emissions_tCO2e', 0))
         
         # Calculate total 2026 savings (ODCV + penalty avoidance)
         total_2026_savings = total_odcv_savings + penalty_2026
-        penalty_breakdown_html = f'<div>LL97 Penalty Avoidance: ${penalty_2026:,.0f}</div>' if penalty_2026 > 0 else ''
+        if penalty_2026 > 0:
+            penalty_breakdown_html = f'<div>HVAC Savings: ${total_odcv_savings:,.0f}</div><div>LL97 Penalty Avoidance: ${penalty_2026:,.0f}</div>'
+        else:
+            penalty_breakdown_html = ''  # Empty when no penalty
         
         # Penalty section
         penalty_section = ""
-        if penalty_2026 > 0 or penalty_2030 > 0:
+        if penalty_2026 > 0 or penalty_2030 > 0 or compliance_2024 == 'No' or compliance_2030 == 'No':
             penalty_section = f"""
             <div class="section">
                 <h2 class="section-header">LL97 Compliance Status</h2>
                 <div class="page">
-                    <h3>LL97 Compliance Impact</h3>
-                    <p style="font-size: 1.1em;">
-                        Penalty without ODCV: <strong style="color: #d32f2f;">${penalty_2026:,.0f}</strong><br>
-                        Savings with ODCV: <strong style="color: #2e7d32;">${total_odcv_savings:,.0f}</strong><br>
-                        Net annual benefit: <strong style="color: #1976d2;">${(total_odcv_savings + penalty_2026):,.0f}</strong>
-                    </p>
+                    <h3 class="page-title">Compliance Overview</h3>
+                    <div class="stat">
+                        <span class="stat-label">2024-2029 Compliance: </span>
+                        <span class="stat-value"><span class="{'yes' if compliance_2024 == 'Yes' else 'no'}">{compliance_2024}</span></span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">2030-2034 Compliance: </span>
+                        <span class="stat-value"><span class="{'yes' if compliance_2030 == 'Yes' else 'no'}">{compliance_2030}</span></span>
+                    </div>
+                    
+                    <h3 class="page-title" style="margin-top: 30px;">Carbon Emissions</h3>
+                    <div class="stat">
+                        <span class="stat-label">Current Emissions: </span>
+                        <span class="stat-value">{total_carbon_emissions:,.0f} tCO2e</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">2024-2029 Limit: </span>
+                        <span class="stat-value">{carbon_limit_2024:,.0f} tCO2e</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">2030-2034 Limit: </span>
+                        <span class="stat-value">{carbon_limit_2030:,.0f} tCO2e</span>
+                    </div>
+                    
+                    <h3 class="page-title" style="margin-top: 30px;">Financial Impact</h3>
+                    <div class="highlight-box" style="background: #f8f8f8; padding: 20px; margin: 20px 0;">
+                        <h4 style="margin-top: 0;">Annual Penalties Without ODCV</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <div style="color: #666;">2026-2029</div>
+                                <div style="font-size: 1.5em; font-weight: bold; color: {'#dc3545' if penalty_2026 > 0 else '#28a745'};">${penalty_2026:,.0f}</div>
+                            </div>
+                            <div>
+                                <div style="color: #666;">2030-2034</div>
+                                <div style="font-size: 1.5em; font-weight: bold; color: {'#dc3545' if penalty_2030 > 0 else '#28a745'};">${penalty_2030:,.0f}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box" style="background: var(--rzero-light-blue); padding: 20px;">
+                        <h4 style="margin-top: 0; color: var(--rzero-primary);">ODCV Impact</h4>
+                        <p>Annual ODCV Savings: <strong style="color: #28a745;">${total_odcv_savings:,.0f}</strong></p>
+                        <p>Net Benefit (2026): <strong style="color: var(--rzero-primary);">${(total_odcv_savings + penalty_2026):,.0f}</strong></p>
+                        <p>Net Benefit (2030): <strong style="color: var(--rzero-primary);">${(total_odcv_savings + penalty_2030):,.0f}</strong></p>
+                    </div>
                 </div>
             </div>
             """
@@ -1632,6 +1813,13 @@ for idx, row in all_buildings.iterrows():
                     aqi_color = "#8f3f97"
                 
                 iaq_section_content = f"""
+                <!-- ODCV and Air Quality Insight -->
+                <div class="iaq-insight" style="margin-bottom: 30px;">
+                    <h4>ODCV and Air Quality</h4>
+                    <p>ODCV systems can reduce outside air intake by up to 50% during high pollution events 
+                    while maintaining required ventilation rates through demand-based control.</p>
+                </div>
+
                 <!-- Page 5.0 - PM2.5 Monitoring -->
                 <div class="page">
                     <h3 class="page-title">Local PM2.5 Levels</h3>
@@ -1656,12 +1844,6 @@ for idx, row in all_buildings.iterrows():
                     </div>
                     
                     <div class="chart" id="monthly_pm25_chart"></div>
-                    
-                    <div class="iaq-insight">
-                        <h4>ODCV and Air Quality</h4>
-                        <p>ODCV systems can reduce outside air intake by up to 50% during high pollution events 
-                        while maintaining required ventilation rates through demand-based control.</p>
-                    </div>
                 </div>
                 """
                 
@@ -1698,12 +1880,15 @@ for idx, row in all_buildings.iterrows():
                     
                     Plotly.newPlot('monthly_pm25_chart', [monthlyMean, goodThreshold, moderateThreshold], {{
                         title: 'Monthly PM2.5 Levels',
-                        yaxis: {{title: 'PM2.5 (μg/m³)', rangemode: 'tozero'}},
+                        yaxis: {{
+                            title: 'PM2.5 (μg/m³)', 
+                            range: [0, Math.max(20, Math.max(...{monthly_means}) * 1.5)]  // Dynamic range with minimum of 20
+                        }},
                         xaxis: {{title: 'Month'}},
                         hovermode: 'x unified',
                         font: {{family: 'Inter, sans-serif'}},
                         height: 400
-                    }});
+                    }}, {{displayModeBar: false}});
                 }}
                 """
             else:
@@ -1809,7 +1994,11 @@ document.addEventListener('DOMContentLoaded', function() {{
             "vOffset": 0,
             "yaw": yaw,
             "pitch": 20,
-            "hfov": 90
+            "hfov": 90,
+            "minYaw": -90,   // Add this - prevents rotating left beyond image
+            "maxYaw": 90,    // Add this - prevents rotating right beyond image
+            "minHfov": 50,   // Add this - minimum zoom
+            "maxHfov": 120   // Add this - maximum zoom
         }});
     }} catch(e) {{
         document.getElementById('viewer_{bbl}').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:400px;color:#666;background:#f0f0f0;border-radius:8px;">360° view not available</div>';
@@ -1910,9 +2099,11 @@ document.addEventListener('DOMContentLoaded', function() {{
             year_altered=year_altered,
             num_floors=num_floors,
             total_area=total_area,
-            energy_star=escape(str(energy_star)),
+            energy_star=escape(str(energy_star_display)),
             energy_star_class=energy_star_class,
             energy_star_gauge_width=energy_star_gauge_width,
+            needle_x=needle_x,
+            needle_y=needle_y,
             target_energy_star=escape(str(target_energy_star)),
             energy_star_delta=energy_star_delta,
             energy_star_discrepancy_html=energy_star_discrepancy_html,
@@ -2177,6 +2368,19 @@ homepage_html = f"""<!DOCTYPE html>
             gap: 10px;
         }}
         
+        details summary::-webkit-details-marker {{
+            display: none;
+        }}
+
+        details[open] summary span {{
+            transform: rotate(180deg);
+            display: inline-block;
+        }}
+
+        details summary span {{
+            transition: transform 0.3s ease;
+        }}
+        
         .portfolio-box {{ 
             background: white;
             border: 1px solid rgba(0, 118, 157, 0.2);
@@ -2280,14 +2484,14 @@ homepage_html = f"""<!DOCTYPE html>
         
         /* Thumbnail styles */
         .thumb-cell {{ 
-            width: 80px; 
+            width: 110px; 
             padding: 8px !important; 
             text-align: center;
         }}
 
         .building-thumb {{ 
-            width: 60px; 
-            height: 60px; 
+            width: 90px; 
+            height: 90px; 
             object-fit: cover; 
             border-radius: 8px; 
             box-shadow: 0 2px 8px rgba(0, 118, 157, 0.15);
@@ -2297,8 +2501,8 @@ homepage_html = f"""<!DOCTYPE html>
 
 
         .no-thumb {{ 
-            width: 60px; 
-            height: 60px; 
+            width: 90px; 
+            height: 90px; 
             background: #f8f9fa; 
             border: 1px solid rgba(0, 118, 157, 0.2);
             border-radius: 8px; 
@@ -2355,6 +2559,13 @@ homepage_html = f"""<!DOCTYPE html>
         
         .table-wrapper::-webkit-scrollbar-thumb:hover {{
             background: var(--rzero-primary-dark);
+        }}
+        
+        .clickable-row {{
+            cursor: pointer;
+        }}
+        .clickable-row:hover {{
+            background-color: rgba(0, 118, 157, 0.05);
         }}
         
         /* Savings tier colors */
@@ -2476,15 +2687,21 @@ homepage_html = f"""<!DOCTYPE html>
         """
 
 if top_portfolios:
+    # Add logo lookups for each top portfolio
+    for i, (owner, stats) in enumerate(top_portfolios):
+        owner_logo = find_logo_file(owner)
+        top_portfolios[i] = (owner, stats, owner_logo)
+    
     homepage_html += f"""
         <div class="portfolio-box">
             <h2>Top Portfolios</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
     """
-    for owner, stats in top_portfolios:
+    for owner, stats, logo in top_portfolios:
         homepage_html += f"""
-                <div class="portfolio-tile" onclick="filterByOwner('{escape(owner).replace("'", "\\'")}')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.2s ease;">
-                    <strong style="color: var(--rzero-primary);">{escape(owner)}</strong><br>
+                <div class="portfolio-tile" onclick="filterByOwner('{escape(owner).replace("'", "\\'")}')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.2s ease; position: relative; min-height: 100px;">
+                    {f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{logo}" alt="{escape(owner)}" style="position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;">' if logo else ''}
+                    <strong style="color: var(--rzero-primary); display: block; margin-bottom: 5px;">{escape(owner)}</strong>
                     <span style="color: #666;">{stats['count']} buildings • ${stats['total']/1000000:.1f}M savings</span>
                 </div>
         """
@@ -2495,23 +2712,24 @@ if top_portfolios:
 
 homepage_html += f"""
         <div class="info-box">
-            <h2 id="rankings-header" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                Understanding the Rankings 
-                <span id="rankings-arrow" style="font-size: 0.8em;">▼</span>
-            </h2>
-            <div id="rankings-content" style="display: none;">
-                <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
-                <ul style="line-height: 1.8;">
-                    <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
-                    <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
-                    <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
-                    <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
-                    <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
-                </ul>
-                <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
-                    <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
-                </p>
-            </div>
+            <details>
+                <summary style="cursor: pointer; font-size: 1.5em; color: var(--rzero-primary); font-weight: 600; padding: 10px 0;">
+                    Understanding the Rankings <span style="font-size: 0.8em;">▼</span>
+                </summary>
+                <div style="margin-top: 15px;">
+                    <p>Buildings are ranked by <strong>SALES READINESS</strong>, not just savings amount. The scoring system (110 points total):</p>
+                    <ul style="line-height: 1.8;">
+                        <li><strong>Financial Impact (40 pts):</strong> 10-year value of ODCV savings + avoided LL97 penalties</li>
+                        <li><strong>BAS Infrastructure (30 pts):</strong> No BAS = 0 points (major barrier to sale)</li>
+                        <li><strong>Owner Portfolio (20 pts):</strong> Large portfolios score higher (one pitch → multiple buildings)</li>
+                        <li><strong>Implementation Ease (10 pts):</strong> Fewer tenants + larger floors = easier installation</li>
+                        <li><strong>Prestige Factors (10 pts):</strong> LEED certification, Energy Star ambitions, Class A buildings</li>
+                    </ul>
+                    <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba;">
+                        <strong>Example:</strong> A building with $1.4M savings but no BAS ranks #123, while a $539K building with perfect infrastructure ranks #1. Focus on the ready buyers!
+                    </p>
+                </div>
+            </details>
         </div>
 """
 
@@ -2535,13 +2753,20 @@ homepage_html += f"""
             <tbody>
 """
 
+def get_street_address(full_address):
+    """Extract just the street address before the first comma"""
+    if pd.isna(full_address):
+        return full_address
+    parts = str(full_address).split(',')
+    return parts[0].strip() if parts else full_address
+
 # Add rows
 for b in homepage_data:
     bas_class = 'yes' if b['bas'] == 'yes' else 'no' if b['bas'] == 'no' else ''
     penalty_class = 'urgent' if b['penalty_2026'] > 0 else ''
     
     # Add rank badge for top 10
-    rank_display = f'<span class="rzero-badge">#{b["rank"]}</span>' if b['rank'] <= 10 else str(b['rank'])
+    rank_display = f'<span class="rzero-badge">#{b["rank"]}</span>'
     
     # Generate thumbnail cell
     if b['has_thumbnail']:
@@ -2567,16 +2792,16 @@ for b in homepage_data:
         return json.dumps(str(text))[1:-1]  # Remove quotes from JSON string
     
     homepage_html += f"""
-                <tr data-search="{attr_escape(b['search_text'])}" data-occupancy="{occ_rate}">
+                <tr data-search="{attr_escape(b['search_text'])}" data-occupancy="{occ_rate}" class="clickable-row" onclick="if (!event.target.closest('a')) window.location.href='{b['filename']}'">
                     <td class="thumb-cell">{thumb_cell}</td>
                     <td>{rank_display}</td>
-                    <td>{escape(b['address'])}</td>
-                    <td><a href="#" onclick="filterByOwner('{js_escape(b['owner'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['owner'])}</a></td>
-                    <td><a href="#" onclick="filterByManager('{js_escape(b['property_manager'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['property_manager'])}</a></td>
+                    <td>{escape(get_street_address(b['address']))}</td>
+                    <td><a href="#" onclick="event.stopPropagation(); filterByOwner('{js_escape(b['owner'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['owner'])}</a></td>
+                    <td><a href="#" onclick="event.stopPropagation(); filterByManager('{js_escape(b['property_manager'])}')" style="color: var(--rzero-primary); text-decoration: none; cursor: pointer;">{escape(b['property_manager'])}</a></td>
                     <td data-value="{b['savings']}" class="{savings_class}">${b['savings']:,.0f}</td>
                     <td>{b['score']:.1f}</td>
-                    <td>
-                        <a href="{b['filename']}">View Report →</a>
+                    <td style="text-align: center;">
+                        <span style="color: var(--rzero-primary);">→</span>
                     </td>
                 </tr>
 """
@@ -2701,20 +2926,6 @@ homepage_html += """
     }}
     
     
-    // Toggle collapsible sections
-    function toggleSection(sectionId) {{
-        const content = document.getElementById(sectionId + '-content');
-        const arrow = document.getElementById(sectionId + '-arrow');
-        
-        if (content.style.display === 'none' || content.style.display === '') {{
-            content.style.display = 'block';
-            arrow.textContent = '▲';
-        }} else {{
-            content.style.display = 'none';
-            arrow.textContent = '▼';
-        }}
-    }}
-    
     // Filter by owner when clicking portfolio tiles
     function filterByOwner(ownerName) {{
         const rows = document.querySelectorAll('#buildingTable tbody tr');
@@ -2823,13 +3034,6 @@ homepage_html += """
             }}
         }});
         
-        // Add click handler for rankings section
-        const rankingsHeader = document.getElementById('rankings-header');
-        if (rankingsHeader) {{
-            rankingsHeader.addEventListener('click', function() {{
-                toggleSection('rankings');
-            }});
-        }}
     }});
     </script>
 </body>
