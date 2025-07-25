@@ -2626,6 +2626,12 @@ homepage_html = f"""<!DOCTYPE html>
             position: relative;
         }}
         
+        .portfolio-tile.selected::after,
+        .portfolio-tile.selected::before {{
+            display: none !important;
+            content: none !important;
+        }}
+        
         
         .search-box {{ 
             width: 100%; 
