@@ -443,7 +443,12 @@
             </details>
         </div>
 
-        <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()">
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" class="search-box" id="search" placeholder="Search by address, owner, property manager" onkeyup="filterTable()" style="flex: 1; margin: 0;">
+            <button onclick="clearAllFilters()" style="background: #dc3545; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s;">
+                Clear Filter
+            </button>
+        </div>
         
         <div class="table-wrapper">
         <table id="buildingTable">
@@ -8147,6 +8152,26 @@
             const ownerCell = row.cells[3];
             const isMatch = ownerCell && ownerCell.textContent.trim() === ownerName;
             row.style.display = isMatch ? '' : 'none';
+        });
+    }
+    
+    function clearAllFilters() {
+        // Clear search box
+        document.getElementById('search').value = '';
+        
+        // Reset active filters
+        activeOwnerFilter = null;
+        
+        // Show all rows
+        const rows = document.querySelectorAll('#buildingTable tbody tr');
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+        
+        // Remove active styling from portfolio tiles
+        document.querySelectorAll('.portfolio-tile').forEach(tile => {
+            tile.style.outline = '';
+            tile.style.boxShadow = '';
         });
     }
     
