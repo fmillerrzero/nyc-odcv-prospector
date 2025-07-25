@@ -1304,9 +1304,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             title: 'Month',
                             showgrid: false  // Remove grid lines
                         },
+                        legend: {
+                            orientation: 'h',  // Horizontal layout
+                            x: 0.5,           // Center horizontally
+                            xanchor: 'center',
+                            y: 1.15,          // Position above chart
+                            yanchor: 'top',
+                            bgcolor: 'rgba(255,255,255,0.8)',
+                            bordercolor: 'rgba(0,0,0,0.1)',
+                            borderwidth: 1
+                        },
                         hovermode: 'x unified',
                         font: {family: 'Inter, sans-serif', size: 16},
-                        height: 500
+                        height: 500,
+                        margin: {t: 80}  // Add top margin for legend
                     }, {displayModeBar: false});
                 }
                 
