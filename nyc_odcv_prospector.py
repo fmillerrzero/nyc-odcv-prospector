@@ -89,6 +89,11 @@ for bbl in all_buildings['bbl']:
     image_map[int(bbl)] = f"https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/images/{bbl}/"
 print(f"Generated {len(image_map)} image folder URLs")
 
+# Map of BBLs that have 3D models
+models_3d_map = {
+    1009950005: 'conde-nast.glb',  # 4 Times Square
+}
+
 # Map thumbnails
 print("\nMapping thumbnails...")
 thumbnail_map = {}
@@ -969,6 +974,8 @@ building_template = """<!DOCTYPE html>
                 </div>
             </div>
             
+            {model_3d_section}
+            
             <!-- Page 1.1 - Site -->
             <div class="page">
                 <h3 class="page-title">Property Details</h3>
@@ -1120,6 +1127,7 @@ building_template = """<!DOCTYPE html>
         </div>
     </div>
     
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1470,11 +1478,15 @@ for idx, row in all_buildings.iterrows():
         # Create logo HTML
         owner_logo_html = ""
         if owner_logo:
-            owner_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{owner_logo}" alt="{escape(owner)}" style="max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;">'
+            # Special styling for Vornado logo
+            owner_logo_style = "max-height:80px;max-width:200px;margin-left:15px;vertical-align:middle;" if "Vornado" in owner else "max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;"
+            owner_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{owner_logo}" alt="{escape(owner)}" style="{owner_logo_style}">'
         
         manager_logo_html = ""
         if manager_logo:
-            manager_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{manager_logo}" alt="{escape(property_manager)}" style="max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;">'
+            # Special styling for Vornado logo
+            manager_logo_style = "max-height:80px;max-width:200px;margin-left:15px;vertical-align:middle;" if "Vornado" in property_manager else "max-height:50px;max-width:150px;margin-left:15px;vertical-align:middle;"
+            manager_logo_html = f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{manager_logo}" alt="{escape(property_manager)}" style="{manager_logo_style}">'
         
         landlord_contact = safe_val(data['buildings'], bbl, 'landlord_contact', safe_val(data['buildings'], bbl, 'ownername', 'Unknown'))
         building_class = safe_val(data['buildings'], bbl, 'Class', 'N/A')
@@ -2025,16 +2037,16 @@ document.addEventListener('DOMContentLoaded', function() {{
             "panorama": imgUrl,
             "autoLoad": true,
             "autoRotate": -2,
-            "showZoomCtrl": false,
-            "showFullscreenCtrl": false,
-            "showControls": false,
+            "showZoomCtrl": true,
+            "showFullscreenCtrl": true,
+            "showControls": true,
             "haov": 360,
             "vaov": Math.min(180, (aspectRatio * 360)),  // Adjust vertical angle based on image
-            "yaw": getBuildingYaw("{main_address}"),
-            "pitch": isTimesSquareArea ? 15 : 0,  // Look up more for tall buildings
+            "yaw": "{bbl}" === "1009950005" ? 135 : getBuildingYaw("{main_address}"),  // 135° points SE toward 4 Times Square
+            "pitch": isTimesSquareArea ? 35 : 0,  // Look up more for tall buildings
             "hfov": isTimesSquareArea ? 100 : 90,  // Wider view for Times Square
-            "minPitch": -45,
-            "maxPitch": 80
+            "minPitch": -60,
+            "maxPitch": 90
         }});
     }};
     img.src = imgUrl;
@@ -2050,6 +2062,27 @@ document.addEventListener('DOMContentLoaded', function() {{
                 '<div style="background:#f0f0f0;height:400px;display:flex;align-items:center;justify-content:center;color:#999;border-radius:8px;">'
                 '360° Street View not available</div>'
             )
+        
+        # 3D Model section (only for buildings with models)
+        model_3d_section = ""
+        if bbl in models_3d_map:
+            model_filename = models_3d_map[bbl]
+            model_3d_section = f'''
+            <!-- Page 1.4 - Interactive 3D Model -->
+            <div class="page">
+                <h3 class="page-title">Interactive 3D Model</h3>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid rgba(0, 118, 157, 0.2);">
+                    <model-viewer 
+                        src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/3d-models/{bbl}/{model_filename}" 
+                        alt="Interactive 3D model of {escape(main_address)}"
+                        camera-controls
+                        auto-rotate
+                        style="width: 100%; height: 600px; background-color: #f5f5f5; border-radius: 10px;">
+                    </model-viewer>
+                    <p style="text-align: center; margin-top: 10px;">🖱️ Drag to rotate • Scroll to zoom</p>
+                </div>
+            </div>
+            '''
         
         # Monthly data arrays
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -2119,6 +2152,7 @@ document.addEventListener('DOMContentLoaded', function() {{
             street_image=street_image,
             satellite_image=satellite_image,
             street_view_360=street_view_360,
+            model_3d_section=model_3d_section,
             # Building identity
             neighborhood=escape(neighborhood) if neighborhood else "Manhattan",
             green_rating_badge=green_rating_badge,
@@ -2439,6 +2473,13 @@ homepage_html = f"""<!DOCTYPE html>
             box-shadow: 0 4px 12px rgba(0, 118, 157, 0.2);
         }}
         
+        .portfolio-tile.selected {{
+            background-color: rgba(0, 118, 157, 0.2) !important;
+            border: 2px solid var(--rzero-primary) !important;
+            box-shadow: 0 6px 16px rgba(0, 118, 157, 0.3);
+            transform: translateY(-2px);
+        }}
+        
         .search-box {{ 
             width: 100%; 
             padding: 15px; 
@@ -2741,9 +2782,12 @@ if top_portfolios:
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
     """
     for owner, stats, logo in top_portfolios:
+        # Special styling for Vornado logo
+        logo_style = "position: absolute; top: 15px; right: 15px; max-height: 60px; max-width: 120px; opacity: 0.8;" if "Vornado" in owner else "position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;"
+        
         homepage_html += f"""
                 <div class="portfolio-tile" onclick="filterByOwner('{escape(owner).replace("'", "\\'")}')" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 118, 157, 0.2); cursor: pointer; transition: all 0.2s ease; position: relative; min-height: 100px;">
-                    {f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{logo}" alt="{escape(owner)}" style="position: absolute; top: 15px; right: 15px; max-height: 40px; max-width: 80px; opacity: 0.8;">' if logo else ''}
+                    {f'<img src="https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/Logos/{logo}" alt="{escape(owner)}" style="{logo_style}">' if logo else ''}
                     <strong style="color: var(--rzero-primary); display: block; margin-bottom: 5px;">{escape(owner)}</strong>
                     <span style="color: #666;">{stats['count']} buildings • ${stats['total']/1000000:.1f}M savings</span>
                 </div>
@@ -2933,6 +2977,22 @@ homepage_html += """
     }
     
     function filterByOwner(ownerName) {
+        // Update active filter
+        activeOwnerFilter = ownerName;
+        
+        // Remove previous selection styling
+        document.querySelectorAll('.portfolio-tile').forEach(tile => {
+            tile.classList.remove('selected');
+        });
+        
+        // Add selection styling to clicked tile
+        document.querySelectorAll('.portfolio-tile').forEach(tile => {
+            if (tile.querySelector('strong') && tile.querySelector('strong').textContent === ownerName) {
+                tile.classList.add('selected');
+            }
+        });
+        
+        // Filter table rows
         const rows = document.querySelectorAll('#buildingTable tbody tr');
         rows.forEach(row => {
             const ownerCell = row.cells[3];
@@ -2956,8 +3016,7 @@ homepage_html += """
         
         // Remove active styling from portfolio tiles
         document.querySelectorAll('.portfolio-tile').forEach(tile => {
-            tile.style.outline = '';
-            tile.style.boxShadow = '';
+            tile.classList.remove('selected');
         });
     }
     
