@@ -1477,7 +1477,8 @@ for idx, row in all_buildings.iterrows():
             # 360° Street View with Marzipano
             street_view_360 = f'''
 <div id="pano_{bbl}" style="width:100%;height:400px;border-radius:8px;"></div>
-<script src="https://www.marzipano.net/demos/vendor/marzipano.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marzipano@0.10.2/build/marzipano.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/marzipano@0.10.2/build/marzipano.css"/>
 <script>
 document.addEventListener('DOMContentLoaded', function() {{
     try {{
