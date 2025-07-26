@@ -5,7 +5,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="deploy-timestamp" content="2025-07-26T12:56:28.276256">
+    <meta name="deploy-timestamp" content="2025-07-26T13:25:50.119318">
     <title>515 Madison Ave, New York, NY 10022 - ODCV Analysis</title>
     <style>
         :root {
@@ -705,6 +705,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
 <script>
 function getBuildingYaw(address) {
+    // Extract building number from address
     const match = address.match(/\b(\d+)/);
     if (!match) return 90;
     
@@ -712,11 +713,47 @@ function getBuildingYaw(address) {
     const isEven = buildingNumber % 2 === 0;
     const addressLower = address.toLowerCase();
     
-    if (addressLower.includes('avenue') || addressLower.includes('ave') || addressLower.includes('broadway')) {
-        return isEven ? 270 : 90;  // Avenue: Even=West, Odd=East
-    } else {
-        return isEven ? 0 : 180;   // Street: Even=North, Odd=South
+    // Check if it's below 14th Street (exceptions apply)
+    const isBelow14th = addressLower.includes('st') && 
+                       parseInt(addressLower.match(/\b(\d+)\s*(st|street)/i)?.[1] || 99) < 14;
+    
+    // Named exceptions
+    const isException = addressLower.includes('broadway') || 
+                       addressLower.includes('bowery') ||
+                       addressLower.includes('west st') ||
+                       addressLower.includes('south st') ||
+                       isBelow14th;
+    
+    // STREET Rules (East-West streets like 34th St, 57th St)
+    // Streets run EAST-WEST, so we look NORTH or SOUTH
+    if (addressLower.includes(' st') || addressLower.includes(' street')) {
+        if (isException) {
+            // For exceptions, use general heuristic
+            return isEven ? 0 : 180;
+        }
+        // NOSE rule: North Odd, South Even
+        // Odd numbers on NORTH side of street, camera looks SOUTH across street (180°)
+        // Even numbers on SOUTH side of street, camera looks NORTH across street (0°/360°)
+        return isEven ? 0 : 180;
     }
+    
+    // AVENUE Rules (North-South avenues like 5th Ave, Park Ave)
+    // Avenues run NORTH-SOUTH, so we look EAST or WEST
+    if (addressLower.includes('avenue') || addressLower.includes(' ave')) {
+        // Odd numbers on EAST side of avenue, camera looks WEST across avenue (270°)
+        // Even numbers on WEST side of avenue, camera looks EAST across avenue (90°)
+        return isEven ? 90 : 270;
+    }
+    
+    // Special cases
+    if (addressLower.includes('broadway')) {
+        // Broadway is diagonal, use contextual clues
+        // Generally face perpendicular to street
+        return isEven ? 45 : 225;
+    }
+    
+    // Default to looking east
+    return 90;
 }
 document.addEventListener('DOMContentLoaded', function() {
     const imgUrl = "https://raw.githubusercontent.com/fmillerrzero/nyc-odcv-prospector/main/images/1012890021/1012890021_360.jpg";
@@ -767,12 +804,12 @@ document.addEventListener('DOMContentLoaded', function() {
             "haov": 360,
             "vaov": Math.min(180, (aspectRatio * 360)),  // Adjust vertical angle based on image
             "yaw": "1012890021" === "1009950005" ? 160 : getBuildingYaw("515 Madison Ave, New York, NY 10022"),  // 160° points toward 4 Times Square
-            "pitch": isTimesSquareArea ? 35 : 0,  // Look up more for tall buildings
+            "pitch": 0,  // Always start looking straight ahead, not at ground or sky
             "hfov": "1012890021" === "1009950005" ? 120 : (isTimesSquareArea ? 100 : 90),  // Max zoom out for 4 Times Square
             "minHfov": "1012890021" === "1009950005" ? 120 : 50,    // Prevent zoom in
             "maxHfov": "1012890021" === "1009950005" ? 120 : 120,   // Lock at max zoom
-            "minPitch": -60,
-            "maxPitch": 90,
+            "minPitch": -30,  // Don't look too far down at the ground
+            "maxPitch": 45,   // Don't look too far up at the sky
             "mouseZoom": false  // Prevent scroll wheel capture to allow page scrolling
         });
         
