@@ -654,7 +654,7 @@ building_template = """<!DOCTYPE html>
         }}
 
         .iaq-value {{
-            font-size: 2em;
+            font-size: 1.5em;
             font-weight: bold;
             margin: 10px 0;
         }}
@@ -940,8 +940,6 @@ building_template = """<!DOCTYPE html>
                 </h1>
                 <p style="margin: 0; opacity: 0.9; font-size: 1.1em; padding-left: 0.5rem;">
                     <span style="margin-right: 1.5rem;">{neighborhood}</span>
-                    <span>{office_occupancy}% avg occupancy</span>
-                    <span style="margin-left: 1rem;">{trend_indicator}</span>
                 </p>
             </div>
             <div style="text-align: center; min-width: 200px;">
@@ -1017,7 +1015,7 @@ building_template = """<!DOCTYPE html>
                     <span class="stat-value">{office_sqft:,} sq ft ({office_pct}%)</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Building Automation System: </span>
+                    <span class="stat-label">BMS: </span>
                     <span class="stat-value"><span class="{bas_class}">{bas_text}</span></span>
                 </div>
                 <div class="stat">
@@ -1094,7 +1092,14 @@ building_template = """<!DOCTYPE html>
                 </div>
             </div>
             
-            <!-- Page 2.1 - Usage -->
+            {penalty_section}
+        </div>
+        
+        <!-- Section 3: Energy Consumption -->
+        <div class="section">
+            <h2 class="section-header">Energy Consumption</h2>
+            
+            <!-- Page 3.1 - Usage -->
             <div class="page">
                 <h3 class="page-title">Energy Usage</h3>
                 <div class="chart-carousel">
@@ -1111,7 +1116,7 @@ building_template = """<!DOCTYPE html>
                 </div>
             </div>
             
-            <!-- Page 2.2 - Cost -->
+            <!-- Page 3.2 - Cost -->
             <div class="page">
                 <h3 class="page-title">Energy Cost</h3>
                 <div class="chart-carousel">
@@ -1129,12 +1134,12 @@ building_template = """<!DOCTYPE html>
             </div>
         </div>
         
-        <!-- Section 3: Office -->
+        <!-- Section 4: ODCV -->
         <div class="section">
             <h2 class="section-header">ODCV</h2>
             
             
-            <!-- Page 3.3 - Disaggregation -->
+            <!-- Page 4.1 - Disaggregation -->
             <div class="page">
                 <h3 class="page-title">HVAC Electricity Usage (% of Total)</h3>
                 <div class="chart" id="hvac_pct_chart"></div>
@@ -1142,9 +1147,7 @@ building_template = """<!DOCTYPE html>
             </div>
         </div>
         
-        {penalty_section}
-        
-        <!-- Section 5: Indoor Air Quality Analysis -->
+        <!-- Section 5: Outdoor Air Quality -->
         <div class="section">
             <h2 class="section-header">Outdoor Air Quality</h2>
             
@@ -1837,10 +1840,8 @@ for idx, row in all_buildings.iterrows():
         penalty_section = ""
         if True:  # Always show LL97 section
             penalty_section = f"""
-            <div class="section">
-                <h2 class="section-header">LL97 Compliance Status</h2>
                 <div class="page">
-                    <h3 class="page-title">Compliance Overview</h3>
+                    <h3 class="page-title">LL97 Compliance Overview</h3>
                     <div class="stat">
                         <span class="stat-label">2024-2029 Compliance: </span>
                         <span class="stat-value"><span class="{'yes' if compliance_2024 == 'Yes' else 'no'}">{compliance_2024}</span></span>
@@ -1878,15 +1879,7 @@ for idx, row in all_buildings.iterrows():
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="highlight-box" style="background: var(--rzero-light-blue); padding: 20px;">
-                        <h4 style="margin-top: 0; color: var(--rzero-primary);">ODCV Impact</h4>
-                        <p>Annual ODCV Savings: <strong style="color: #28a745;">${total_odcv_savings:,.0f}</strong></p>
-                        <p>Net Benefit (2026): <strong style="color: var(--rzero-primary);">${(total_odcv_savings + penalty_2026):,.0f}</strong></p>
-                        <p>Net Benefit (2030): <strong style="color: var(--rzero-primary);">${(total_odcv_savings + penalty_2030):,.0f}</strong></p>
-                    </div>
                 </div>
-            </div>
             """
         
         # Process IAQ data
@@ -1973,6 +1966,17 @@ for idx, row in all_buildings.iterrows():
                     aqi_category = "Very Unhealthy"
                     aqi_color = "#8f3f97"
                 
+                # Categories for Maximum PM2.5
+                if max_pm25 <= 12:
+                    max_category = "Good"
+                    max_color = "#00e400"
+                elif max_pm25 <= 35:
+                    max_category = "Moderate"
+                    max_color = "#FBBF24"
+                else:
+                    max_category = "Bad"
+                    max_color = "#EF4444"
+                
                 iaq_section_content = f"""
                 <!-- ODCV and Air Quality Insight -->
                 <div class="iaq-insight" style="margin-bottom: 30px;">
@@ -1992,10 +1996,11 @@ for idx, row in all_buildings.iterrows():
                                 <div class="iaq-value" style="color: {aqi_color}">{avg_pm25:.1f} μg/m³</div>
                                 <div class="iaq-category">{aqi_category}</div>
                             </div>
-                            <div class="iaq-stat">
+                            {f'''<div class="iaq-stat">
                                 <div class="iaq-label">Maximum Recorded</div>
-                                <div class="iaq-value" style="color: #FF0000">{max_pm25:.1f} μg/m³</div>
-                            </div>
+                                <div class="iaq-value" style="color: {max_color}">{max_pm25:.1f} μg/m³</div>
+                                <div class="iaq-category">{max_category}</div>
+                            </div>''' if max_pm25 > 12 else ''}
                             <div class="iaq-stat">
                                 <div class="iaq-label">Monitoring Station</div>
                                 <div class="iaq-value">{sensor_site}</div>
@@ -2063,8 +2068,8 @@ for idx, row in all_buildings.iterrows():
                             orientation: 'h',
                             x: 0.5,
                             xanchor: 'center',
-                            y: 1.15,
-                            yanchor: 'bottom',
+                            y: -0.15,
+                            yanchor: 'top',
                             bgcolor: 'transparent',
                             borderwidth: 0,
                             font: {{
@@ -2077,7 +2082,7 @@ for idx, row in all_buildings.iterrows():
                         hovermode: 'x unified',
                         font: {{family: 'Inter, sans-serif', size: 16}},
                         height: 500,
-                        margin: {{t: 100, l: 80, r: 50, b: 60}}  // Adjust margins for legend above
+                        margin: {{t: 60, l: 80, r: 50, b: 100}}  // Adjust margins for legend below
                     }}, {{displayModeBar: false}});
                 }}
                 """

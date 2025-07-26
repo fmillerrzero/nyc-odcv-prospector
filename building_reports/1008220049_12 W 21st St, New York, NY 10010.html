@@ -5,7 +5,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="deploy-timestamp" content="2025-07-25T16:42:24.837711">
+    <meta name="deploy-timestamp" content="2025-07-25T18:01:44.443890">
     <title>12 W 21st St, New York, NY 10010 - ODCV Analysis</title>
     <style>
         :root {
@@ -362,7 +362,7 @@
         }
 
         .iaq-value {
-            font-size: 2em;
+            font-size: 1.5em;
             font-weight: bold;
             margin: 10px 0;
         }
@@ -648,8 +648,6 @@
                 </h1>
                 <p style="margin: 0; opacity: 0.9; font-size: 1.1em; padding-left: 0.5rem;">
                     <span style="margin-right: 1.5rem;">Chelsea</span>
-                    <span>88% avg occupancy</span>
-                    <span style="margin-left: 1rem;"><span style="color: #c41e3a; font-weight: 600;">↓ 4.0% YoY</span></span>
                 </p>
             </div>
             <div style="text-align: center; min-width: 200px;">
@@ -817,7 +815,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="stat-value">50,000 sq ft (84%)</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Building Automation System: </span>
+                    <span class="stat-label">BMS: </span>
                     <span class="stat-value"><span class="no-bas">Absent</span></span>
                 </div>
                 <div class="stat">
@@ -894,59 +892,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             
-            <!-- Page 2.1 - Usage -->
-            <div class="page">
-                <h3 class="page-title">Energy Usage</h3>
-                <div class="chart-carousel">
-                    <div class="chart-toggle">
-                        <button class="toggle-btn active" onclick="showChart('usage', 'building')">Building</button>
-                        <button class="toggle-btn" onclick="showChart('usage', 'office')">Office</button>
-                    </div>
-                    <div id="building_usage_container" class="chart-container">
-                        <div class="chart" id="energy_usage_chart"></div>
-                    </div>
-                    <div id="office_usage_container" class="chart-container" style="display: none;">
-                        <div class="chart" id="office_usage_chart"></div>
-                    </div>
-                </div>
-            </div>
             
-            <!-- Page 2.2 - Cost -->
-            <div class="page">
-                <h3 class="page-title">Energy Cost</h3>
-                <div class="chart-carousel">
-                    <div class="chart-toggle">
-                        <button class="toggle-btn active" onclick="showChart('cost', 'building')">Building</button>
-                        <button class="toggle-btn" onclick="showChart('cost', 'office')">Office</button>
-                    </div>
-                    <div id="building_cost_container" class="chart-container">
-                        <div class="chart" id="energy_cost_chart"></div>
-                    </div>
-                    <div id="office_cost_container" class="chart-container" style="display: none;">
-                        <div class="chart" id="office_cost_chart"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Section 3: Office -->
-        <div class="section">
-            <h2 class="section-header">ODCV</h2>
-            
-            
-            <!-- Page 3.3 - Disaggregation -->
-            <div class="page">
-                <h3 class="page-title">HVAC Electricity Usage (% of Total)</h3>
-                <div class="chart" id="hvac_pct_chart"></div>
-                <div class="chart" id="odcv_savings_chart"></div>
-            </div>
-        </div>
-        
-        
-            <div class="section">
-                <h2 class="section-header">LL97 Compliance Status</h2>
                 <div class="page">
-                    <h3 class="page-title">Compliance Overview</h3>
+                    <h3 class="page-title">LL97 Compliance Overview</h3>
                     <div class="stat">
                         <span class="stat-label">2024-2029 Compliance: </span>
                         <span class="stat-value"><span class="yes">Yes</span></span>
@@ -984,18 +932,63 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="highlight-box" style="background: var(--rzero-light-blue); padding: 20px;">
-                        <h4 style="margin-top: 0; color: var(--rzero-primary);">ODCV Impact</h4>
-                        <p>Annual ODCV Savings: <strong style="color: #28a745;">$2,378</strong></p>
-                        <p>Net Benefit (2026): <strong style="color: var(--rzero-primary);">$2,378</strong></p>
-                        <p>Net Benefit (2030): <strong style="color: var(--rzero-primary);">$2,378</strong></p>
+                </div>
+            
+        </div>
+        
+        <!-- Section 3: Energy Consumption -->
+        <div class="section">
+            <h2 class="section-header">Energy Consumption</h2>
+            
+            <!-- Page 3.1 - Usage -->
+            <div class="page">
+                <h3 class="page-title">Energy Usage</h3>
+                <div class="chart-carousel">
+                    <div class="chart-toggle">
+                        <button class="toggle-btn active" onclick="showChart('usage', 'building')">Building</button>
+                        <button class="toggle-btn" onclick="showChart('usage', 'office')">Office</button>
+                    </div>
+                    <div id="building_usage_container" class="chart-container">
+                        <div class="chart" id="energy_usage_chart"></div>
+                    </div>
+                    <div id="office_usage_container" class="chart-container" style="display: none;">
+                        <div class="chart" id="office_usage_chart"></div>
                     </div>
                 </div>
             </div>
             
+            <!-- Page 3.2 - Cost -->
+            <div class="page">
+                <h3 class="page-title">Energy Cost</h3>
+                <div class="chart-carousel">
+                    <div class="chart-toggle">
+                        <button class="toggle-btn active" onclick="showChart('cost', 'building')">Building</button>
+                        <button class="toggle-btn" onclick="showChart('cost', 'office')">Office</button>
+                    </div>
+                    <div id="building_cost_container" class="chart-container">
+                        <div class="chart" id="energy_cost_chart"></div>
+                    </div>
+                    <div id="office_cost_container" class="chart-container" style="display: none;">
+                        <div class="chart" id="office_cost_chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
-        <!-- Section 5: Indoor Air Quality Analysis -->
+        <!-- Section 4: ODCV -->
+        <div class="section">
+            <h2 class="section-header">ODCV</h2>
+            
+            
+            <!-- Page 4.1 - Disaggregation -->
+            <div class="page">
+                <h3 class="page-title">HVAC Electricity Usage (% of Total)</h3>
+                <div class="chart" id="hvac_pct_chart"></div>
+                <div class="chart" id="odcv_savings_chart"></div>
+            </div>
+        </div>
+        
+        <!-- Section 5: Outdoor Air Quality -->
         <div class="section">
             <h2 class="section-header">Outdoor Air Quality</h2>
             
@@ -1020,7 +1013,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div class="iaq-stat">
                                 <div class="iaq-label">Maximum Recorded</div>
-                                <div class="iaq-value" style="color: #FF0000">28.3 μg/m³</div>
+                                <div class="iaq-value" style="color: #FBBF24">28.3 μg/m³</div>
+                                <div class="iaq-category">Moderate</div>
                             </div>
                             <div class="iaq-stat">
                                 <div class="iaq-label">Monitoring Station</div>
@@ -1503,8 +1497,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             orientation: 'h',
                             x: 0.5,
                             xanchor: 'center',
-                            y: 1.15,
-                            yanchor: 'bottom',
+                            y: -0.15,
+                            yanchor: 'top',
                             bgcolor: 'transparent',
                             borderwidth: 0,
                             font: {
@@ -1517,7 +1511,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         hovermode: 'x unified',
                         font: {family: 'Inter, sans-serif', size: 16},
                         height: 500,
-                        margin: {t: 100, l: 80, r: 50, b: 60}  // Adjust margins for legend above
+                        margin: {t: 60, l: 80, r: 50, b: 100}  // Adjust margins for legend below
                     }, {displayModeBar: false});
                 }
                 
