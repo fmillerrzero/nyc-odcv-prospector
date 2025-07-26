@@ -1,0 +1,20 @@
+{
+  "changes_since_last_report_deploy": 0,
+  "last_homepage_deploy": 0,
+  "last_report_deploy": 1753556182.119636,
+  "last_file_hashes": {
+    "nyc_odcv_prospector.py": "01b16df10970a639c124cf0f388d740b",
+    "index.html": "dcc4aad7be25480cf2ad028d3964f696",
+    "building_reports/1012630051_22 W 48th St, New York, NY 10036.html": "40cb950a9d145dbc8d1aac8c4990a012",
+    "building_reports/1008610072_6 E 32nd St, New York, NY 10016.html": "6d81be4af007b1f290f85401b0cb3c35",
+    "building_reports/1012900044_66 E 55th St, New York, NY 10022.html": "5eb96e0529a8b02f4f57cba504c5f9d2",
+    "building_reports/1006720001_601 W 26th St, New York, NY 10001.html": "cbac78bbd8b6a317cece0da391ce8955",
+    "building_reports/1007610033_545 8 Ave, New York, NY 10018.html": "3480d09fc1e85a349fe72fdebd80e825",
+    "building_reports/1008380072_40 W 37th St, New York, NY 10018.html": "b24a3183c318947ce0f8f7d7d524ede5",
+    "building_reports/1008220062_38 W 21st St, New York, NY 10010.html": "f2c3431b95f0441b2b620fb1d0ba723a",
+    "building_reports/1008070039_875 Ave Of The Americas, New York, NY 10001.html": "fcd1a23edc8349aeeb66d3945904ccda",
+    "building_reports/1005810063_225 Varick St, New York, NY 10014.html": "5f6c83e641521016cb0c1dd3ed8e999f",
+    "building_reports/1008710060_30 Irving Pl, New York, NY 10003.html": "607e916a7ecc0c0b602fa21605026ddc"
+  },
+  "deployment_history": []
+}
